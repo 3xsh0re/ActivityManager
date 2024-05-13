@@ -14,8 +14,8 @@ import java.io.Serializable;
 public class UserLoginDTO implements Serializable {
     private String  username; //用户名
     private String  passwd;   //用户密码
-    private String phone_number;//手机号
-    private String mail;  //邮箱
+    private String phoneNumber;//手机号
+    private String email;  //邮箱
 
     private String captcha; //验证码
 }

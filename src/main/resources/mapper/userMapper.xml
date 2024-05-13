@@ -3,7 +3,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.example.activity_manage.Mapper.UserMapper">
     <insert id="insertUser" parameterType="com.example.activity_manage.Entity.User">
-        insert into User(username,passwd,phone_number,email,role) values(#{username},#{passwd},#{phone_number},#{email},0)
+        insert into User(username,passwd,phoneNumber,email,role) values(#{username},#{passwd},#{phoneNumber},#{email},0)
     </insert>
     <select id="selectUserByPhone" resultType="com.example.activity_manage.Entity.User">
         SELECT * FROM User WHERE phoneNumber = #{phone}

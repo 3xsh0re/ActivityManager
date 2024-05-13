@@ -7,10 +7,12 @@ import com.example.activity_manage.Entity.User;
 import com.example.activity_manage.Entity.VO.GetUserVO;
 import com.example.activity_manage.Exception.AccountNotFoundException;
 import com.example.activity_manage.Exception.DuplicatePhoneException;
+import com.example.activity_manage.Exception.ErrorCaptchaException;
 import com.example.activity_manage.Exception.PasswdErrorException;
 import com.example.activity_manage.Mapper.ResourceMapper;
 import com.example.activity_manage.Mapper.UserMapper;
 import com.example.activity_manage.Service.UserService;
+import com.example.activity_manage.Utils.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
@@ -22,10 +24,19 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
     @Autowired
     UserMapper userMapper;
+    @Autowired
+    RedisUtil redisUtil;
     @Override
     public User Login(UserLoginDTO userLoginDTO) {
-        String phoneNumber = userLoginDTO.getPhone_number();
+        String phoneNumber = userLoginDTO.getPhoneNumber();
         String password = userLoginDTO.getPasswd();
+        String email = userLoginDTO.getEmail();
+        String captcha = userLoginDTO.getCaptcha();
+        // 比对验证码
+        String true_captcha_phone = (String) redisUtil.get("UMS_" + phoneNumber);
+        String true_captcha_email = (String) redisUtil.get("UMS_" + email);
+        if ( !captcha.equals(true_captcha_email) && !captcha.equals(true_captcha_phone) )
+            throw new ErrorCaptchaException(MessageConstant.ERROR_CAPTCHA);
 
         //1、根据用户名查询数据库中的数据
         User user = userMapper.selectUserByPhone(phoneNumber);
@@ -35,7 +46,6 @@ public class UserServiceImpl implements UserService {
             //账号不存在
             throw new AccountNotFoundException(MessageConstant.ACCOUNT_NOT_FOUND);
         }
-
         //密码比对
         //对前端传过来的明文密码进行md5加密处理
         password = DigestUtils.md5DigestAsHex(password.getBytes());
@@ -45,14 +55,23 @@ public class UserServiceImpl implements UserService {
         }
 
         //3、返回实体对象
+        System.out.println(user);
         return user;
     }
 
     @Override
     public Boolean Register(UserLoginDTO userLoginDTO) {
         String username = userLoginDTO.getUsername();
-        String phoneNumber = userLoginDTO.getPhone_number();
+        String phoneNumber = userLoginDTO.getPhoneNumber();
+        String email = userLoginDTO.getEmail();
         String pwd = userLoginDTO.getPasswd();
+        String captcha = userLoginDTO.getCaptcha();
+        // 比对验证码
+        String true_captcha_phone = (String) redisUtil.get("UMS_" + phoneNumber);
+        String true_captcha_email = (String) redisUtil.get("UMS_" + email);
+        if ( !captcha.equals(true_captcha_email) && !captcha.equals(true_captcha_phone) )
+            throw new ErrorCaptchaException(MessageConstant.ERROR_CAPTCHA);
+
         User user = userMapper.selectUserByPhone(phoneNumber);
         if (user != null)
         {
@@ -64,7 +83,9 @@ public class UserServiceImpl implements UserService {
             new_user.setRole(0);
             new_user.setPhoneNumber(phoneNumber);
             new_user.setPasswd(DigestUtils.md5DigestAsHex(pwd.getBytes()));
+            new_user.setEmail(email);
             userMapper.insertUser(new_user);
+            System.out.println(new_user);
         }
         return true;
     }
