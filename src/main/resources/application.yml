@@ -3,7 +3,7 @@ Spring:
     url: jdbc:mysql://:3306/ActivityManger
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
-    password: 
+    password: 12312257890Xyh!
 
 server:
   port: 18088

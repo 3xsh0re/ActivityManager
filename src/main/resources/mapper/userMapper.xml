@@ -6,12 +6,12 @@
         insert into User(username,passwd,phone_number,email,role) values(#{username},#{passwd},#{phone_number},#{email},0)
     </insert>
     <select id="selectUserByPhone" resultType="com.example.activity_manage.Entity.User">
-        SELECT * FROM User WHERE phone_number = #{phone}
+        SELECT * FROM User WHERE phoneNumber = #{phone}
     </select>
     <select id="selectAllUser" resultType="com.example.activity_manage.Entity.VO.GetUserVO">
-        SELECT id, username, phone_number, email FROM User
+        SELECT id, username, phoneNumber, email FROM User
     </select>
     <select id="selectAllPhone">
-        SELECT phone_number FROM User
+        SELECT phoneNumber FROM User
     </select>
 </mapper>

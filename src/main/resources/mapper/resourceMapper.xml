@@ -1,8 +1,19 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.example.activity_manage.Mapper.UserMapper">
-
+<mapper namespace="com.example.activity_manage.Mapper.ResourceMapper">
+    <select id="checkResourceByName">
+        SELECT COUNT(*) > 0 AS resource_exists FROM Resource WHERE resourceName = #{ResourceName}
+    </select>
+    <select id="selectResourceByName">
+        SELECT quantity FROM Resource WHERE resourceName = #{ResourceName}
+    </select>
+    <update id="updateResourceQuantityByName">
+        UPDATE Resource SET quantity = #{quantity} WHERE resourceName = #{ResourceName}
+    </update>
+    <insert id="insertResource">
+        INSERT INTO Resource (resourceName, type, quantity) VALUES (#{ResourceName}, #{type}, #{quantity});
+    </insert>
 </mapper>
 
 
