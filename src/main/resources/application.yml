@@ -4,6 +4,23 @@ Spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
     password: 12312257890Xyh!
+  mail:
+    host: smtp.163.com
+    username: ustb_xieyuheng@163.com
+    password: PSMHPHTLCBRSEACV
+
+  data:
+    redis:
+      host: 47.93.254.31
+      port: 23798
+      password: 12312257890Xyh!
+      database: 0
+      lettuce:
+        pool:
+          max-idle: 16
+          max-active: 32
+          min-idle: 8
+
 
 server:
   port: 18088
