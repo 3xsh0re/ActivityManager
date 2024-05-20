@@ -5,10 +5,7 @@ import com.example.activity_manage.Entity.DTO.ResetPwdDTO;
 import com.example.activity_manage.Entity.DTO.UserLoginDTO;
 import com.example.activity_manage.Entity.User;
 import com.example.activity_manage.Entity.VO.GetUserVO;
-import com.example.activity_manage.Exception.AccountNotFoundException;
-import com.example.activity_manage.Exception.DuplicatePhoneException;
-import com.example.activity_manage.Exception.ErrorCaptchaException;
-import com.example.activity_manage.Exception.PasswdErrorException;
+import com.example.activity_manage.Exception.*;
 import com.example.activity_manage.Mapper.UserMapper;
 import com.example.activity_manage.Service.UserService;
 import com.example.activity_manage.Utils.RedisUtil;
@@ -39,8 +36,13 @@ public class UserServiceImpl implements UserService {
 
         //1、根据用户名查询数据库中的数据
         User user = userMapper.selectUserByPhone(phoneNumber);
-
-        //2、处理各种异常情况（用户名不存在、密码不对、账号被锁定）
+        //2、判断是否为管理员
+        if (userLoginDTO.isAdmin())
+        {
+            if (!phoneNumber.equals(user.getPhoneNumber()))
+                throw new NotAdminLoginException(MessageConstant.ACCOUNT_NOT_ADMIN);
+        }
+        //3、处理各种异常情况（用户名不存在、密码不对、账号被锁定）
         if (user == null) {
             //账号不存在
             throw new AccountNotFoundException(MessageConstant.ACCOUNT_NOT_FOUND);

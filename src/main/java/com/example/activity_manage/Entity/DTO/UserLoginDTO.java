@@ -16,6 +16,6 @@ public class UserLoginDTO implements Serializable {
     private String  passwd;   //用户密码
     private String phoneNumber;//手机号
     private String email;  //邮箱
-
     private String captcha; //验证码
+    private boolean isAdmin;//用户身份,0是普通用户
 }
