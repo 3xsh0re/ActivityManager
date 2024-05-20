@@ -89,8 +89,8 @@ public class UserController {
         return Result.success(Boolean.TRUE);
     }
 
-    @GetMapping("/getCaptchaByPhone/{phoneNumber}")
-    public Result<Boolean> getCaptchaByPhone(@PathVariable("phoneNumber") String phoneNumber){
+    @GetMapping("/getCaptchaByPhone")
+    public Result<Boolean> getCaptchaByPhone(@RequestParam("phoneNumber") String phoneNumber){
         // 判断redis中是否还有验证码未过期
         if (redisUtil.get("UMS_" + phoneNumber) != null)
         {
@@ -100,7 +100,7 @@ public class UserController {
 
         return Result.success(sendUtil.SendMessage(phoneNumber,phoneCaptcha));
     }
-    @GetMapping("/resetPasswd")
+    @PostMapping("/resetPasswd")
     public Result<Boolean> resetPasswd(@RequestBody ResetPwdDTO resetPwdDTO)
     {
         return Result.success(userService.ResetPwd(resetPwdDTO));
