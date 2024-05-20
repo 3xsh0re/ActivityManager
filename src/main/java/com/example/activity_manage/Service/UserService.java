@@ -1,5 +1,6 @@
 package com.example.activity_manage.Service;
 
+import com.example.activity_manage.Entity.DTO.ResetPwdDTO;
 import com.example.activity_manage.Entity.DTO.ResourceReservationDTO;
 import com.example.activity_manage.Entity.DTO.UserLoginDTO;
 import com.example.activity_manage.Entity.User;
@@ -12,4 +13,6 @@ public interface UserService {
     Boolean Register(UserLoginDTO userLoginDTO);
     List<GetUserVO> getAllUser();
     List<String> getAllPhone();
+    Boolean ResetPwd(ResetPwdDTO resetPwdDTO);
+    void checkPhoneNumberExist(String phone);
 }

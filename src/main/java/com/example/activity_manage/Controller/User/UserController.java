@@ -1,17 +1,23 @@
 package com.example.activity_manage.Controller.User;
 
+
+import com.example.activity_manage.Constant.MessageConstant;
+import com.example.activity_manage.Entity.DTO.ResetPwdDTO;
 import com.example.activity_manage.Entity.DTO.UserLoginDTO;
 import com.example.activity_manage.Entity.User;
 import com.example.activity_manage.Entity.VO.UserLoginVO;
+import com.example.activity_manage.Exception.DuplicateCaptchaExecption;
 import com.example.activity_manage.Result.Result;
 import com.example.activity_manage.Utils.CaptchaUtil;
 import com.example.activity_manage.Service.UserService;
 import com.example.activity_manage.Utils.JwtUtil;
 import com.example.activity_manage.Utils.RedisUtil;
+import com.example.activity_manage.Utils.SendUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.bind.annotation.*;
+
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,35 +32,35 @@ public class UserController {
     }
     @Autowired
     UserService userService;
-
     @Autowired
     CaptchaUtil captchaUtil;
-
     @Autowired
     RedisUtil redisUtil;
+    @Autowired
+    SendUtil sendUtil;
 
     @PostMapping("/login")
     public Result<UserLoginVO> Login(@RequestBody UserLoginDTO userLoginDTO)
     {
         User user = userService.Login(userLoginDTO);
-        //登录成功后，生成jwt令牌
+        // 登录成功后，生成jwt令牌
         Map<String, Object> claims = new HashMap<>();
         claims.put("id", user.getId());
         claims.put("username", user.getUsername());
         String token = JwtUtil.createJWT(
                 "123456",
-                7 * 60 * 60 * 24,
+                60 * 60 * 24 * 3,
                 claims);
         UserLoginVO userLoginVO = UserLoginVO.builder()
                 .id(user.getId())
                 .token(token)
                 .build();
-        //存入redis
+        // token存入redis
         Map<String, Object> userMap = new HashMap<>();
         userMap.put("username", user.getUsername());
         userMap.put("phoneNumber", user.getPhoneNumber());
         userMap.put("email", user.getEmail());
-        userMap.put("ActiList", user.getActiList());
+        userMap.put("actList", user.getActiList());
         redisUtil.hmset("TOKEN_" + token, userMap ,60*60*24*5);
 
         return Result.success(userLoginVO);
@@ -65,9 +71,10 @@ public class UserController {
         return Result.success(userService.Register(userLoginDTO));
     }
     @Autowired
-    JavaMailSender sender;
+    private JavaMailSender sender;
     @GetMapping("/getCaptchaByEmail/{email}")
     public Result<Boolean> getCaptchaByEmail(@PathVariable("email") String email){
+
         SimpleMailMessage message = new SimpleMailMessage();
         //设置邮件标题
         message.setSubject("ActivityManager");
@@ -80,5 +87,22 @@ public class UserController {
         //发送
         sender.send(message);
         return Result.success(Boolean.TRUE);
+    }
+
+    @GetMapping("/getCaptchaByPhone/{phoneNumber}")
+    public Result<Boolean> getCaptchaByPhone(@PathVariable("phoneNumber") String phoneNumber){
+        // 判断redis中是否还有验证码未过期
+        if (redisUtil.get("UMS_" + phoneNumber) != null)
+        {
+            throw new DuplicateCaptchaExecption(MessageConstant.CAPTCHA_DUPLICATE);
+        }
+        String phoneCaptcha = captchaUtil.generateCaptcha(phoneNumber);
+
+        return Result.success(sendUtil.SendMessage(phoneNumber,phoneCaptcha));
+    }
+    @GetMapping("/resetPasswd")
+    public Result<Boolean> resetPasswd(@RequestBody ResetPwdDTO resetPwdDTO)
+    {
+        return Result.success(userService.ResetPwd(resetPwdDTO));
     }
 }

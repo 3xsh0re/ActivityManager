@@ -11,8 +11,10 @@ public interface UserMapper {
     // 添加用户
     public void insertUser(User user);
     // 查找用户
-    public User selectUserByPhone(String username);
+    public User selectUserByPhone(String phoneNumber);
     // 返回所有用户
     public List<GetUserVO> selectAllUser();
     public List<String> selectAllPhone();
+    public void setPwd(String passwd,String phoneNumber);
+    public Long selectIdByPhone(String phoneNumber);
 }
