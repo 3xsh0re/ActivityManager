@@ -20,7 +20,7 @@ import java.util.Map;
 public class SendUtil {
     public Boolean SendMessage(String phoneNumber,String phone_captcha){
         // 连接阿里云
-        DefaultProfile profile = DefaultProfile.getProfile("cn-Beijing", "LTAI5tFecUJxe4fA1tQRcjKV", "GWGAex7POIN6IL1OLVwBu1xNiK2Zxa");
+        DefaultProfile profile = DefaultProfile.getProfile("cn-Beijing", "", "");
         IAcsClient client = new DefaultAcsClient(profile);
         // 构建请求
         CommonRequest request = new CommonRequest();
