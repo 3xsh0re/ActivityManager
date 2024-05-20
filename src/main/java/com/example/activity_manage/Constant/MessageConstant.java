@@ -10,6 +10,7 @@ public class MessageConstant {
     public static final String ACCOUNT_LOCKED = "账号被锁定";
     public static final String ACCOUNT_NOT_ADMIN = "此账号非管理员用户";
     public static final String ERROR_CAPTCHA = "验证码错误";
+    public static final String EMPTY_PHONE_NUMBER = "手机号为空";
     public static final String CAPTCHA_DUPLICATE = "5min内发送过一次验证码";
     public static final String SYSTEM_BUSY = "系统繁忙,请稍后重试";
     public static final String ALREADY_EXISTS = "已存在";
