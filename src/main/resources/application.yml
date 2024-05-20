@@ -1,19 +1,19 @@
 Spring:
   datasource:
-    url: jdbc:mysql://47.93.254.31:33306/ActivityManger
+    url: jdbc:mysql:///ActivityManger
     driver-class-name: com.mysql.cj.jdbc.Driver
-    username: root
-    password: 12312257890Xyh!
+    username:
+    password:
   mail:
     host: smtp.163.com
-    username: ustb_xieyuheng@163.com
-    password: PSMHPHTLCBRSEACV
+    username:
+    password:
 
   data:
     redis:
-      host: 47.93.254.31
-      port: 23798
-      password: 12312257890Xyh!
+      host:
+      port:
+      password:
       database: 0
       lettuce:
         pool:
