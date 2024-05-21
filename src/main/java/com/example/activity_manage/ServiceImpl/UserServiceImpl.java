@@ -94,14 +94,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<GetUserVO> getAllUser() {
-        return userMapper.selectAllUser();
-    }
-    public List<String> getAllPhone() {
-        return userMapper.selectAllPhone();
-    }
-
-    @Override
     public Boolean ResetPwd(ResetPwdDTO resetPwdDTO) {
         String phoneNumber = resetPwdDTO.getPhoneNumber();
         String Reset_Captcha = resetPwdDTO.getCaptcha();

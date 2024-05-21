@@ -15,18 +15,16 @@ import java.util.List;
 @RequestMapping("/admin")
 public class AdminController {
     @Autowired
-    UserService userService;
-    @Autowired
     AdminService adminService;
 
     @GetMapping("/getAllUser")
     public Result<List<GetUserVO>> getAllUser()
     {
-        return Result.success(userService.getAllUser());
+        return Result.success(adminService.getAllUser());
     }
     @GetMapping("/getAllPhone")
     public Result<List<String>> getAllPhone()
     {
-        return Result.success(userService.getAllPhone());
+        return Result.success(adminService.getAllPhone());
     }
 }

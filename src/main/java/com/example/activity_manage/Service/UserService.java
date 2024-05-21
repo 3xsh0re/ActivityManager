@@ -11,8 +11,6 @@ import java.util.List;
 public interface UserService {
     User Login(UserLoginDTO userLoginDTO);
     Boolean Register(UserLoginDTO userLoginDTO);
-    List<GetUserVO> getAllUser();
-    List<String> getAllPhone();
     Boolean ResetPwd(ResetPwdDTO resetPwdDTO);
     void checkPhoneNumberExist(String phone);
 }
