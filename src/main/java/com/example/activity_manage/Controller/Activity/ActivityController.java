@@ -14,7 +14,7 @@ import java.sql.Date;
 public class ActivityController {
     @Autowired
     ActivityService activityService;
-    @PostMapping("/create")
+    @PostMapping("/createActivity")
     public Result<Boolean> activityCreate(@RequestBody ActivityCreateDTO activityCreateDTO)
     {
         return  Result.success(activityService.ActivityCreate(activityCreateDTO));

@@ -15,5 +15,5 @@ public class User {
     private String phoneNumber;//手机号
     private String email;  //邮箱
     private int role;
-    private String actiList;//用户活动日程
+    private String actList;//用户活动日程
 }

@@ -2,10 +2,12 @@ package com.example.activity_manage.ServiceImpl;
 
 import com.example.activity_manage.Constant.MessageConstant;
 import com.example.activity_manage.Entity.DTO.ResetPwdDTO;
+import com.example.activity_manage.Entity.DTO.ResourceReservationDTO;
 import com.example.activity_manage.Entity.DTO.UserLoginDTO;
 import com.example.activity_manage.Entity.User;
 import com.example.activity_manage.Entity.VO.GetUserVO;
 import com.example.activity_manage.Exception.*;
+import com.example.activity_manage.Mapper.ResourceMapper;
 import com.example.activity_manage.Mapper.UserMapper;
 import com.example.activity_manage.Service.UserService;
 import com.example.activity_manage.Utils.RedisUtil;
@@ -20,6 +22,8 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
     @Autowired
     UserMapper userMapper;
+    @Autowired
+    ResourceMapper resourceMapper;
     @Autowired
     RedisUtil redisUtil;
     @Override
@@ -125,4 +129,5 @@ public class UserServiceImpl implements UserService {
             throw new AccountNotFoundException(MessageConstant.ACCOUNT_NOT_FOUND);
         }
     }
+
 }

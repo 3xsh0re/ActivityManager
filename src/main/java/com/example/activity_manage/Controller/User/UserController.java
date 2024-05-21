@@ -4,6 +4,7 @@ package com.example.activity_manage.Controller.User;
 import com.example.activity_manage.Constant.MessageConstant;
 import com.example.activity_manage.Entity.DTO.ActivityCreateDTO;
 import com.example.activity_manage.Entity.DTO.ResetPwdDTO;
+import com.example.activity_manage.Entity.DTO.ResourceReservationDTO;
 import com.example.activity_manage.Entity.DTO.UserLoginDTO;
 import com.example.activity_manage.Entity.User;
 import com.example.activity_manage.Entity.VO.UserLoginVO;
@@ -62,7 +63,7 @@ public class UserController {
         userMap.put("username", user.getUsername());
         userMap.put("phoneNumber", user.getPhoneNumber());
         userMap.put("email", user.getEmail());
-        userMap.put("actList", user.getActiList());
+        userMap.put("actList", user.getActList());
         redisUtil.hmset("TOKEN_" + token, userMap ,60*60*24*5);
 
         return Result.success(userLoginVO);

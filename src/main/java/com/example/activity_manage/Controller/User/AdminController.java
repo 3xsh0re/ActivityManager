@@ -29,12 +29,4 @@ public class AdminController {
     {
         return Result.success(userService.getAllPhone());
     }
-    @PostMapping("/resourceReservation")// 资源申请接口
-    public Result<Boolean> resourceReservation(@RequestBody ResourceReservationDTO resourceReservationDTO) {
-        return Result.success(adminService.resourceReservation(resourceReservationDTO));
-    }
-    @PostMapping("/resourceAddition")// 资源添加接口
-    public Result<Boolean> resourceAddition(@RequestBody ResourceAdditionDTO resourceAdditionDTO) {
-        return Result.success(adminService.resourceAddition(resourceAdditionDTO));
-    }
 }
