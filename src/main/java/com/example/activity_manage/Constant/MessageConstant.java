@@ -14,7 +14,7 @@ public class MessageConstant {
     public static final String CAPTCHA_DUPLICATE = "5min内发送过一次验证码";
     public static final String SYSTEM_BUSY = "系统繁忙,请稍后重试";
     public static final String ALREADY_EXISTS = "已存在";
-    public static final String UNKNOWN_ERROR = "未知错误";
+    public static final String UNKNOWN_ERROR = "系统发送未知错误,请稍后再试";
     public static final String USER_NOT_LOGIN = "用户未登录";
     public static final String PHONE_DUPLICATE = "手机号已被注册";
     public static final String LOGIN_FAILED = "登录失败";

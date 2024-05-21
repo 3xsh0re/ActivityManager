@@ -1,11 +1,16 @@
 package com.example.activity_manage.ServiceImpl;
 
+import com.example.activity_manage.Constant.MessageConstant;
 import com.example.activity_manage.Entity.DTO.ResourceAdditionDTO;
 import com.example.activity_manage.Entity.DTO.ResourceReservationDTO;
+import com.example.activity_manage.Entity.Resource;
+import com.example.activity_manage.Exception.SystemBusyException;
 import com.example.activity_manage.Mapper.ResourceMapper;
 import com.example.activity_manage.Service.ResourceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class ResourceServiceImpl implements ResourceService {
@@ -45,5 +50,14 @@ public class ResourceServiceImpl implements ResourceService {
             resourceMapper.insertResource(resourceName, quantity, type);
         }
         return true;
+    }
+
+    public List<Resource> getAllResource(){
+        try {
+            return resourceMapper.getAllResource();
+        }
+        catch (Exception e){
+            throw new SystemBusyException(MessageConstant.SYSTEM_BUSY);
+        }
     }
 }

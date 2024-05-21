@@ -2,6 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.example.activity_manage.Mapper.ResourceMapper">
+    <select id="getAllResource">
+        SELECT * FROM Resource
+    </select>
     <select id="checkResourceByName">
         SELECT COUNT(*) > 0 AS resource_exists FROM Resource WHERE resourceName = #{ResourceName}
     </select>
