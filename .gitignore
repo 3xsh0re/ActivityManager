@@ -1,5 +1,6 @@
 HELP.md
 target/
+src/main/java/com/example/activity_manage/Utils/SendUtil.java
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
@@ -30,4 +31,11 @@ build/
 !**/src/test/**/build/
 
 ### VS Code ###
-.vscode/
+.vscode/### Example user template template
+### Example user template
+
+# IntelliJ project files
+.idea
+*.iml
+out
+gen
