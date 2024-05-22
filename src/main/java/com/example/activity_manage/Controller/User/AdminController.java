@@ -1,7 +1,10 @@
 package com.example.activity_manage.Controller.User;
 
+import com.example.activity_manage.Entity.Activity;
 import com.example.activity_manage.Entity.DTO.ResourceAdditionDTO;
 import com.example.activity_manage.Entity.DTO.ResourceReservationDTO;
+import com.example.activity_manage.Entity.VO.ActInfoToAdminVO;
+import com.example.activity_manage.Entity.VO.ActInfoToAllVO;
 import com.example.activity_manage.Entity.VO.GetUserVO;
 import com.example.activity_manage.Result.Result;
 import com.example.activity_manage.Service.AdminService;
@@ -27,4 +30,7 @@ public class AdminController {
     {
         return Result.success(adminService.getAllPhone());
     }
+    //用于管理员获取所有活动基本信息
+    @GetMapping("/getAllActivity")
+    public Result<List<ActInfoToAdminVO>> getAllActivity(){return Result.success(adminService.getAllActivity());}
 }

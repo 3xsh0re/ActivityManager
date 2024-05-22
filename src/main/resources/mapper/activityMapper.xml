@@ -42,6 +42,7 @@
         <result column="userList" jdbcType="OTHER" property="userList" javaType="net.minidev.json.JSONObject" typeHandler="com.example.activity_manage.Handler.JsonTypeHandler"/>
         <result column="actStatus" jdbcType="OTHER" property="actStatus" javaType="net.minidev.json.JSONObject" typeHandler="com.example.activity_manage.Handler.JsonTypeHandler"/>
     </resultMap>
+
     <select id="activityDateGet" resultMap="pairResultMap">
         SELECT beginTime, endTime FROM Activity WHERE id = #{AID};
     </select>
@@ -68,6 +69,23 @@
         SELECT uid, actName, status, actDescription, beginTime, endTime, totalBudget, place, score, userGroup, userList, actStatus
         FROM Activity
         WHERE id = #{aid};
+    </select>
+
+    <select id="getActByUid" resultMap="ActivityResultMap">
+        SELECT uid, actName, status, actDescription, beginTime, endTime, totalBudget, place,
+               score, userGroup, userList, actStatus
+        FROM Activity
+        WHERE uid = #{uid};
+    </select>
+
+    <select id="getAllAct" resultMap="ActivityResultMap">
+        select * from Activity;
+    </select>
+
+    <select id="getAllActInfoToAdmin" resultType="com.example.activity_manage.Entity.VO.ActInfoToAdminVO">
+        select uid, actName, status, actDescription, beginTime, endTime, totalBudget,
+               place, score
+        from Activity;
     </select>
 
 </mapper>

@@ -5,6 +5,7 @@ import com.example.activity_manage.Constant.MessageConstant;
 import com.example.activity_manage.Entity.Activity;
 import com.example.activity_manage.Entity.DTO.ActivityCreateDTO;
 import com.example.activity_manage.Entity.VO.ActInfoToAllVO;
+import com.example.activity_manage.Entity.VO.ActScheduleVO;
 import com.example.activity_manage.Exception.NotOrganizerForActivityException;
 import com.example.activity_manage.Exception.PageNotFoundException;
 import com.example.activity_manage.Exception.SystemBusyException;
@@ -13,6 +14,8 @@ import com.example.activity_manage.Mapper.UserMapper;
 import com.example.activity_manage.Service.ActivityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.*;
 
 @Service
 public class ActivityServiceImpl implements ActivityService {
@@ -61,5 +64,26 @@ public class ActivityServiceImpl implements ActivityService {
         }
         actInfoToAllVO.setUsername(userMapper.getUsernameById(actInfoToAllVO.getOrgId()));
         return actInfoToAllVO;
+    }
+
+    @Override
+    public List<ActScheduleVO> getActSchedule(long uid) {
+        List<Activity> l_act = activityMapper.getAllAct();
+        List<ActScheduleVO> l_actSchedule = new ArrayList<>();
+        // 将Activity转换到VO
+        for (Activity act : l_act){
+            String role = act.getUserList().getAsString(Long.toString(uid));
+            if (role != null)
+            {
+                ActScheduleVO actScheduleVO = new ActScheduleVO();
+                actScheduleVO.setAid(act.getId());
+                actScheduleVO.setActName(act.getActName());
+                actScheduleVO.setBeginTime(act.getBeginTime());
+                actScheduleVO.setEndTime(act.getEndTime());
+                actScheduleVO.setRole(act.getUserList().getAsString(Long.toString(uid)));
+                l_actSchedule.add(actScheduleVO);
+            }
+        }
+        return l_actSchedule;
     }
 }
