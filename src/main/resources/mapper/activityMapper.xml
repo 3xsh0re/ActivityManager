@@ -6,16 +6,68 @@
         <result column="beginTime" javaType="java.sql.Date"/>
         <result column="endTime" javaType="java.sql.Date"/>
     </resultMap>
+
+    <resultMap id="ActivityResultMap" type="com.example.activity_manage.Entity.Activity">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="uid" jdbcType="BIGINT" property="uid" />
+        <result column="actName" jdbcType="VARCHAR" property="actName" />
+        <result column="status" jdbcType="INTEGER" property="status" />
+        <result column="actDescription" jdbcType="VARCHAR" property="actDescription" />
+        <result column="beginTime" jdbcType="TIMESTAMP" property="beginTime" />
+        <result column="endTime" jdbcType="TIMESTAMP" property="endTime" />
+        <result column="totalBudget" jdbcType="INTEGER" property="totalBudget" />
+        <result column="place" jdbcType="VARCHAR" property="place" />
+        <result column="ifFileStore" jdbcType="TINYINT" property="ifFileStore" />
+        <result column="score" jdbcType="DOUBLE" property="rank" />
+        <result column="userCost" jdbcType="OTHER" property="userCost" javaType="net.minidev.json.JSONObject" typeHandler="com.example.activity_manage.Handler.JsonTypeHandler"/>
+        <result column="userGroup" jdbcType="OTHER" property="userGroup" javaType="net.minidev.json.JSONObject" typeHandler="com.example.activity_manage.Handler.JsonTypeHandler"/>
+        <result column="resource" jdbcType="OTHER" property="resource" javaType="net.minidev.json.JSONObject" typeHandler="com.example.activity_manage.Handler.JsonTypeHandler"/>
+        <result column="userList" jdbcType="OTHER" property="userList" javaType="net.minidev.json.JSONObject" typeHandler="com.example.activity_manage.Handler.JsonTypeHandler"/>
+        <result column="rankList" jdbcType="OTHER" property="rankList" javaType="net.minidev.json.JSONObject" typeHandler="com.example.activity_manage.Handler.JsonTypeHandler"/>
+        <result column="roleList" jdbcType="OTHER" property="roleList" javaType="net.minidev.json.JSONObject" typeHandler="com.example.activity_manage.Handler.JsonTypeHandler"/>
+        <result column="actStatus" jdbcType="OTHER" property="actStatus" javaType="net.minidev.json.JSONObject" typeHandler="com.example.activity_manage.Handler.JsonTypeHandler"/>
+    </resultMap>
+
+    <resultMap id="ActInfoToAllVOResultMap" type="com.example.activity_manage.Entity.VO.ActInfoToAllVO">
+        <result column="uid" jdbcType="BIGINT" property="orgId" />
+        <result column="actName" jdbcType="VARCHAR" property="actName" />
+        <result column="status" jdbcType="INTEGER" property="status" />
+        <result column="actDescription" jdbcType="VARCHAR" property="actDescription" />
+        <result column="beginTime" jdbcType="TIMESTAMP" property="beginTime" />
+        <result column="endTime" jdbcType="TIMESTAMP" property="endTime" />
+        <result column="totalBudget" jdbcType="INTEGER" property="totalBudget" />
+        <result column="place" jdbcType="VARCHAR" property="place" />
+        <result column="score" jdbcType="DOUBLE" property="rank" />
+        <result column="userGroup" jdbcType="OTHER" property="userGroup" javaType="net.minidev.json.JSONObject" typeHandler="com.example.activity_manage.Handler.JsonTypeHandler"/>
+        <result column="userList" jdbcType="OTHER" property="userList" javaType="net.minidev.json.JSONObject" typeHandler="com.example.activity_manage.Handler.JsonTypeHandler"/>
+        <result column="actStatus" jdbcType="OTHER" property="actStatus" javaType="net.minidev.json.JSONObject" typeHandler="com.example.activity_manage.Handler.JsonTypeHandler"/>
+    </resultMap>
     <select id="activityDateGet" resultMap="pairResultMap">
         SELECT beginTime, endTime FROM Activity WHERE id = #{AID};
     </select>
+
     <insert id="activityCreate" parameterType="com.example.activity_manage.Entity.DTO.ActivityCreateDTO">
         INSERT INTO Activity (uid, actName, actDescription, beginTime,
-                              endTime, ifFileStore, status , totalBudget, roleList, actStatus)
+                              endTime, ifFileStore, status , totalBudget,
+                              roleList, actStatus)
         VALUES (#{uid}, #{actName}, #{actDescription}, #{beginTime},
                 #{endTime}, #{ifFileStore}, 0, 0,
                 #{roleList, jdbcType=OTHER, typeHandler=com.example.activity_manage.Handler.JsonTypeHandler},
                 #{actStatus, jdbcType=OTHER, typeHandler=com.example.activity_manage.Handler.JsonTypeHandler})
     </insert>
+
+    <select id="getUidByAid">
+        select uid from Activity where id = #{aid};
+    </select>
+
+    <select id="getActInfoToOrganizer" resultMap="ActivityResultMap">
+        select * from Activity where id = #{aid};
+    </select>
+
+    <select id="getActInfoToAll" resultMap="ActInfoToAllVOResultMap">
+        SELECT uid, actName, status, actDescription, beginTime, endTime, totalBudget, place, score, userGroup, userList, actStatus
+        FROM Activity
+        WHERE id = #{aid};
+    </select>
 
 </mapper>

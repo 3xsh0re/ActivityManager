@@ -17,4 +17,8 @@
     <update id="setPwd">
         UPDATE User SET passwd = #{passwd} where phoneNumber = #{phoneNumber};
     </update>
+    <select id="getUsernameById">
+        select username
+        from User where id = #{uid};
+    </select>
 </mapper>
