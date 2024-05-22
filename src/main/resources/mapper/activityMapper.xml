@@ -11,9 +11,9 @@
     </select>
     <insert id="activityCreate" parameterType="com.example.activity_manage.Entity.DTO.ActivityCreateDTO">
         INSERT INTO Activity (uid, actName, actDescription, beginTime,
-                              endTime, ifFileStore, status , roleList, actStatus)
+                              endTime, ifFileStore, status , totalBudget, roleList, actStatus)
         VALUES (#{uid}, #{actName}, #{actDescription}, #{beginTime},
-                #{endTime}, #{ifFileStore}, 0,
+                #{endTime}, #{ifFileStore}, 0, 0,
                 #{roleList, jdbcType=OTHER, typeHandler=com.example.activity_manage.Handler.JsonTypeHandler},
                 #{actStatus, jdbcType=OTHER, typeHandler=com.example.activity_manage.Handler.JsonTypeHandler})
     </insert>
