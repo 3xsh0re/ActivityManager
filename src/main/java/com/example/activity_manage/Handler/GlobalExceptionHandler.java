@@ -1,6 +1,7 @@
-package com.example.activity_manage.Exception;
+package com.example.activity_manage.Handler;
 
 import com.example.activity_manage.Constant.MessageConstant;
+import com.example.activity_manage.Exception.BaseException;
 import com.example.activity_manage.Result.Result;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;

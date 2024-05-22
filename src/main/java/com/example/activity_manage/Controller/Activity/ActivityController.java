@@ -17,7 +17,7 @@ public class ActivityController {
     @PostMapping("/createActivity")
     public Result<Boolean> activityCreate(@RequestBody ActivityCreateDTO activityCreateDTO)
     {
-        return  Result.success(activityService.ActivityCreate(activityCreateDTO));
+        return Result.success(activityService.ActivityCreate(activityCreateDTO));
     }
     @GetMapping("/getDate")
     public Result<Pair<Date, Date>> activityDateGet(@RequestParam("AID") long AID){

@@ -9,6 +9,16 @@
     <select id="activityDateGet" resultMap="pairResultMap">
         SELECT beginTime, endTime FROM Activity WHERE id = #{AID};
     </select>
+    <insert id="activityCreate" parameterType="com.example.activity_manage.Entity.DTO.ActivityCreateDTO">
+        INSERT INTO Activity (uid, actName, actDescription, beginTime,
+                              endTime, ifFileStore, status , roleList, actStatus)
+        VALUES (#{uid}, #{actName}, #{actDescription}, #{beginTime},
+                #{endTime}, #{ifFileStore}, 0,
+                #{roleList, jdbcType=OTHER, typeHandler=com.example.activity_manage.Handler.JsonTypeHandler},
+                #{actStatus, jdbcType=OTHER, typeHandler=com.example.activity_manage.Handler.JsonTypeHandler})
+    </insert>
+
 </mapper>
+
 
 

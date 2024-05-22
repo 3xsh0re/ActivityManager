@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.Map;
 
 @Service
 public class ActivityServiceImpl implements ActivityService {
@@ -19,14 +20,8 @@ public class ActivityServiceImpl implements ActivityService {
     @Override
     public Boolean ActivityCreate(ActivityCreateDTO activityCreateDTO)
     {
-        long userid = activityCreateDTO.getUserid();
-        String activityName = activityCreateDTO.getActivityName();
-        String activityDescription = activityCreateDTO.getActivityDescription();
-        Date beginTime = activityCreateDTO.getBeginTime();
-        Date endTime = activityCreateDTO.getEndTime();
-        Activity activity = new Activity();
-
-        return null;
+        // 创建活动,直接将activityCreateDTO传入即可
+        return activityMapper.activityCreate(activityCreateDTO);
     }
 
     @Override
