@@ -1,6 +1,7 @@
 package com.example.activity_manage.ServiceImpl;
 
 import ch.qos.logback.core.joran.sanity.Pair;
+import com.example.activity_manage.Entity.Activity;
 import com.example.activity_manage.Entity.DTO.ActivityCreateDTO;
 import com.example.activity_manage.Mapper.ActivityMapper;
 import com.example.activity_manage.Service.ActivityService;
@@ -23,6 +24,8 @@ public class ActivityServiceImpl implements ActivityService {
         String activityDescription = activityCreateDTO.getActivityDescription();
         Date beginTime = activityCreateDTO.getBeginTime();
         Date endTime = activityCreateDTO.getEndTime();
+        Activity activity = new Activity();
+
         return null;
     }
 

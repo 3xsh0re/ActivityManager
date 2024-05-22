@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Data
 @Builder
@@ -18,4 +19,7 @@ public class ActivityCreateDTO {
     private String activityDescription; // 活动描述
     private Date beginTime; // 开始时间
     private Date endTime; // 活动的结束时间
+    private Map<String,Integer> roleList; // 身份列表<role,quantity>
+    private boolean ifFileStore;// 活动是否开启文件上传功能
+    private Map<String,String> actStatus;//活动内部细节流程<StatusName,StatusDescription>
 }
