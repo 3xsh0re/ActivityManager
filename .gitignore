@@ -1,6 +1,7 @@
 HELP.md
 target/
 src/main/java/com/example/activity_manage/Utils/SendUtil.java
+src/main/resources/application.yml
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
