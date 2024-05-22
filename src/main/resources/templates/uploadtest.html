@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>文件上传</title>
+    <script>
+        function uploadFile() {
+            var fileInput = document.getElementById("fileInput");
+            var file = fileInput.files[0];
+
+            var url = "http://127.0.0.1:18088/file/upload"; // 替换为实际的文件上传接口 URL
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", url, true);
+
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    console.log("文件上传成功！");
+                } else {
+                    console.log("文件上传失败。错误代码：" + xhr.status);
+                }
+            };
+
+            var formData = new FormData();
+            formData.append("file", file);
+
+            xhr.send(formData);
+        }
+    </script>
+</head>
+<body>
+<h2>文件上传</h2>
+<input type="file" id="fileInput" />
+<br /><br />
+<button onclick="uploadFile()">上传文件</button>
+</body>
+</html>
