@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>文件下载测试</title>
+  <script>
+    function downloadFile() {
+      var aid = document.getElementById("aid").value;
+      var filename = document.getElementById("filename").value;
+      var url = "http://127.0.0.1:18088/file/download?aid=" + encodeURIComponent(aid) + "&filename=" + encodeURIComponent(filename);
+
+      fetch(url)
+              .then(response => {
+                if (response.ok) {
+                  return response.blob();
+                } else {
+                  throw new Error("下载文件失败");
+                }
+              })
+              .then(blob => {
+                // 创建一个临时的下载链接
+                var link = document.createElement("a");
+                link.href = URL.createObjectURL(blob);
+                link.download = filename;
+                link.click();
+              })
+              .catch(error => {
+                console.error(error);
+                // 处理下载失败的情况
+              });
+    }
+  </script>
+</head>
+<body>
+<h1>文件下载测试</h1>
+<label for="aid">AID:</label>
+<input type="text" id="aid" name="aid" required><br><br>
+<label for="filename">文件名:</label>
+<input type="text" id="filename" name="filename" required><br><br>
+<button type="button" onclick="downloadFile()">下载文件</button>
+</body>
+</html>

@@ -16,6 +16,7 @@ public class MessageConstant {
     public static final String SYSTEM_BUSY = "系统繁忙,请稍后重试";
     public static final String ALREADY_EXISTS = "已存在";
     public static final String PAGE_NOT_FOUND = "页面不存在";
+    public static final String FILE_NOT_FOUND = "文件不存在";
     public static final String FILE_UPLOAD_ERROR = "文件上传失败";
     public static final String ERROR_FILE_SUFFIX = "文件后缀只能为.pdf或.docx或.doc或.exe或.zip";
     public static final String UNKNOWN_ERROR = "系统发生未知错误,请稍后再试";

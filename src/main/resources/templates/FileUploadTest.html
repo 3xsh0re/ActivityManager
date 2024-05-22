@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>文件上传测试</title>
+    <script>
+        function uploadFile() {
+            var aid = document.getElementById("aid").value;
+            var fileInput = document.getElementById("file");
+
+            if (fileInput.files.length === 0) {
+                console.error("请选择一个文件");
+                return;
+            }
+
+            var file = fileInput.files[0];
+
+            var formData = new FormData();
+            formData.append("file", file);
+            formData.append("aid", aid);
+
+            var request = new XMLHttpRequest();
+            request.open("POST", "http://127.0.0.1:18088/file/upload");
+            request.onreadystatechange = function() {
+                if (request.readyState === 4) {
+                    if (request.status === 200) {
+                        console.log("上传成功");
+                        // 处理上传成功的情况
+                    } else {
+                        console.error("上传文件失败");
+                        // 处理上传失败的情况
+                    }
+                }
+            };
+            request.send(formData);
+        }
+    </script>
+</head>
+<body>
+<h1>文件上传测试</h1>
+<label for="aid">AID:</label>
+<input type="text" id="aid" name="aid" required><br><br>
+<input type="file" id="file" name="file" required><br><br>
+<button type="button" onclick="uploadFile()">上传文件</button>
+</body>
+</html>
