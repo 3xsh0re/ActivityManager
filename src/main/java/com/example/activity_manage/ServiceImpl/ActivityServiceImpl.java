@@ -4,14 +4,19 @@ import ch.qos.logback.core.joran.sanity.Pair;
 import com.example.activity_manage.Constant.MessageConstant;
 import com.example.activity_manage.Entity.Activity;
 import com.example.activity_manage.Entity.DTO.ActivityCreateDTO;
+import com.example.activity_manage.Entity.DTO.BasePageQueryDTO;
 import com.example.activity_manage.Entity.VO.ActInfoToAllVO;
 import com.example.activity_manage.Entity.VO.ActScheduleVO;
+import com.example.activity_manage.Entity.VO.BaseActInfoVO;
 import com.example.activity_manage.Exception.ActivityException;
 import com.example.activity_manage.Exception.PageNotFoundException;
 import com.example.activity_manage.Exception.SystemException;
 import com.example.activity_manage.Mapper.ActivityMapper;
 import com.example.activity_manage.Mapper.UserMapper;
+import com.example.activity_manage.Result.PageResult;
 import com.example.activity_manage.Service.ActivityService;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -91,5 +96,34 @@ public class ActivityServiceImpl implements ActivityService {
     public List<Activity> getAllActivity()
     {
         return activityMapper.getAllAct();
+    }
+
+    @Override
+    public void deleteActivity(long uid,long aid) {
+        if (activityMapper.getActInfoToOrganizer(aid) == null)
+        {
+            throw new ActivityException(MessageConstant.ACTIVITY_NOT_EXIST);
+        }
+        if (uid == activityMapper.getUidByAid(aid) || uid == 1)//非组织者或者管理员不能删除活动
+        {
+            activityMapper.deleteActivity(aid);
+        }
+        else {
+            throw new ActivityException(MessageConstant.NOT_HAVE_THIS_PERMISSION);
+        }
+    }
+
+    @Override
+    public void setBudget(long uid, long aid, int budget) {
+        activityMapper.setBudget(aid,budget);
+    }
+    //分页查询返回活动
+    public PageResult pageQuery(BasePageQueryDTO basePageQueryDTO) {
+        //开始分页查询
+        PageHelper.startPage(basePageQueryDTO.getPage(), basePageQueryDTO.getPageSize());
+        Page<BaseActInfoVO> page = activityMapper.pageQuery(basePageQueryDTO);
+        long total = page.getTotal();
+        List<BaseActInfoVO> records = page.getResult();
+        return new PageResult(total, records);
     }
 }

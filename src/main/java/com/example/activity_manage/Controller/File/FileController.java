@@ -1,7 +1,7 @@
 package com.example.activity_manage.Controller.File;
 
 import com.example.activity_manage.Constant.MessageConstant;
-import com.example.activity_manage.Exception.FileUploadErrorException;
+import com.example.activity_manage.Exception.FileUploadException;
 import com.example.activity_manage.Result.Result;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.boot.system.ApplicationHome;
@@ -21,7 +21,7 @@ public class FileController {
     public Result<String> upload(@RequestParam("file") MultipartFile file,@RequestParam("aid") long aid){
         //判断上传文件是否为空，若为空则返回错误信息
         if(file.isEmpty()){
-            throw new FileUploadErrorException(MessageConstant.FILE_UPLOAD_ERROR);
+            throw new FileUploadException(MessageConstant.FILE_UPLOAD_ERROR);
         }
         else
         {
@@ -48,10 +48,10 @@ public class FileController {
                     file.transferTo(fileNew);
                 }
                 else {
-                    throw new FileUploadErrorException(MessageConstant.ERROR_FILE_SUFFIX);
+                    throw new FileUploadException(MessageConstant.ERROR_FILE_SUFFIX);
                 }
             } catch (Exception e) {
-                throw new FileUploadErrorException(MessageConstant.FILE_UPLOAD_ERROR);
+                throw new FileUploadException(MessageConstant.FILE_UPLOAD_ERROR);
             }
         }
         return Result.success("上传成功");
@@ -81,7 +81,7 @@ public class FileController {
             Files.copy(path, response.getOutputStream());
         }
         else {
-            throw new FileUploadErrorException(MessageConstant.FILE_NOT_FOUND);
+            throw new FileUploadException(MessageConstant.FILE_NOT_FOUND);
         }
         return Result.success("文件下载成功!");
     }

@@ -3,8 +3,10 @@ package com.example.activity_manage.Controller.Activity;
 import ch.qos.logback.core.joran.sanity.Pair;
 import com.example.activity_manage.Entity.Activity;
 import com.example.activity_manage.Entity.DTO.ActivityCreateDTO;
+import com.example.activity_manage.Entity.DTO.BasePageQueryDTO;
 import com.example.activity_manage.Entity.VO.ActInfoToAllVO;
 import com.example.activity_manage.Entity.VO.ActScheduleVO;
+import com.example.activity_manage.Result.PageResult;
 import com.example.activity_manage.Result.Result;
 import com.example.activity_manage.Service.ActivityService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,4 +46,24 @@ public class ActivityController {
     public Result<List<ActScheduleVO>> getActSchedule(@RequestParam("uid") long uid){
         return Result.success(activityService.getActSchedule(uid));
     }
+    //分页返回活动页的所有活动
+    @PostMapping("/getAllActivity")
+    public Result<PageResult> getAllActivity(@RequestBody BasePageQueryDTO basePageQueryDTO){
+        return Result.success(activityService.pageQuery(basePageQueryDTO));
+    }
+
+
+    //删除活动,只有活动组织者或者管理员具有权限
+    @GetMapping("/deleteActivity")
+    public Result<String> deleteActivity(@RequestParam("uid") long uid,@RequestParam("aid") long aid)
+    {
+        activityService.deleteActivity(uid,aid);
+        return Result.success("删除成功!");
+    }
+    //活动预算设定
+    @GetMapping("/setBudget")
+    public Result<Boolean> setBudget(@RequestParam("uid") long uid,@RequestParam("aid") long aid,@RequestParam("budget") int budget){
+        return Result.success();
+    }
+
 }

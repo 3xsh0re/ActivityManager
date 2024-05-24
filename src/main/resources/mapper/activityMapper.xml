@@ -95,4 +95,18 @@
     <select id="getStatusById">
         select status from Activity where id =#{aid};
     </select>
+
+    <delete id="deleteActivity">
+        delete from Activity where id = #{aid};
+    </delete>
+
+    <update id="setBudget">
+        update Activity SET totalBudget = #{budget} where id = #{aid}
+    </update>
+
+    <select id="pageQuery" resultType="com.example.activity_manage.Entity.VO.BaseActInfoVO">
+        select id, actName, beginTime, endTime,
+               actDescription, status, place
+        from Activity order by beginTime desc
+    </select>
 </mapper>

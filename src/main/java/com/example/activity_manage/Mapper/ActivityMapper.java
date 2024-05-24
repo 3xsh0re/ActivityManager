@@ -3,8 +3,11 @@ package com.example.activity_manage.Mapper;
 import ch.qos.logback.core.joran.sanity.Pair;
 import com.example.activity_manage.Entity.Activity;
 import com.example.activity_manage.Entity.DTO.ActivityCreateDTO;
+import com.example.activity_manage.Entity.DTO.BasePageQueryDTO;
 import com.example.activity_manage.Entity.VO.ActInfoToAdminVO;
 import com.example.activity_manage.Entity.VO.ActInfoToAllVO;
+import com.example.activity_manage.Entity.VO.BaseActInfoVO;
+import com.github.pagehelper.Page;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.sql.Date;
@@ -22,4 +25,7 @@ public interface ActivityMapper {
     List<Activity> getActByUid(long uid);
     Boolean checkActContent(long aid, int status, String checkResult);//更新审核活动结果
     int getStatusById(long aid);
+    void deleteActivity(long aid);
+    void setBudget(long aid,int budget);
+    Page<BaseActInfoVO>  pageQuery(BasePageQueryDTO basePageQueryDTO);
 }
