@@ -21,4 +21,7 @@
         select username
         from User where id = #{uid};
     </select>
+    <select id="selectAIDByUID">
+        SELECT actList FROM User WHERE id = #{UID}
+    </select>
 </mapper>

@@ -19,7 +19,6 @@ public class ResourceServiceImpl implements ResourceService {
 
     public Boolean resourceReservation(ResourceReservationDTO resourceReservationDTO)
     {
-        String userName = resourceReservationDTO.getUsername();
         String resourceName = resourceReservationDTO.getResource();
         int quantityNeed = resourceReservationDTO.getQuantity();
         if(resourceMapper.checkResourceByName(resourceName))
