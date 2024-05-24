@@ -115,6 +115,14 @@ public class ActivityServiceImpl implements ActivityService {
 
     @Override
     public void setBudget(long uid, long aid, int budget) {
+        if (activityMapper.getActInfoToAll(aid) == null)
+        {
+            throw new ActivityException(MessageConstant.ACTIVITY_NOT_EXIST);
+        }
+        if (uid != activityMapper.getUidByAid(aid))
+        {
+            throw new ActivityException(MessageConstant.NOT_HAVE_THIS_PERMISSION);
+        }
         activityMapper.setBudget(aid,budget);
     }
     //分页查询返回活动
@@ -122,7 +130,7 @@ public class ActivityServiceImpl implements ActivityService {
         //开始分页查询
         PageHelper.startPage(basePageQueryDTO.getPage(), basePageQueryDTO.getPageSize());
         Page<BaseActInfoVO> page = activityMapper.pageQueryBaseActInfoVO(basePageQueryDTO);
-        long total = page.size();
+        long total = page.getTotal();
         List<BaseActInfoVO> records = page.getResult();
         return new PageResult(total, records);
     }

@@ -62,6 +62,7 @@ public class ActivityController {
     //活动预算设定
     @GetMapping("/setBudget")
     public Result<Boolean> setBudget(@RequestParam("uid") long uid,@RequestParam("aid") long aid,@RequestParam("budget") int budget){
+        activityService.setBudget(uid,aid,budget);
         return Result.success();
     }
 

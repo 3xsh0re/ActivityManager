@@ -36,10 +36,15 @@ public class AdminController {
     @PostMapping("/getAllActivity")
     public Result<PageResult> getAllActivity(@RequestBody BasePageQueryDTO basePageQueryDTO){return Result.success(adminService.pageQueryActInfoToAdmin(basePageQueryDTO));}
 
+    //审核
     @GetMapping("/checkActContent")
     public Result<Boolean> checkActContent(@RequestParam("aid")long aid ,@RequestParam("status") int status, @RequestParam("result") String result){
         return Result.success(adminService.checkActContent(aid,status,result));
     }
-
+    //删除用户
+    @GetMapping("/deleteUser")
+    public Result<Boolean> deleteUser(@RequestParam("id") long uid, @RequestParam("deleteId") long deleteId){
+        return Result.success();
+    }
 
 }

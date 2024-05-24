@@ -60,7 +60,7 @@ public class AdminServiceImpl implements AdminService {
             //开始分页查询
             PageHelper.startPage(basePageQueryDTO.getPage(), basePageQueryDTO.getPageSize());
             Page<ActInfoToAdminVO> page = activityMapper.pageQueryActInfoToAdmin(basePageQueryDTO);
-            long total = page.size();
+            long total = page.getTotal();
             List<ActInfoToAdminVO> records = page.getResult();
             for (ActInfoToAdminVO act : records){
                 act.setUsername(userMapper.getUsernameById(act.getUid()));
