@@ -1,0 +1,110 @@
+  body {
+    background-image: url('../images1/background.jpg');
+    background-size: cover;
+  }
+  #app {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: white;
+  }
+  h1 { 
+    text-align: center;
+    font-family: 黑体, sans-serif; 
+    font-weight: bold;
+    color: black; 
+}
+  .in {
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 8px;
+    box-sizing: border-box;
+  }
+  .ver{
+    width: 305px;
+    margin-bottom: 10px;
+    padding: 8px;
+    box-sizing: border-box;
+  }
+  .sendVer{
+    max-width: 100px;
+    
+    margin-bottom: 10px;
+    padding: 8px;
+    box-sizing: border-box;
+}
+
+  .log {
+    width: 100%;
+    padding: 10px;
+    background-color: blue;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 5px;
+    margin-bottom: 10px;
+  }
+  .log:hover {
+    background-color: #0056b3;
+  }
+
+  .reg {
+    width: 100%;
+    padding: 10px;
+    background-color: blue;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 5px;
+    margin-bottom: 10px;
+  }
+  .reg:hover {
+    background-color: #0056b3;
+  }
+
+  .user-info p {
+    margin-bottom: 10px;
+    font-family: 宋体;
+  }
+
+  .forgot-password {
+    color: #007bff;
+    text-decoration: none; /* 取消下划线 */
+    font-size: 14px;
+    margin-top: 10px; /* 调整按钮与上方元素的间距 */
+  }
+  
+  .forgot-password:hover {
+    text-decoration: underline; /* 鼠标悬停时添加下划线 */
+  }
+  .register {
+    color: #007bff;
+    text-decoration: none; /* 取消下划线 */
+    font-size: 14px;
+    margin-top: 10px; /* 调整按钮与上方元素的间距 */
+    margin-left: 190px;
+  }
+  
+  .register:hover {
+    text-decoration: underline; /* 鼠标悬停时添加下划线 */
+  }
+
+  .fanhui {
+    color: #007bff;
+    text-decoration: none; /* 取消下划线 */
+    font-size: 14px;
+    margin-top: 10px; /* 调整按钮与上方元素的间距 */
+    
+  }
+  
+  .fanhui:hover {
+    text-decoration: underline; /* 鼠标悬停时添加下划线 */
+  }
+
+
+
+  

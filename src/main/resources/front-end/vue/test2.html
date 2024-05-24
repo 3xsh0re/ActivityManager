@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>管理系统</title>
+  <link rel="stylesheet" href="css/style2.css">
+</head>
+<body>
+  <div id="app">
+    <div class="header">
+      <a @click="switchToMain" class="activity-link">管理系统</a>
+      <a @click="switchToProfile" class="profile-link">个人主页</a>
+    </div>
+
+    <!-- 活动列表视图 -->
+    <section v-if="showActivityList" id="activity-list" class="section">
+      <div class="container">
+        <h2>活动列表</h2>
+        <button class="btn" @click="openCreateActivityModal">创建活动</button>
+        <!-- 活动列表内容 -->
+        <div class="activity-list">
+          <!-- 活动卡片 -->
+          <div class="activity-card" v-for="activity in activities" :key="activity.id">
+            <h3>{{ activity.title }}</h3>
+            <p>时间：{{ activity.time }}</p>
+            <p>地点：{{ activity.location }}</p>
+            <p>进度：<span :class="getProgressClass(activity.status)">{{ activity.status }}</span></p>
+            <!-- 更多活动信息 -->
+            <button class="btn">查看详情</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 创建活动模态框 -->
+    <div v-if="showCreateActivityModal" class="modal">
+      <div class="modal-content">
+        <span class="close" @click="closeCreateActivityModal">&times;</span>
+        <h2>创建活动</h2>
+        <form @submit.prevent="createActivity">
+          <div class="form-group">
+            <label for="activityTitle">活动标题</label>
+            <input type="text" id="activityTitle" v-model="newActivity.title" required>
+          </div>
+          <div class="form-group">
+            <label for="activityTemplate">选择活动模板</label>
+            <select id="activityTemplate" v-model="selectedTemplate">
+              <option value="custom">自定义活动</option>
+              <option value="meeting">会议活动模板</option>
+              <!-- 可以添加更多模板 -->
+            </select>
+          </div>
+
+          <!-- 根据选择的模板显示相应的表单字段 -->
+          <div v-if="selectedTemplate === 'custom'">
+            <div class="form-group">
+              <label for="activityDetails">活动详情</label>
+              <textarea id="activityDetails" v-model="newActivity.details" required></textarea>
+            </div>
+          </div>
+          <div v-if="selectedTemplate === 'meeting'">
+            <div class="form-group">
+              <label for="meetingAgenda">议程设置</label>
+              <textarea id="meetingAgenda" v-model="newActivity.agenda" required></textarea>
+            </div>
+            <div class="form-group">
+              <label for="meetingParticipants">参会人员管理</label>
+              <textarea id="meetingParticipants" v-model="newActivity.participants" required></textarea>
+            </div>
+            <div class="form-group">
+              <label for="meetingMaterials">资料分享</label>
+              <textarea id="meetingMaterials" v-model="newActivity.materials" required></textarea>
+            </div>
+          </div>
+
+          <button type="submit" class="btn">创建</button>
+        </form>
+      </div>
+    </div>
+
+
+    <!-- 用户个人主页视图 -->
+    <div v-if="showUserProfile" class="profile-page">
+      <!-- 侧边导航栏 -->
+      <nav class="profile-nav">
+        <ul>
+          <li @click="switchToInfo">个人信息</li>
+          <li @click="switchToMyActivities">我的活动</li>
+        </ul>
+      </nav>
+      <!-- 个人主页内容 -->
+      <section class="profile-content">
+        <div v-if="showInfo">
+          <h2>个人信息</h2>
+          <div class="profile-info">
+            <p><strong>姓名：</strong>{{ userProfile.name }}</p>
+            <p><strong>邮箱：</strong>{{ userProfile.email }}</p>
+            <p><strong>手机号：</strong>{{ userProfile.phone }}</p>
+            <p><strong>用户权限：</strong>{{ userProfile.role }}</p>
+          </div>
+        </div>
+        <div v-if="showMyActivities">
+          <h2>我的活动</h2>
+          <div class="activity-list">
+            <div class="activity-card" v-for="activity in userActivities" :key="activity.id">
+              <h3>{{ activity.title }}</h3>
+              <p>时间：{{ activity.time }}</p>
+              <p>地点：{{ activity.location }}</p>
+              <p>进度：<span :class="getProgressClass(activity.status)">{{ activity.status }}</span></p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script src="https://cdn.bootcdn.net/ajax/libs/vue/2.6.0/vue.js"></script>
+  <script src="https://cdn.bootcdn.net/ajax/libs/axios/0.24.0/axios.min.js"></script>
+  <script src="js/script2.js"></script>
+</body>
+</html>

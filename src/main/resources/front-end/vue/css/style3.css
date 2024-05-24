@@ -1,0 +1,157 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f5f5f5;
+}
+
+#admin-app {
+  max-width: 1400px; /* 增加宽度 */
+  margin: 40px auto;
+  background-color: #ffffff;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  min-height: 800px; /* 增加最小高度 */
+}
+
+h1 {
+  text-align: center;
+  color: #333333;
+  margin-bottom: 20px;
+}
+
+.container {
+  display: flex;
+}
+
+.sidebar {
+  width: 250px;
+  background-color: #007bff;
+  color: white;
+  padding: 20px;
+  border-radius: 10px 0 0 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar ul li {
+  padding: 15px;
+  margin-bottom: 10px;
+  text-align: center;
+  cursor: pointer;
+  background: #0056b3;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.sidebar ul li:hover {
+  background-color: #003f7f;
+}
+
+.sidebar ul li.active {
+  background-color: #003f7f;
+  color: #ffffff;
+}
+
+.content {
+  flex: 1;
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 0 10px 10px 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  min-height: 800px; /* 增加最小高度 */
+}
+
+.section {
+  margin-bottom: 30px;
+}
+
+h2 {
+  font-size: 1.8em;
+  margin-bottom: 15px;
+  color: #2c3e50;
+  border-bottom: 2px solid #e2e2e2;
+  padding-bottom: 5px;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+li {
+  background-color: #ecf0f1;
+  margin-bottom: 10px;
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid #dcdcdc;
+  transition: background-color 0.3s ease;
+}
+
+li:hover {
+  background-color: #d0e7f9;
+}
+
+li span {
+  display: block;
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+li .details {
+  color: #7f8c8d;
+  font-size: 0.9em;
+  margin-top: 5px;
+}
+
+button {
+  margin-left: 10px;
+  padding: 5px 10px;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+.modal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  max-width: 600px;
+  width: 100%;
+  position: relative;
+}
+
+.close {
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  font-size: 24px;
+  cursor: pointer;
+}
