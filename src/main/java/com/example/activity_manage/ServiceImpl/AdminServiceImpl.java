@@ -3,6 +3,7 @@ package com.example.activity_manage.ServiceImpl;
 import com.example.activity_manage.Constant.MessageConstant;
 import com.example.activity_manage.Entity.VO.ActInfoToAdminVO;
 import com.example.activity_manage.Entity.VO.GetUserVO;
+import com.example.activity_manage.Exception.AdminException;
 import com.example.activity_manage.Exception.SystemException;
 import com.example.activity_manage.Mapper.ActivityMapper;
 import com.example.activity_manage.Mapper.UserMapper;
@@ -51,6 +52,17 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public Boolean checkActContent(long aid, int status, String result) {
+        if (activityMapper.getActInfoToOrganizer(aid) == null)
+        {
+            throw new AdminException(MessageConstant.ACTIVITY_NOT_EXIST);
+        }
+        if (activityMapper.getStatusById(aid) != 0){
+            throw new AdminException(MessageConstant.ACTIVITY_ALREADY_CHECKED);
+        }
+        if (status != 1 && status != -1)
+        {
+            throw new AdminException(MessageConstant.NOT_ILLEGAL_CHECK_STATUS);
+        }
         return activityMapper.checkActContent(aid,status,result);
     }
 

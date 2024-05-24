@@ -12,13 +12,14 @@ import java.util.List;
 
 @Mapper
 public interface ActivityMapper {
-    public Pair<Date,Date> activityDateGet(long AID);
-    public boolean activityCreate(ActivityCreateDTO activity);
-    public long getUidByAid(long aid);
-    public Activity getActInfoToOrganizer(long aid);
-    public List<Activity> getAllAct();
-    public List<ActInfoToAdminVO> getAllActInfoToAdmin();//返回给管理员的所有活动信息
-    public ActInfoToAllVO getActInfoToAll(long aid);
-    public List<Activity> getActByUid(long uid);
-    public Boolean checkActContent(long aid, int status, String checkResult);
+    Pair<Date,Date> activityDateGet(long AID);
+    boolean activityCreate(ActivityCreateDTO activity);
+    long getUidByAid(long aid);
+    Activity getActInfoToOrganizer(long aid);
+    List<Activity> getAllAct();
+    List<ActInfoToAdminVO> getAllActInfoToAdmin();//返回给管理员的所有活动信息
+    ActInfoToAllVO getActInfoToAll(long aid);
+    List<Activity> getActByUid(long uid);
+    Boolean checkActContent(long aid, int status, String checkResult);//更新审核活动结果
+    int getStatusById(long aid);
 }

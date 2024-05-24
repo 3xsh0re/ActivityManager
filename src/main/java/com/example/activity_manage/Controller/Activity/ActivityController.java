@@ -39,7 +39,7 @@ public class ActivityController {
     public Result<ActInfoToAllVO> getActInfoToAll(@RequestParam("aid") long aid){
         return Result.success(activityService.getActInfoToAll(aid));
     }
-    //返回用户的所有活动信息,用于日程试图
+    //返回用户的所有活动信息,用于日程视图
     @GetMapping("/getActSchedule")
     public Result<List<ActScheduleVO>> getActSchedule(@RequestParam("uid") long uid){
         return Result.success(activityService.getActSchedule(uid));
