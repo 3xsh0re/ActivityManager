@@ -121,9 +121,4 @@ public class UserServiceImpl implements UserService {
             throw new AccountNotFoundException(MessageConstant.ACCOUNT_NOT_FOUND);
         }
     }
-
-    @Override
-    public List<Long> getAIDbyUID(Long UID) {
-        return userMapper.selectAIDByUID(UID);
-    }
 }

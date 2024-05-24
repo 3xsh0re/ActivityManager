@@ -13,5 +13,4 @@ public interface UserService {
     Boolean Register(UserLoginDTO userLoginDTO);
     Boolean ResetPwd(ResetPwdDTO resetPwdDTO);
     void checkPhoneNumberExist(String phone);
-    List<Long> getAIDbyUID(Long UID);
 }

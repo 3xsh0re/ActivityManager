@@ -17,6 +17,5 @@ public interface UserMapper {
     public List<String> selectAllPhone();
     public void setPwd(String passwd,String phoneNumber);
     public Long selectIdByPhone(String phoneNumber);
-    public List<Long> selectAIDByUID(Long UID);
     String getUsernameById(long uid);
 }
