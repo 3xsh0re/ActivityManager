@@ -20,12 +20,12 @@ public interface ActivityMapper {
     long getUidByAid(long aid);
     Activity getActInfoToOrganizer(long aid);
     List<Activity> getAllAct();
-    List<ActInfoToAdminVO> getAllActInfoToAdmin();//返回给管理员的所有活动信息
+    Page<ActInfoToAdminVO> pageQueryActInfoToAdmin(BasePageQueryDTO basePageQueryDTO);//分页返回给管理员的所有活动信息
     ActInfoToAllVO getActInfoToAll(long aid);
     List<Activity> getActByUid(long uid);
     Boolean checkActContent(long aid, int status, String checkResult);//更新审核活动结果
     int getStatusById(long aid);
     void deleteActivity(long aid);
     void setBudget(long aid,int budget);
-    Page<BaseActInfoVO>  pageQuery(BasePageQueryDTO basePageQueryDTO);
+    Page<BaseActInfoVO>  pageQueryBaseActInfoVO(BasePageQueryDTO basePageQueryDTO);
 }

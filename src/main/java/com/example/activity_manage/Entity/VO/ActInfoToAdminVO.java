@@ -13,7 +13,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ActInfoToAdminVO implements Serializable {
-    private long orgId; //组织者id
+    private long uid; //组织者id
     private String username; //组织者姓名
     private String actName;
     private String actDescription;

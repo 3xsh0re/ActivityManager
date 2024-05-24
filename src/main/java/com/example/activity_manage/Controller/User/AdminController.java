@@ -1,11 +1,13 @@
 package com.example.activity_manage.Controller.User;
 
 import com.example.activity_manage.Entity.Activity;
+import com.example.activity_manage.Entity.DTO.BasePageQueryDTO;
 import com.example.activity_manage.Entity.DTO.ResourceAdditionDTO;
 import com.example.activity_manage.Entity.DTO.ResourceReservationDTO;
 import com.example.activity_manage.Entity.VO.ActInfoToAdminVO;
 import com.example.activity_manage.Entity.VO.ActInfoToAllVO;
 import com.example.activity_manage.Entity.VO.GetUserVO;
+import com.example.activity_manage.Result.PageResult;
 import com.example.activity_manage.Result.Result;
 import com.example.activity_manage.Service.AdminService;
 import com.example.activity_manage.Service.UserService;
@@ -20,19 +22,19 @@ public class AdminController {
     @Autowired
     AdminService adminService;
 
-    @GetMapping("/getAllUser")
-    public Result<List<GetUserVO>> getAllUser()
+    @PostMapping("/getAllUser")
+    public Result<PageResult> getAllUser(@RequestBody BasePageQueryDTO basePageQueryDTO)
     {
-        return Result.success(adminService.getAllUser());
+        return Result.success(adminService.getAllUser(basePageQueryDTO));
     }
-    @GetMapping("/getAllPhone")
-    public Result<List<String>> getAllPhone()
+    @PostMapping("/getAllPhone")
+    public Result<PageResult> getAllPhone(@RequestBody BasePageQueryDTO basePageQueryDTO)
     {
-        return Result.success(adminService.getAllPhone());
+        return Result.success(adminService.pageQueryAllPhone(basePageQueryDTO));
     }
     //用于管理员获取所有活动基本信息
-    @GetMapping("/getAllActivity")
-    public Result<List<ActInfoToAdminVO>> getAllActivity(){return Result.success(adminService.getAllActivity());}
+    @PostMapping("/getAllActivity")
+    public Result<PageResult> getAllActivity(@RequestBody BasePageQueryDTO basePageQueryDTO){return Result.success(adminService.pageQueryActInfoToAdmin(basePageQueryDTO));}
 
     @GetMapping("/checkActContent")
     public Result<Boolean> checkActContent(@RequestParam("aid")long aid ,@RequestParam("status") int status, @RequestParam("result") String result){

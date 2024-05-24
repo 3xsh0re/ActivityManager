@@ -20,5 +20,5 @@ public interface ActivityService {
     List<Activity> getAllActivity(); // 获取全部活动数据
     void deleteActivity(long uid,long aid);
     void setBudget(long uid,long aid,int budget);
-    PageResult pageQuery(BasePageQueryDTO basePageQueryDTO);
+    PageResult pageQueryBaseActInfoVO(BasePageQueryDTO basePageQueryDTO);
 }

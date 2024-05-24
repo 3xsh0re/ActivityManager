@@ -2,6 +2,7 @@ package com.example.activity_manage.Mapper;
 
 import com.example.activity_manage.Entity.User;
 import com.example.activity_manage.Entity.VO.GetUserVO;
+import com.github.pagehelper.Page;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -9,13 +10,13 @@ import java.util.List;
 @Mapper
 public interface UserMapper {
     // 添加用户
-    public void insertUser(User user);
+    void insertUser(User user);
     // 查找用户
-    public User selectUserByPhone(String phoneNumber);
+    User selectUserByPhone(String phoneNumber);
     // 返回所有用户
-    public List<GetUserVO> selectAllUser();
-    public List<String> selectAllPhone();
-    public void setPwd(String passwd,String phoneNumber);
-    public Long selectIdByPhone(String phoneNumber);
+    Page<GetUserVO> pageQueryAllUser();
+    Page<String> pageQueryAllPhone();
+    void setPwd(String passwd,String phoneNumber);
+    Long selectIdByPhone(String phoneNumber);
     String getUsernameById(long uid);
 }

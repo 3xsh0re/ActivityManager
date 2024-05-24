@@ -8,10 +8,10 @@
     <select id="selectUserByPhone" resultType="com.example.activity_manage.Entity.User">
         SELECT * FROM User WHERE phoneNumber = #{phoneNumber}
     </select>
-    <select id="selectAllUser" resultType="com.example.activity_manage.Entity.VO.GetUserVO">
+    <select id="pageQueryAllUser" resultType="com.example.activity_manage.Entity.VO.GetUserVO">
         SELECT id, username, phoneNumber, email FROM User
     </select>
-    <select id="selectAllPhone">
+    <select id="pageQueryAllPhone">
         SELECT phoneNumber FROM User
     </select>
     <update id="setPwd">

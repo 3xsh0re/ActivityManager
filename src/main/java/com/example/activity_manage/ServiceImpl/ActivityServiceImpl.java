@@ -118,11 +118,11 @@ public class ActivityServiceImpl implements ActivityService {
         activityMapper.setBudget(aid,budget);
     }
     //分页查询返回活动
-    public PageResult pageQuery(BasePageQueryDTO basePageQueryDTO) {
+    public PageResult pageQueryBaseActInfoVO(BasePageQueryDTO basePageQueryDTO) {
         //开始分页查询
         PageHelper.startPage(basePageQueryDTO.getPage(), basePageQueryDTO.getPageSize());
-        Page<BaseActInfoVO> page = activityMapper.pageQuery(basePageQueryDTO);
-        long total = page.getTotal();
+        Page<BaseActInfoVO> page = activityMapper.pageQueryBaseActInfoVO(basePageQueryDTO);
+        long total = page.size();
         List<BaseActInfoVO> records = page.getResult();
         return new PageResult(total, records);
     }

@@ -49,9 +49,8 @@ public class ActivityController {
     //分页返回活动页的所有活动
     @PostMapping("/getAllActivity")
     public Result<PageResult> getAllActivity(@RequestBody BasePageQueryDTO basePageQueryDTO){
-        return Result.success(activityService.pageQuery(basePageQueryDTO));
+        return Result.success(activityService.pageQueryBaseActInfoVO(basePageQueryDTO));
     }
-
 
     //删除活动,只有活动组织者或者管理员具有权限
     @GetMapping("/deleteActivity")

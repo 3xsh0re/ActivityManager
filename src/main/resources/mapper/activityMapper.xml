@@ -75,17 +75,17 @@
         SELECT uid, actName, status, actDescription, beginTime, endTime, totalBudget, place,
                score, userGroup, userList, actStatus
         FROM Activity
-        WHERE uid = #{uid};
+        WHERE uid = #{uid}
     </select>
 
     <select id="getAllAct" resultMap="ActivityResultMap">
-        select * from Activity;
+        select * from Activity order by beginTime desc
     </select>
 
-    <select id="getAllActInfoToAdmin" resultType="com.example.activity_manage.Entity.VO.ActInfoToAdminVO">
-        select uid, actName, status, actDescription, beginTime, endTime, totalBudget,
-               place, score
-        from Activity;
+    <select id="pageQueryActInfoToAdmin" resultType="com.example.activity_manage.Entity.VO.ActInfoToAdminVO">
+        select uid, actName, status, actDescription, beginTime,
+               endTime, totalBudget, place, score
+        from Activity order by beginTime desc
     </select>
 
     <update id="checkActContent">
@@ -93,20 +93,21 @@
     </update>
 
     <select id="getStatusById">
-        select status from Activity where id =#{aid};
+        select status from Activity where id =#{aid}
     </select>
 
     <delete id="deleteActivity">
-        delete from Activity where id = #{aid};
+        delete from Activity where id = #{aid}
     </delete>
 
     <update id="setBudget">
         update Activity SET totalBudget = #{budget} where id = #{aid}
     </update>
 
-    <select id="pageQuery" resultType="com.example.activity_manage.Entity.VO.BaseActInfoVO">
+    <select id="pageQueryBaseActInfoVO" resultType="com.example.activity_manage.Entity.VO.BaseActInfoVO">
         select id, actName, beginTime, endTime,
                actDescription, status, place
         from Activity order by beginTime desc
     </select>
+
 </mapper>
