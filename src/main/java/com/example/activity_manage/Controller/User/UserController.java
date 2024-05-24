@@ -2,14 +2,11 @@ package com.example.activity_manage.Controller.User;
 
 
 import com.example.activity_manage.Constant.MessageConstant;
-import com.example.activity_manage.Entity.DTO.ActivityCreateDTO;
 import com.example.activity_manage.Entity.DTO.ResetPwdDTO;
-import com.example.activity_manage.Entity.DTO.ResourceReservationDTO;
 import com.example.activity_manage.Entity.DTO.UserLoginDTO;
 import com.example.activity_manage.Entity.User;
 import com.example.activity_manage.Entity.VO.UserLoginVO;
-import com.example.activity_manage.Exception.DuplicateCaptchaExecption;
-import com.example.activity_manage.Exception.EmptyPhoneNumberException;
+import com.example.activity_manage.Exception.LoginRegisterException;
 import com.example.activity_manage.Result.Result;
 import com.example.activity_manage.Utils.CaptchaUtil;
 import com.example.activity_manage.Service.UserService;
@@ -96,12 +93,12 @@ public class UserController {
     public Result<Boolean> getCaptchaByPhone(@RequestParam("phoneNumber") String phoneNumber){
         if (phoneNumber.equals(""))
         {
-            throw new EmptyPhoneNumberException(MessageConstant.EMPTY_PHONE_NUMBER);
+            throw new LoginRegisterException(MessageConstant.EMPTY_PHONE_NUMBER);
         }
         // 判断redis中是否还有验证码未过期
         if (redisUtil.get("UMS_" + phoneNumber) != null)
         {
-            throw new DuplicateCaptchaExecption(MessageConstant.CAPTCHA_DUPLICATE);
+            throw new LoginRegisterException(MessageConstant.CAPTCHA_DUPLICATE);
         }
         String phoneCaptcha = captchaUtil.generateCaptcha(phoneNumber);
 

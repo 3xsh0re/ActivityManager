@@ -2,10 +2,8 @@ package com.example.activity_manage.ServiceImpl;
 
 import com.example.activity_manage.Constant.MessageConstant;
 import com.example.activity_manage.Entity.DTO.ResetPwdDTO;
-import com.example.activity_manage.Entity.DTO.ResourceReservationDTO;
 import com.example.activity_manage.Entity.DTO.UserLoginDTO;
 import com.example.activity_manage.Entity.User;
-import com.example.activity_manage.Entity.VO.GetUserVO;
 import com.example.activity_manage.Exception.*;
 import com.example.activity_manage.Mapper.ResourceMapper;
 import com.example.activity_manage.Mapper.UserMapper;
@@ -14,8 +12,6 @@ import com.example.activity_manage.Utils.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
-
-import java.util.List;
 
 
 @Service
@@ -35,8 +31,8 @@ public class UserServiceImpl implements UserService {
         // 比对验证码
         String true_captcha_phone = (String) redisUtil.get("UMS_" + phoneNumber);
         String true_captcha_email = (String) redisUtil.get("UMS_" + email);
-        if ( L_captcha.equals("") ) throw new ErrorCaptchaException(MessageConstant.ERROR_CAPTCHA);
-        if ( !L_captcha.equals(true_captcha_email) && !L_captcha.equals(true_captcha_phone) ) throw new ErrorCaptchaException(MessageConstant.ERROR_CAPTCHA);
+        if ( L_captcha.equals("") ) throw new LoginRegisterException(MessageConstant.ERROR_CAPTCHA);
+        if ( !L_captcha.equals(true_captcha_email) && !L_captcha.equals(true_captcha_phone) ) throw new LoginRegisterException(MessageConstant.ERROR_CAPTCHA);
 
         //1、根据用户名查询数据库中的数据
         User user = userMapper.selectUserByPhone(phoneNumber);
@@ -44,19 +40,19 @@ public class UserServiceImpl implements UserService {
         if (userLoginDTO.isAdmin())
         {
             if (!phoneNumber.equals(user.getPhoneNumber()))
-                throw new NotAdminLoginException(MessageConstant.ACCOUNT_NOT_ADMIN);
+                throw new AdminException(MessageConstant.ACCOUNT_NOT_ADMIN);
         }
         //3、处理各种异常情况（用户名不存在、密码不对、账号被锁定）
         if (user == null) {
             //账号不存在
-            throw new AccountNotFoundException(MessageConstant.ACCOUNT_NOT_FOUND);
+            throw new LoginRegisterException(MessageConstant.ACCOUNT_NOT_FOUND);
         }
         //密码比对
         //对前端传过来的明文密码进行md5加密处理
         password = DigestUtils.md5DigestAsHex(password.getBytes());
         if (!password.equals(user.getPasswd())) {
             //密码错误
-            throw new PasswdErrorException(MessageConstant.PASSWORD_ERROR);
+            throw new LoginRegisterException(MessageConstant.PASSWORD_ERROR);
         }
 
         //3、返回实体对象
@@ -73,13 +69,13 @@ public class UserServiceImpl implements UserService {
         // 比对验证码
         String true_captcha_phone = (String) redisUtil.get("UMS_" + phoneNumber);
         String true_captcha_email = (String) redisUtil.get("UMS_" + email);
-        if ( R_captcha.equals("") ) throw new ErrorCaptchaException(MessageConstant.ERROR_CAPTCHA);
-        if ( !R_captcha.equals(true_captcha_email) && !R_captcha.equals(true_captcha_phone) ) throw new ErrorCaptchaException(MessageConstant.ERROR_CAPTCHA);
+        if ( R_captcha.equals("") ) throw new LoginRegisterException(MessageConstant.ERROR_CAPTCHA);
+        if ( !R_captcha.equals(true_captcha_email) && !R_captcha.equals(true_captcha_phone) ) throw new LoginRegisterException(MessageConstant.ERROR_CAPTCHA);
 
         User user = userMapper.selectUserByPhone(phoneNumber);
         if (user != null)
         {
-            throw new DuplicatePhoneException(MessageConstant.PHONE_DUPLICATE);
+            throw new LoginRegisterException(MessageConstant.PHONE_DUPLICATE);
         }
         else {
             User new_user = new User();
@@ -100,13 +96,13 @@ public class UserServiceImpl implements UserService {
         String passwd = resetPwdDTO.getPasswd();
         // 比对验证码
         String true_captcha_phone = (String) redisUtil.get("UMS_" + phoneNumber);
-        if ( Reset_Captcha.equals("") ) throw new ErrorCaptchaException(MessageConstant.ERROR_CAPTCHA);
-        if ( !Reset_Captcha.equals(true_captcha_phone) ) throw new ErrorCaptchaException(MessageConstant.ERROR_CAPTCHA);
+        if ( Reset_Captcha.equals("") ) throw new LoginRegisterException(MessageConstant.ERROR_CAPTCHA);
+        if ( !Reset_Captcha.equals(true_captcha_phone) ) throw new LoginRegisterException(MessageConstant.ERROR_CAPTCHA);
 
         User user = userMapper.selectUserByPhone(phoneNumber);
         if (user == null) {
             //账号不存在
-            throw new AccountNotFoundException(MessageConstant.ACCOUNT_NOT_FOUND);
+            throw new LoginRegisterException(MessageConstant.ACCOUNT_NOT_FOUND);
         }
         passwd = DigestUtils.md5DigestAsHex(passwd.getBytes());
         userMapper.setPwd(passwd,phoneNumber);
@@ -118,7 +114,7 @@ public class UserServiceImpl implements UserService {
         User user = userMapper.selectUserByPhone(phoneNumber);
         if ( user == null)
         {
-            throw new AccountNotFoundException(MessageConstant.ACCOUNT_NOT_FOUND);
+            throw new LoginRegisterException(MessageConstant.ACCOUNT_NOT_FOUND);
         }
     }
 

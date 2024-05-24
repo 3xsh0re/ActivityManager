@@ -6,9 +6,9 @@ import com.example.activity_manage.Entity.Activity;
 import com.example.activity_manage.Entity.DTO.ActivityCreateDTO;
 import com.example.activity_manage.Entity.VO.ActInfoToAllVO;
 import com.example.activity_manage.Entity.VO.ActScheduleVO;
-import com.example.activity_manage.Exception.NotOrganizerForActivityException;
+import com.example.activity_manage.Exception.ActivityException;
 import com.example.activity_manage.Exception.PageNotFoundException;
-import com.example.activity_manage.Exception.SystemBusyException;
+import com.example.activity_manage.Exception.SystemException;
 import com.example.activity_manage.Mapper.ActivityMapper;
 import com.example.activity_manage.Mapper.UserMapper;
 import com.example.activity_manage.Service.ActivityService;
@@ -30,7 +30,7 @@ public class ActivityServiceImpl implements ActivityService {
             // 创建活动,直接将activityCreateDTO传入即可
             return activityMapper.activityCreate(activityCreateDTO);
         }catch (Exception e){
-            throw new SystemBusyException(MessageConstant.SYSTEM_BUSY);
+            throw new SystemException(MessageConstant.SYSTEM_BUSY);
         }
     }
 
@@ -49,7 +49,7 @@ public class ActivityServiceImpl implements ActivityService {
         //非组织者用户非法查看
         if (uid != uid_t)
         {
-            throw new NotOrganizerForActivityException(MessageConstant.NOT_ORGANIZER_FOR_ACTIVITY);
+            throw new ActivityException(MessageConstant.NOT_ORGANIZER_FOR_ACTIVITY);
         }
         return activityMapper.getActInfoToOrganizer(aid);
     }

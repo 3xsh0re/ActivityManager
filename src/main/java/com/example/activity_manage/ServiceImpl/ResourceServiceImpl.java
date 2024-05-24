@@ -4,7 +4,7 @@ import com.example.activity_manage.Constant.MessageConstant;
 import com.example.activity_manage.Entity.DTO.ResourceAdditionDTO;
 import com.example.activity_manage.Entity.DTO.ResourceReservationDTO;
 import com.example.activity_manage.Entity.Resource;
-import com.example.activity_manage.Exception.SystemBusyException;
+import com.example.activity_manage.Exception.SystemException;
 import com.example.activity_manage.Mapper.ResourceMapper;
 import com.example.activity_manage.Service.ResourceService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,7 +57,7 @@ public class ResourceServiceImpl implements ResourceService {
             return resourceMapper.getAllResource();
         }
         catch (Exception e){
-            throw new SystemBusyException(MessageConstant.SYSTEM_BUSY);
+            throw new SystemException(MessageConstant.SYSTEM_BUSY);
         }
     }
 }
