@@ -1,0 +1,183 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f5f5f5;
+  margin: 0;
+  padding: 0;
+}
+
+.header {
+  background-color: #007bff;
+  color: white;
+  padding: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.activity-link{
+  color: white;
+  text-decoration: none;
+  cursor: pointer;
+  margin-right: 0px;
+}
+
+.profile-link {
+  color: white;
+  text-decoration: none;
+  cursor: pointer;
+  margin-right: 0px;
+}
+
+.container {
+  max-width: 1000px;
+  margin: 20px auto;
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+h2 {
+  margin-top: 0;
+}
+
+.activity-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.activity-card {
+  background: #f9f9f9;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.activity-card h3 {
+  margin: 0 0 10px;
+}
+
+.btn {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.btn:hover {
+  background-color: #0056b3;
+}
+
+.profile-page {
+  display: flex;
+  max-width: 1200px;
+  margin: 20px auto;
+}
+
+.profile-nav {
+  width: 250px;
+  background: #007bff;
+  color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  margin-right: 20px;
+}
+
+.profile-nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.profile-nav li {
+  padding: 15px;
+  margin-bottom: 10px;
+  text-align: center;
+  cursor: pointer;
+  background: #0056b3;
+  border-radius: 5px;
+}
+
+.profile-nav li:hover {
+  background: #003f7f;
+}
+
+.profile-content {
+  flex-grow: 1;
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.profile-info p {
+  margin: 10px 0;
+  font-size: 18px;
+}
+
+/* Activity status styles */
+.status-preparing {
+  color: orange;
+}
+
+.status-ongoing {
+  color: green;
+}
+
+.status-completed {
+  color: gray;
+}
+
+/* Modal styles */
+.modal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  max-width: 600px;
+  width: 100%;
+  position: relative;
+}
+
+.close {
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: calc(100% - 20px);
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}

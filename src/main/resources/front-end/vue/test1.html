@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>登录注册</title>
+  <link rel="stylesheet" href="css/style1.css">
+  <script src="https://cdn.bootcdn.net/ajax/libs/vue/2.6.0/vue.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+  <div id="app">
+    <div v-if="showRegister">
+      <h1>注册</h1>
+      <input class="in" type="text" v-model="username" placeholder="用户名由4-12位字符组成">
+      <input class="in" type="text" v-model="mail" placeholder="邮箱">
+      <input class="in" type="text" v-model="phoneNumber" placeholder="手机号">
+      <input class="in" type="password" v-model="passwd" placeholder="密码由6-15位组成，且包含字母、数字和特殊字符">
+      <input class="in" type="password" v-model="passwd_again" placeholder="请再次输入密码">
+      <div>
+        <input type="text" class="ver" v-model="captcha" placeholder="验证码">
+        <button class="sendVer" @click="sendVerificationCode">发送验证码</button>
+      </div>
+      <button class="reg" @click="register">注册</button>
+      <a href="#" class="fanhui" @click="switchToLogin">返回登录</a>
+    </div>
+    <div v-if="showLogin">
+      <h1>登录</h1>
+      <select v-model="loginType" class="in">
+        <option value=0>普通用户登录</option>
+        <option value=1>管理员登录</option>
+      </select>
+      <input class="in" type="text" v-model="loginPhone" placeholder="手机号">
+      <input class="in" type="password" v-model="loginPassword" placeholder="密码">
+      <div>
+        <input type="text" class="ver" v-model="verificationCode" placeholder="验证码">
+        <button class="sendVer" @click="sendVerificationCode">发送验证码</button>
+      </div>
+      <button class="log" @click="login">登录</button>
+      <a href="#" class="forgot-password" @click="forgotPassword">忘记密码？</a>
+      <a href="#" class="register" @click="switchToRegister">没有账号？立即注册</a>
+    </div>
+    <div v-if="showRevise">
+      <h1>密码重置</h1>
+      <input class="in" type="text" v-model="revisePhone" placeholder="手机号">
+      <input class="in" type="password" v-model="revisePassword" placeholder="重置密码">
+      <div>
+        <input type="text" class="ver" v-model="reviseCaptcha" placeholder="验证码">
+        <button class="sendVer" @click="sendVerificationCode">发送验证码</button>
+      </div>
+      <button class="log" @click="revise">确定</button>
+      <a href="#" class="fanhui" @click="switchToLogin">返回登录</a>
+    </div>
+  </div>
+  <script src="js/script1.js"></script>
+</body>
+</html>
