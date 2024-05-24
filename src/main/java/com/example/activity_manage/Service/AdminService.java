@@ -12,4 +12,5 @@ public interface AdminService {
     List<GetUserVO> getAllUser();
     List<String> getAllPhone();
     List<ActInfoToAdminVO> getAllActivity();
+    Boolean checkActContent(long aid,int status,String result);//活动审核
 }

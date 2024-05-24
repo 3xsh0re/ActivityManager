@@ -20,4 +20,5 @@ public interface ActivityMapper {
     public List<ActInfoToAdminVO> getAllActInfoToAdmin(); //返回给管理员的所有活动信息
     public ActInfoToAllVO getActInfoToAll(long aid);
     public List<Activity> getActByUid(long uid);
+    public Boolean checkActContent(long aid, int status, String checkResult);
 }

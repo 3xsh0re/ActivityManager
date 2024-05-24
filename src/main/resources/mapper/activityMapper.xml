@@ -87,5 +87,8 @@
                place, score
         from Activity;
     </select>
+    <update id="checkActContent">
+        update Activity SET status = #{status},checkResult = #{checkResult} where id = #{aid}
+    </update>
 
 </mapper>

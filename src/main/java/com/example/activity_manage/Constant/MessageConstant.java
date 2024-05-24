@@ -9,6 +9,7 @@ public class MessageConstant {
     public static final String ACCOUNT_NOT_FOUND = "账号不存在";
     public static final String ACCOUNT_LOCKED = "账号被锁定";
     public static final String ACCOUNT_NOT_ADMIN = "此账号非管理员用户";
+    public static final String NOT_ILLEGAL_CHECK_STATUS = "不是管理员审核后的合法状态";
     public static final String NOT_ORGANIZER_FOR_ACTIVITY = "此账号不是本活动的组织者";
     public static final String ERROR_CAPTCHA = "验证码错误";
     public static final String EMPTY_PHONE_NUMBER = "手机号为空";

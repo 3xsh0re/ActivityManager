@@ -33,4 +33,11 @@ public class AdminController {
     //用于管理员获取所有活动基本信息
     @GetMapping("/getAllActivity")
     public Result<List<ActInfoToAdminVO>> getAllActivity(){return Result.success(adminService.getAllActivity());}
+
+    @GetMapping("/checkActContent")
+    public Result<Boolean> checkActContent(@RequestParam("aid")long aid ,@RequestParam("status") int status, @RequestParam("result") String result){
+        return Result.success(adminService.checkActContent(aid,status,result));
+    }
+
+
 }
