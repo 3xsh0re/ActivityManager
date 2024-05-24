@@ -122,4 +122,8 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
+    public List<Long> getAIDbyUID(Long UID) {
+        return userMapper.selectAIDByUID(UID);
+    }
 }

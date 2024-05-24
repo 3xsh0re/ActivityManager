@@ -5,12 +5,16 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.sql.Date;
+
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class ResourceReservationDTO {
-    private String username; // 申请者用户名
+    private long uid; // 申请者UID
     private String resource; // 资源名称
     private int quantity; //资源数量
+    private Date beginTime;
+    private Date endTime;
 }
