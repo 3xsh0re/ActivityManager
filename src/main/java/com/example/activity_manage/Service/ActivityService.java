@@ -15,4 +15,5 @@ public interface ActivityService {
     Activity getActInfoToOrganizer(long uid,long aid); //面向组织者
     ActInfoToAllVO getActInfoToAll(long aid); //面向所有用户
     List<ActScheduleVO> getActSchedule(long uid); //获取某个用户的所有活动日程
+    List<Activity> getAllActivity(); // 获取全部活动数据
 }
