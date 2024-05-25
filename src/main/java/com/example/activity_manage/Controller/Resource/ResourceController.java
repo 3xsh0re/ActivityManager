@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 public class ResourceController {
     @Autowired
     ResourceService resourceService;
-    @GetMapping("/getAllResource") //获取所有资源详情
+    @PostMapping("/getAllResource") //获取所有资源详情
     public Result<PageResult> pageQueryAllResource(@RequestBody BasePageQueryDTO basePageQueryDTO){
         return Result.success(resourceService.pageQueryAllResource(basePageQueryDTO));
     }
