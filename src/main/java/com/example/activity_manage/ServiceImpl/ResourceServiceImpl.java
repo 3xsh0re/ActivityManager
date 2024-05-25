@@ -1,12 +1,16 @@
 package com.example.activity_manage.ServiceImpl;
 
 import com.example.activity_manage.Constant.MessageConstant;
+import com.example.activity_manage.Entity.DTO.BasePageQueryDTO;
 import com.example.activity_manage.Entity.DTO.ResourceAdditionDTO;
 import com.example.activity_manage.Entity.DTO.ResourceReservationDTO;
 import com.example.activity_manage.Entity.Resource;
 import com.example.activity_manage.Exception.SystemException;
 import com.example.activity_manage.Mapper.ResourceMapper;
+import com.example.activity_manage.Result.PageResult;
 import com.example.activity_manage.Service.ResourceService;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -51,9 +55,14 @@ public class ResourceServiceImpl implements ResourceService {
         return true;
     }
 
-    public List<Resource> getAllResource(){
+    public PageResult pageQueryAllResource(BasePageQueryDTO basePageQueryDTO){
         try {
-            return resourceMapper.getAllResource();
+            //开始分页查询
+            PageHelper.startPage(basePageQueryDTO.getPage(), basePageQueryDTO.getPageSize());
+            Page<Resource> page = resourceMapper.pageQueryAllResource();
+            long total = page.getTotal();
+            List<Resource> records = page.getResult();
+            return new PageResult(total, records);
         }
         catch (Exception e){
             throw new SystemException(MessageConstant.SYSTEM_BUSY);

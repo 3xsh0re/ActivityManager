@@ -2,13 +2,17 @@ package com.example.activity_manage.ServiceImpl;
 
 import com.example.activity_manage.Constant.MessageConstant;
 import com.example.activity_manage.Entity.Activity;
+import com.example.activity_manage.Entity.DTO.BasePageQueryDTO;
 import com.example.activity_manage.Entity.DTO.ResourceAdditionDTO;
 import com.example.activity_manage.Entity.DTO.ResourceReservationDTO;
 import com.example.activity_manage.Entity.Resource;
-import com.example.activity_manage.Exception.SystemBusyException;
+import com.example.activity_manage.Exception.SystemException;
 import com.example.activity_manage.Mapper.ResourceMapper;
+import com.example.activity_manage.Result.PageResult;
 import com.example.activity_manage.Service.ActivityService;
 import com.example.activity_manage.Service.ResourceService;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -48,7 +52,7 @@ public class ResourceServiceImpl implements ResourceService {
         return totalResourceUsage;
     }
     public Boolean resourceReservation(ResourceReservationDTO resourceReservationDTO) {
-        Long UID = resourceReservationDTO.getUid(); // 获取申请者UID, 目前没什么用
+//        Long UID = resourceReservationDTO.getUid(); // 获取申请者UID, 目前没什么用
         String resourceName = resourceReservationDTO.getResource();
         int quantityNeed = resourceReservationDTO.getQuantity();
         Date beginTime = resourceReservationDTO.getBeginTime();
@@ -69,6 +73,7 @@ public class ResourceServiceImpl implements ResourceService {
         }
         return false;
     }
+
     @Override
     public Boolean resourceAddition(ResourceAdditionDTO resourceAdditionDTO) {
         String resourceName = resourceAdditionDTO.getResource();
@@ -87,12 +92,17 @@ public class ResourceServiceImpl implements ResourceService {
         return true;
     }
 
-    public List<Resource> getAllResource(){
+    public PageResult pageQueryAllResource(BasePageQueryDTO basePageQueryDTO){
         try {
-            return resourceMapper.getAllResource();
+            //开始分页查询
+            PageHelper.startPage(basePageQueryDTO.getPage(), basePageQueryDTO.getPageSize());
+            Page<Resource> page = resourceMapper.pageQueryAllResource();
+            long total = page.getTotal();
+            List<Resource> records = page.getResult();
+            return new PageResult(total, records);
         }
         catch (Exception e){
-            throw new SystemBusyException(MessageConstant.SYSTEM_BUSY);
+            throw new SystemException(MessageConstant.SYSTEM_BUSY);
         }
     }
 }
