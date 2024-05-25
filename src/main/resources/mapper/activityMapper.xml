@@ -42,7 +42,9 @@
         <result column="userList" jdbcType="OTHER" property="userList" javaType="net.minidev.json.JSONObject" typeHandler="com.example.activity_manage.Handler.JsonTypeHandler"/>
         <result column="actStatus" jdbcType="OTHER" property="actStatus" javaType="net.minidev.json.JSONObject" typeHandler="com.example.activity_manage.Handler.JsonTypeHandler"/>
     </resultMap>
-
+    <resultMap id="userListResultMap" type="net.minidev.json.JSONObject">
+        <result column="userList" jdbcType="OTHER" property="userList" javaType="net.minidev.json.JSONObject" typeHandler="com.example.activity_manage.Handler.JsonTypeHandler"/>
+    </resultMap>
     <select id="activityDateGet" resultMap="pairResultMap">
         SELECT beginTime, endTime FROM Activity WHERE id = #{AID};
     </select>
@@ -96,6 +98,10 @@
         select status from Activity where id =#{aid}
     </select>
 
+    <select id="getUserList" resultMap="userListResultMap">
+        select userList from Activity where id = #{aid};
+    </select>
+
     <delete id="deleteActivity">
         delete from Activity where id = #{aid}
     </delete>
@@ -104,7 +110,7 @@
         update Activity SET totalBudget = #{budget} where id = #{aid}
     </update>
 
-    <select id="pageQueryBaseActInfoVO" resultType="com.example.activity_manage.Entity.VO.BaseActInfoVO">
+    <select id="pageQueryBaseActInfoVO" resultType="com.example.activity_manage.Entity.VO.BaseActInfoVO" >
         select id, actName, beginTime, endTime,
                actDescription, status, place
         from Activity order by beginTime desc

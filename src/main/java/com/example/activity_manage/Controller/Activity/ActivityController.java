@@ -24,6 +24,7 @@ public class ActivityController {
     @PostMapping("/createActivity")
     public Result<Boolean> activityCreate(@RequestBody ActivityCreateDTO activityCreateDTO)
     {
+        //TODO: 完善活动冲突图检测逻辑
         return Result.success(activityService.ActivityCreate(activityCreateDTO));
     }
     @GetMapping("/getDate")
@@ -31,35 +32,35 @@ public class ActivityController {
         return Result.success(activityService.ActivityDateGet(aid));
     }
 
-    //面向组织者应该提供活动全部信息。
+    // 面向组织者应该提供活动全部信息
     @GetMapping("/getActInfoToOrganizer")
     public Result<Activity> getActInfoToOrganizer(@RequestParam("uid") long uid, @RequestParam("aid") long aid){
         return Result.success(activityService.getActInfoToOrganizer(uid,aid));
     }
-    //面向用户提供活动的部分信息
+    // 面向用户提供活动的部分信息
     @GetMapping("/getActInfoToAll")
     public Result<ActInfoToAllVO> getActInfoToAll(@RequestParam("aid") long aid){
         return Result.success(activityService.getActInfoToAll(aid));
     }
-    //返回用户的所有活动信息,用于日程视图
+    // 返回用户的所有活动信息,用于日程视图
     @GetMapping("/getActSchedule")
     public Result<List<ActScheduleVO>> getActSchedule(@RequestParam("uid") long uid){
         return Result.success(activityService.getActSchedule(uid));
     }
-    //分页返回活动页的所有活动
+    // 分页返回活动页的所有活动
     @PostMapping("/getAllActivity")
     public Result<PageResult> getAllActivity(@RequestBody BasePageQueryDTO basePageQueryDTO){
         return Result.success(activityService.pageQueryBaseActInfoVO(basePageQueryDTO));
     }
 
-    //删除活动,只有活动组织者或者管理员具有权限
+    // 删除活动,只有活动组织者或者管理员具有权限
     @GetMapping("/deleteActivity")
     public Result<String> deleteActivity(@RequestParam("uid") long uid,@RequestParam("aid") long aid)
     {
         activityService.deleteActivity(uid,aid);
         return Result.success("删除成功!");
     }
-    //活动预算设定
+    // 活动预算设定
     @GetMapping("/setBudget")
     public Result<Boolean> setBudget(@RequestParam("uid") long uid,@RequestParam("aid") long aid,@RequestParam("budget") int budget){
         activityService.setBudget(uid,aid,budget);
