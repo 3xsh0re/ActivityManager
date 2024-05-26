@@ -20,5 +20,7 @@ public interface UserMapper {
     Long selectIdByPhone(String phoneNumber);
     String getUsernameById(long uid);
     JSONObject getActList(long uid);
-    void updateActList(long uid,JSONObject actList);
+    JSONObject getWantJoinActList(long uid);
+    void updateActList(long uid,JSONObject actList);//更新用户参与的活动
+    void updateWantJoinActList(long uid,JSONObject wantJoinActList);
 }

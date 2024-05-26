@@ -66,4 +66,11 @@ public class ActivityController {
         return Result.success();
     }
 
+    // 用户参与活动
+    @GetMapping("/JoinActivity")
+    public Result<Boolean> joinAct(@RequestParam("uid") long uid,@RequestParam("aid") long aid,@RequestParam("reason") String reason){
+        activityService.joinAct(uid, aid, reason);
+        return Result.success();
+    }
+
 }

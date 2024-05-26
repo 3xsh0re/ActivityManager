@@ -42,9 +42,15 @@
         <result column="userList" jdbcType="OTHER" property="userList" javaType="net.minidev.json.JSONObject" typeHandler="com.example.activity_manage.Handler.JsonTypeHandler"/>
         <result column="actStatus" jdbcType="OTHER" property="actStatus" javaType="net.minidev.json.JSONObject" typeHandler="com.example.activity_manage.Handler.JsonTypeHandler"/>
     </resultMap>
+
     <resultMap id="userListResultMap" type="net.minidev.json.JSONObject">
         <result column="userList" jdbcType="OTHER" property="userList" javaType="net.minidev.json.JSONObject" typeHandler="com.example.activity_manage.Handler.JsonTypeHandler"/>
     </resultMap>
+
+    <resultMap id="unCheckedUserListResultMap" type="net.minidev.json.JSONObject">
+        <result column="unCheckedUserList" jdbcType="OTHER" property="unCheckedUserList" javaType="net.minidev.json.JSONObject" typeHandler="com.example.activity_manage.Handler.JsonTypeHandler"/>
+    </resultMap>
+
     <select id="activityDateGet" resultMap="pairResultMap">
         SELECT beginTime, endTime FROM Activity WHERE id = #{AID};
     </select>
@@ -103,6 +109,11 @@
         select userList from Activity where id = #{aid};
     </select>
 
+    <select id="getUnCheckedUserList" resultMap="unCheckedUserListResultMap">
+        select unCheckedUserList
+        from Activity where id = #{aid};
+    </select>
+
     <delete id="deleteActivity">
         delete from Activity where id = #{aid}
     </delete>
@@ -121,5 +132,10 @@
         SELECT MAX(id) FROM Activity
     </select>
 
+    <update id="updateUnCheckedUserList">
+        update Activity
+        set unCheckedUserList = #{unCheckedUserList, jdbcType=OTHER, typeHandler=com.example.activity_manage.Handler.JsonTypeHandler}
+        where id = #{aid};
+    </update>
 
 </mapper>

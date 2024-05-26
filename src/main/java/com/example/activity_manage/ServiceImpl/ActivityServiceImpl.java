@@ -9,6 +9,7 @@ import com.example.activity_manage.Entity.VO.ActInfoToAllVO;
 import com.example.activity_manage.Entity.VO.ActScheduleVO;
 import com.example.activity_manage.Entity.VO.BaseActInfoVO;
 import com.example.activity_manage.Exception.ActivityException;
+import com.example.activity_manage.Exception.LoginRegisterException;
 import com.example.activity_manage.Exception.PageNotFoundException;
 import com.example.activity_manage.Mapper.ActivityMapper;
 import com.example.activity_manage.Mapper.UserMapper;
@@ -63,7 +64,7 @@ public class ActivityServiceImpl implements ActivityService {
         activityCreateDTO.setUserList(userList);
         // 创建活动,直接将activityCreateDTO传入即可
         activityMapper.activityCreate(activityCreateDTO);
-
+        // 更新User表中字段
         if (jsonObject == null){
             // 将创建的活动修改到User的ActList中
             JSONObject new_actList = new JSONObject();
@@ -164,6 +165,45 @@ public class ActivityServiceImpl implements ActivityService {
         }
         activityMapper.setBudget(aid,budget);
     }
+
+    @Override
+    public void joinAct(long uid, long aid, String reason) {
+        ActInfoToAllVO activity = activityMapper.getActInfoToAll(aid);
+        String  username = userMapper.getUsernameById(uid);
+        if (activity == null)
+        {
+            throw new ActivityException(MessageConstant.ACTIVITY_NOT_EXIST);
+        }
+        if (username.equals("")){
+            throw new LoginRegisterException(MessageConstant.ACCOUNT_NOT_FOUND);
+        }
+        // 更新User的待审核活动
+        JSONObject objectUser = userMapper.getWantJoinActList(uid);
+        if (objectUser == null)//User没有待申请的活动
+        {
+            objectUser = new JSONObject();
+            objectUser.put( Long.toString(aid), reason);
+            userMapper.updateWantJoinActList(aid,objectUser);
+        }
+        else{
+            JSONObject wJActList = (JSONObject) objectUser.get("wantJoinActList");
+            wJActList.put( Long.toString(aid), reason);
+            userMapper.updateWantJoinActList(aid, wJActList);
+        }
+        // 更新Activity的待审核用户
+        JSONObject objectActivity = activityMapper.getUnCheckedUserList(aid);
+        if (objectActivity == null){
+            objectActivity = new JSONObject();
+            objectActivity.put(Long.toString(uid),reason);
+            activityMapper.updateUnCheckedUserList(aid,objectActivity);
+        }
+        else {
+            JSONObject uCActList = (JSONObject) objectActivity.get("unCheckedUserList");
+            uCActList.put(Long.toString(uid),reason);
+            activityMapper.updateUnCheckedUserList(aid,uCActList);
+        }
+    }
+
     //分页查询返回活动
     public PageResult pageQueryBaseActInfoVO(BasePageQueryDTO basePageQueryDTO) {
         //开始分页查询
