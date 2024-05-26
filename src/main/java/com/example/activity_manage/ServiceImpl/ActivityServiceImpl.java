@@ -3,10 +3,7 @@ package com.example.activity_manage.ServiceImpl;
 import ch.qos.logback.core.joran.sanity.Pair;
 import com.example.activity_manage.Constant.MessageConstant;
 import com.example.activity_manage.Entity.Activity;
-import com.example.activity_manage.Entity.DTO.ActivityCreateDTO;
-import com.example.activity_manage.Entity.DTO.ActivityPageQueryDTO;
-import com.example.activity_manage.Entity.DTO.ActivitySetParticipantRoleDTO;
-import com.example.activity_manage.Entity.DTO.BasePageQueryDTO;
+import com.example.activity_manage.Entity.DTO.*;
 import com.example.activity_manage.Entity.VO.ActInfoToAllVO;
 import com.example.activity_manage.Entity.VO.ActScheduleVO;
 import com.example.activity_manage.Entity.VO.BaseActInfoVO;
@@ -265,6 +262,23 @@ public class ActivityServiceImpl implements ActivityService {
             activityMapper.updateRoleList(aid, newRole, newRoleNum + 1);
             // 更新userList的角色
             activityMapper.updateUserRole(aid, participantUid, newRole);
+            return true;
+        }
+        return false;
+    }
+    public Boolean serParticipantGroup(ActivitySetParticipantGroupDTO activitySetParticipantGroupDTO)
+    {
+        long managerUid = activitySetParticipantGroupDTO.getManagerUid();
+        long aid = activitySetParticipantGroupDTO.getAid();
+        long participantUid = activitySetParticipantGroupDTO.getParticipantUid();
+        String group = activitySetParticipantGroupDTO.getGroup();
+        // 获取操作者身份, 鉴权
+        Set<String> validRoles = new HashSet<>(Arrays.asList("组织者", "管理员"));
+        String managerRole = activityMapper.getUserRole(aid, managerUid);
+        if(validRoles.contains(managerRole))
+        {
+            // 更新userList的角色
+            activityMapper.updateUserGroup(aid, participantUid, group);
             return true;
         }
         return false;

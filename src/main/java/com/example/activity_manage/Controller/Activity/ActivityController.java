@@ -2,10 +2,7 @@ package com.example.activity_manage.Controller.Activity;
 
 import ch.qos.logback.core.joran.sanity.Pair;
 import com.example.activity_manage.Entity.Activity;
-import com.example.activity_manage.Entity.DTO.ActivityCreateDTO;
-import com.example.activity_manage.Entity.DTO.ActivitySetParticipantRoleDTO;
-import com.example.activity_manage.Entity.DTO.ActivityPageQueryDTO;
-import com.example.activity_manage.Entity.DTO.BasePageQueryDTO;
+import com.example.activity_manage.Entity.DTO.*;
 import com.example.activity_manage.Entity.VO.ActInfoToAllVO;
 import com.example.activity_manage.Entity.VO.ActScheduleVO;
 import com.example.activity_manage.Result.PageResult;
@@ -79,10 +76,14 @@ public class ActivityController {
         activityService.joinAct(uid, aid, reason);
         return Result.success();
     }
-
     // 分页返回用户申请活动请求
     @PostMapping("/GetUnCheckedUserList")
     public Result<PageResult> getUnCheckedUserList(@RequestBody ActivityPageQueryDTO pageQueryDTO){
         return Result.success(activityService.pageQueryUnCheckedUser(pageQueryDTO));
+    }
+    @PostMapping("/serParticipantGroup")
+    public Result<Boolean> serParticipantGroup(@RequestBody ActivitySetParticipantGroupDTO activitySetParticipantGroupDTO)
+    {
+        return Result.success(activityService.serParticipantGroup(activitySetParticipantGroupDTO));
     }
 }

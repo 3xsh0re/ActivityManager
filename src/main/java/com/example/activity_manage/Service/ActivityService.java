@@ -2,10 +2,7 @@ package com.example.activity_manage.Service;
 
 import ch.qos.logback.core.joran.sanity.Pair;
 import com.example.activity_manage.Entity.Activity;
-import com.example.activity_manage.Entity.DTO.ActivityCreateDTO;
-import com.example.activity_manage.Entity.DTO.ActivityPageQueryDTO;
-import com.example.activity_manage.Entity.DTO.ActivitySetParticipantRoleDTO;
-import com.example.activity_manage.Entity.DTO.BasePageQueryDTO;
+import com.example.activity_manage.Entity.DTO.*;
 import com.example.activity_manage.Entity.VO.ActInfoToAllVO;
 import com.example.activity_manage.Entity.VO.ActScheduleVO;
 import com.example.activity_manage.Result.PageResult;
@@ -26,4 +23,5 @@ public interface ActivityService {
     PageResult pageQueryBaseActInfoVO(BasePageQueryDTO basePageQueryDTO);
     PageResult pageQueryUnCheckedUser(ActivityPageQueryDTO pageQueryDTO);
     Boolean setParticipantRole(ActivitySetParticipantRoleDTO activitySetParticipantRoleDTO); // 设置活动参与者分组, 输入为: 管理者, 活动, 参与者
+    Boolean serParticipantGroup(ActivitySetParticipantGroupDTO activitySetParticipantGroupDTO); // 设置分组
 }

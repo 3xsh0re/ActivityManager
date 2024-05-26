@@ -39,4 +39,5 @@ public interface ActivityMapper {
     void updateUserRole(long aid, long uid, String role); // 更新用户角色
     int getRoleNum(long aid, String role); // 获取role的数量
     void updateRoleList(long aid, String role, int quantity); // 更新roleList对应的数量
+    void updateUserGroup(long aid, long uid, String group); // 更新用户分组
 }

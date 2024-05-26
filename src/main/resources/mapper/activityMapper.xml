@@ -176,4 +176,10 @@
         WHERE id = #{aid};
     </update>
 
+    <update id="updateUserGroup">
+        UPDATE Activity
+        SET roleList = JSON_MERGE_PATCH(userGroup, JSON_OBJECT(#{uid}, #{group}))
+        WHERE id = #{aid};
+    </update>
+
 </mapper>
