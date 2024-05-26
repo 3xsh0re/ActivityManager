@@ -90,4 +90,12 @@ public class ActivityController {
     {
         return Result.success(activityService.serParticipantGroup(activitySetParticipantGroupDTO));
     }
+
+    // 审核活动参与申请
+    @GetMapping("/CheckApplication")
+    public Result<Boolean> checkApplication(@RequestParam("uid") long uid,@RequestParam("aid") long aid, @RequestParam("result") boolean result){
+        return Result.success();
+    }
+    // TODO:组织者审核申请
+
 }

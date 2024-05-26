@@ -187,12 +187,12 @@ public class ActivityServiceImpl implements ActivityService {
         {
             objectUser = new JSONObject();
             objectUser.put( Long.toString(aid), reason);
-            userMapper.updateWantJoinActList(aid,objectUser);
+            userMapper.updateWantJoinActList(uid,objectUser);
         }
         else{
             JSONObject wJActList = (JSONObject) objectUser.get("wantJoinActList");
             wJActList.put( Long.toString(aid), reason);
-            userMapper.updateWantJoinActList(aid, wJActList);
+            userMapper.updateWantJoinActList(uid, wJActList);
         }
         // 更新Activity的待审核用户
         JSONObject objectActivity = activityMapper.getUnCheckedUserList(aid);
