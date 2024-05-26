@@ -5,12 +5,10 @@ import com.example.activity_manage.Constant.MessageConstant;
 import com.example.activity_manage.Entity.Activity;
 import com.example.activity_manage.Entity.DTO.ActivityCreateDTO;
 import com.example.activity_manage.Entity.DTO.ActivitySetParticipantRoleDTO;
-import com.example.activity_manage.Entity.DTO.ActivityPageQueryDTO;
 import com.example.activity_manage.Entity.DTO.BasePageQueryDTO;
 import com.example.activity_manage.Entity.VO.ActInfoToAllVO;
 import com.example.activity_manage.Entity.VO.ActScheduleVO;
 import com.example.activity_manage.Entity.VO.BaseActInfoVO;
-import com.example.activity_manage.Entity.VO.UnCheckedUserVO;
 import com.example.activity_manage.Exception.ActivityException;
 import com.example.activity_manage.Exception.LoginRegisterException;
 import com.example.activity_manage.Exception.PageNotFoundException;
@@ -210,5 +208,10 @@ public class ActivityServiceImpl implements ActivityService {
         long total = page.getTotal();
         List<BaseActInfoVO> records = page.getResult();
         return new PageResult(total, records);
+    }
+
+    @Override
+    public Boolean setParticipantRole(ActivitySetParticipantRoleDTO activitySetParticipantRoleDTO) {
+        return null;
     }
 }
