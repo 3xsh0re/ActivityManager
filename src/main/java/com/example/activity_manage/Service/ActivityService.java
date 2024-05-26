@@ -22,4 +22,5 @@ public interface ActivityService {
     void setBudget(long uid,long aid,int budget);
     void joinAct(long uid,long aid, String reason);
     PageResult pageQueryBaseActInfoVO(BasePageQueryDTO basePageQueryDTO);
+    Boolean setParticipantRole(long managerUid, long aid, long participantUid); // 设置活动参与者分组, 输入为: 管理者, 活动, 参与者
 }

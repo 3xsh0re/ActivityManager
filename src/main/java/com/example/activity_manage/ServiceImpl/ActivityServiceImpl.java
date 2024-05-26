@@ -208,4 +208,9 @@ public class ActivityServiceImpl implements ActivityService {
         List<BaseActInfoVO> records = page.getResult();
         return new PageResult(total, records);
     }
+
+    public Boolean setParticipantRole(long managerUid, long aid, long participantUid)
+    {
+        return null;
+    }
 }

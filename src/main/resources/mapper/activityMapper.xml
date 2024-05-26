@@ -138,4 +138,19 @@
         where id = #{aid};
     </update>
 
+    <update id="updateActivityResource">
+        UPDATE Activity
+        SET resource = CASE
+           WHEN JSON_CONTAINS_PATH(resource, 'one', #{resourceName}) THEN
+               JSON_SET(resource, #{resourceName}, JSON_EXTRACT(resource, #{resourceName}) + #{quantity})
+           ELSE
+               JSON_INSERT(resource, #{resourceName}, #{quantity})
+        END
+        WHERE id = #{aid};
+    </update>
+
+    <select id="getUserRole">
+        select JSON_UNQUOTE(JSON_EXTRACT(userList, #{uid})) AS key1_value from Activity where id = #{aid};
+    </select>
+
 </mapper>

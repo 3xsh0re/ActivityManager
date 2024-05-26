@@ -65,7 +65,9 @@ public class ActivityController {
         activityService.setBudget(uid,aid,budget);
         return Result.success();
     }
-
+    // 管理活动参与者角色
+    @PostMapping("/setParticipantRole")
+    public Boolean setParticipantRole()
     // 用户参与活动
     @GetMapping("/JoinActivity")
     public Result<Boolean> joinAct(@RequestParam("uid") long uid,@RequestParam("aid") long aid,@RequestParam("reason") String reason){

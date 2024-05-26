@@ -13,6 +13,7 @@ import java.util.Date;
 @AllArgsConstructor
 public class ResourceReservationDTO {
     private long uid; // 申请者UID
+    private long aid; // 申请活动的AID
     private String resource; // 资源名称
     private int quantity; //资源数量
     private Date beginTime;

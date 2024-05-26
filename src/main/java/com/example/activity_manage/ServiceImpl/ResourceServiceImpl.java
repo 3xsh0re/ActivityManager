@@ -18,8 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class ResourceServiceImpl implements ResourceService {
@@ -58,7 +57,8 @@ public class ResourceServiceImpl implements ResourceService {
         return totalResourceUsage;
     }
     public Boolean resourceReservation(ResourceReservationDTO resourceReservationDTO) {
-//        Long UID = resourceReservationDTO.getUid(); // 获取申请者UID, 目前没什么用
+        long UID = resourceReservationDTO.getUid(); // 获取申请者UID, 鉴权, 只有活动创建者与活动管理员可以申请资源
+        long AID = resourceReservationDTO.getAid();
         String resourceName = resourceReservationDTO.getResource();
         int quantityNeed = resourceReservationDTO.getQuantity();
         Date beginTime = resourceReservationDTO.getBeginTime();
@@ -68,14 +68,22 @@ public class ResourceServiceImpl implements ResourceService {
         JSONObject totalResourceUsage = checkActivityConflicts(actList, beginTime, endTime);
         // 打印总资源使用情况（调试用）
         // System.out.println("总资源使用情况: " + totalResourceUsage.toString());
-        if (resourceMapper.checkResourceByName(resourceName)) {// 检查资源是否存在
+        // 获取操作者的角色
+        String userRole = activityMapper.getUserRole(AID, UID);
+        // 设置哪些角色有权限进行资源申请
+        Set<String> validRoles = new HashSet<>(Arrays.asList("组织者", "管理员"));
+        if (validRoles.contains(userRole) && resourceMapper.checkResourceByName(resourceName)) {// 检查资源是否存在
             int quantityCurr = resourceMapper.selectResourceByName(resourceName);
             // 从totalResourceUsage中获取已经被占用的数量
             int quantityUsed = (int) totalResourceUsage.getOrDefault(resourceName, 0);
             // 可用资源数量
             int availableQuantity = quantityCurr - quantityUsed;
             // 判断当前申请的资源数量是否能被满足
-            return availableQuantity >= quantityNeed;
+            if(availableQuantity >= quantityNeed)
+            {
+                activityMapper.updateActivityResource(AID, resourceName, quantityNeed);
+                return true;
+            }
         }
         return false;
     }
