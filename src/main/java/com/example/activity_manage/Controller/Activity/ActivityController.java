@@ -64,6 +64,10 @@ public class ActivityController {
         activityService.setBudget(uid,aid,budget);
         return Result.success();
     }
+    @GetMapping("/getBudget")
+    public Result<Integer> getBudget(@RequestParam("aid") long aid,@RequestParam("uid") long uid){
+        return Result.success(activityService.getBudget(aid, uid));
+    }
     // 管理活动参与者角色
     @PostMapping("/setParticipantRole")
     public Result<Boolean> setParticipantRole(@RequestBody ActivitySetParticipantRoleDTO activitySetParticipantRoleDTO)

@@ -122,6 +122,10 @@
         update Activity SET totalBudget = #{budget} where id = #{aid}
     </update>
 
+    <select id="getBudget">
+        select totalBudget from Activity where id = #{aid}
+    </select>
+
     <select id="pageQueryBaseActInfoVO" resultType="com.example.activity_manage.Entity.VO.BaseActInfoVO" >
         select id, actName, beginTime, endTime,
                actDescription, status, place
@@ -181,5 +185,11 @@
         SET roleList = JSON_MERGE_PATCH(userGroup, JSON_OBJECT(#{uid}, #{group}))
         WHERE id = #{aid};
     </update>
+
+    <select id="checkUserExist">
+        SELECT JSON_CONTAINS_PATH(userList, 'one', #{uid}) AS containsUid
+        FROM Activity
+        WHERE id = #{aid};
+    </select>
 
 </mapper>

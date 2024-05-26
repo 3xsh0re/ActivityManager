@@ -160,6 +160,15 @@ public class ActivityServiceImpl implements ActivityService {
         }
         activityMapper.setBudget(aid,budget);
     }
+    @Override
+    public Integer getBudget(long aid, long uid)
+    {
+        if(activityMapper.checkUserExist(aid, uid)) // 判断用户是否存在于活动中, 仅有活动参与者可以查询预算
+        {
+            return activityMapper.getBudget(aid);
+        }
+        return null;
+    }
 
     @Override
     public void joinAct(long uid, long aid, String reason) {
