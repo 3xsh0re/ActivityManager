@@ -4,6 +4,7 @@ import ch.qos.logback.core.joran.sanity.Pair;
 import com.example.activity_manage.Constant.MessageConstant;
 import com.example.activity_manage.Entity.Activity;
 import com.example.activity_manage.Entity.DTO.ActivityCreateDTO;
+import com.example.activity_manage.Entity.DTO.ActivitySetParticipantRoleDTO;
 import com.example.activity_manage.Entity.DTO.BasePageQueryDTO;
 import com.example.activity_manage.Entity.VO.ActInfoToAllVO;
 import com.example.activity_manage.Entity.VO.ActScheduleVO;
@@ -209,8 +210,31 @@ public class ActivityServiceImpl implements ActivityService {
         return new PageResult(total, records);
     }
 
-    public Boolean setParticipantRole(long managerUid, long aid, long participantUid)
+    public Boolean setParticipantRole(ActivitySetParticipantRoleDTO activitySetParticipantRoleDTO)
     {
-        return null;
+        long managerUid = activitySetParticipantRoleDTO.getManagerUid();
+        long aid = activitySetParticipantRoleDTO.getAid();
+        long participantUid = activitySetParticipantRoleDTO.getParticipantUid();
+        String newRole = activitySetParticipantRoleDTO.getRole();
+        String oriRole = activityMapper.getUserRole(aid, participantUid);
+        int oriRoleNum = activityMapper.getRoleNum(aid, oriRole);
+        // 获取操作者身份, 鉴权
+        Set<String> validRoles = new HashSet<>(Arrays.asList("组织者", "管理员"));
+        String managerRole = activityMapper.getUserRole(aid, managerUid);
+        if(validRoles.contains(managerRole))
+        {
+            // 如果用户原本有角色, 将roleList对应角色的数量减一
+            if(oriRole != null && oriRoleNum > 0)
+            {
+                activityMapper.updateRoleList(aid, oriRole, oriRoleNum - 1);
+            }
+            // 更新新角色的roleList对应quantity
+            int newRoleNum = activityMapper.getRoleNum(aid, newRole);
+            activityMapper.updateRoleList(aid, newRole, newRoleNum + 1);
+            // 更新userList的角色
+            activityMapper.updateUserRole(aid, participantUid, newRole);
+            return true;
+        }
+        return false;
     }
 }

@@ -3,6 +3,7 @@ package com.example.activity_manage.Service;
 import ch.qos.logback.core.joran.sanity.Pair;
 import com.example.activity_manage.Entity.Activity;
 import com.example.activity_manage.Entity.DTO.ActivityCreateDTO;
+import com.example.activity_manage.Entity.DTO.ActivitySetParticipantRoleDTO;
 import com.example.activity_manage.Entity.DTO.BasePageQueryDTO;
 import com.example.activity_manage.Entity.VO.ActInfoToAllVO;
 import com.example.activity_manage.Entity.VO.ActScheduleVO;
@@ -22,5 +23,5 @@ public interface ActivityService {
     void setBudget(long uid,long aid,int budget);
     void joinAct(long uid,long aid, String reason);
     PageResult pageQueryBaseActInfoVO(BasePageQueryDTO basePageQueryDTO);
-    Boolean setParticipantRole(long managerUid, long aid, long participantUid); // 设置活动参与者分组, 输入为: 管理者, 活动, 参与者
+    Boolean setParticipantRole(ActivitySetParticipantRoleDTO activitySetParticipantRoleDTO); // 设置活动参与者分组, 输入为: 管理者, 活动, 参与者
 }
