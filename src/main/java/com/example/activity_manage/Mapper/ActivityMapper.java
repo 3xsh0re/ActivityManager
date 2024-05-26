@@ -29,7 +29,7 @@ public interface ActivityMapper {
     long getMaxId();
     void deleteActivity(long aid);
     void setBudget(long aid,int budget);
-    void updateUnCheckedUserList(long aid,JSONObject object);
+    void updateUnCheckedUserList(long aid,JSONObject unCheckedUserList);
     JSONObject getUnCheckedUserList(long aid);
     Page<BaseActInfoVO>  pageQueryBaseActInfoVO(BasePageQueryDTO basePageQueryDTO);
     Page<ActInfoToAdminVO> pageQueryActInfoToAdmin(BasePageQueryDTO basePageQueryDTO);//分页返回给管理员的所有活动信息

@@ -6,7 +6,7 @@
         <result column="actList" jdbcType="OTHER" property="actList" javaType="net.minidev.json.JSONObject" typeHandler="com.example.activity_manage.Handler.JsonTypeHandler"/>
     </resultMap>
     <resultMap id="getWantJoinActListResultMap" type="net.minidev.json.JSONObject">
-        <result column="getWantJoinActList" jdbcType="OTHER" property="getWantJoinActList" javaType="net.minidev.json.JSONObject" typeHandler="com.example.activity_manage.Handler.JsonTypeHandler"/>
+        <result column="wantJoinActList" jdbcType="OTHER" property="wantJoinActList" javaType="net.minidev.json.JSONObject" typeHandler="com.example.activity_manage.Handler.JsonTypeHandler"/>
     </resultMap>
     <insert id="insertUser" parameterType="com.example.activity_manage.Entity.User">
         insert into User(username,passwd,phoneNumber,email,role) values(#{username},#{passwd},#{phoneNumber},#{email},0)

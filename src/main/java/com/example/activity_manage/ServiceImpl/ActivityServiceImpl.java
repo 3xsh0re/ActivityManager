@@ -174,7 +174,7 @@ public class ActivityServiceImpl implements ActivityService {
         {
             throw new ActivityException(MessageConstant.ACTIVITY_NOT_EXIST);
         }
-        if (username.equals("")){
+        if (username == null){
             throw new LoginRegisterException(MessageConstant.ACCOUNT_NOT_FOUND);
         }
         // 更新User的待审核活动
