@@ -75,4 +75,9 @@ public class ActivityController {
         return Result.success();
     }
 
+    // 分页返回用户申请活动请求
+    @PostMapping("/GetUnCheckedUserList")
+    public Result<PageResult> getUnCheckedUserList(@RequestBody ActivityPageQueryDTO pageQueryDTO){
+        return Result.success(activityService.pageQueryUnCheckedUser(pageQueryDTO));
+    }
 }
