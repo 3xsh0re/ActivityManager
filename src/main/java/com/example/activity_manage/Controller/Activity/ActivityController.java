@@ -3,6 +3,7 @@ package com.example.activity_manage.Controller.Activity;
 import ch.qos.logback.core.joran.sanity.Pair;
 import com.example.activity_manage.Entity.Activity;
 import com.example.activity_manage.Entity.DTO.ActivityCreateDTO;
+import com.example.activity_manage.Entity.DTO.ActivityPageQueryDTO;
 import com.example.activity_manage.Entity.DTO.BasePageQueryDTO;
 import com.example.activity_manage.Entity.VO.ActInfoToAllVO;
 import com.example.activity_manage.Entity.VO.ActScheduleVO;
@@ -71,6 +72,12 @@ public class ActivityController {
     public Result<Boolean> joinAct(@RequestParam("uid") long uid,@RequestParam("aid") long aid,@RequestParam("reason") String reason){
         activityService.joinAct(uid, aid, reason);
         return Result.success();
+    }
+
+    // 分页返回用户申请活动请求
+    @PostMapping("/GetUnCheckedUserList")
+    public Result<PageResult> getUnCheckedUserList(@RequestBody ActivityPageQueryDTO pageQueryDTO){
+        return Result.success(activityService.pageQueryUnCheckedUser(pageQueryDTO));
     }
 
 }

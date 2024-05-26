@@ -138,4 +138,9 @@
         where id = #{aid};
     </update>
 
+    <select id="pageQueryUnCheckedUser" resultMap="unCheckedUserListResultMap">
+        select unCheckedUserList
+        from Activity where id = #{aid}
+    </select>
+
 </mapper>

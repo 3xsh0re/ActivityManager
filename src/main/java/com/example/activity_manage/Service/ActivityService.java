@@ -3,6 +3,7 @@ package com.example.activity_manage.Service;
 import ch.qos.logback.core.joran.sanity.Pair;
 import com.example.activity_manage.Entity.Activity;
 import com.example.activity_manage.Entity.DTO.ActivityCreateDTO;
+import com.example.activity_manage.Entity.DTO.ActivityPageQueryDTO;
 import com.example.activity_manage.Entity.DTO.BasePageQueryDTO;
 import com.example.activity_manage.Entity.VO.ActInfoToAllVO;
 import com.example.activity_manage.Entity.VO.ActScheduleVO;
@@ -22,4 +23,5 @@ public interface ActivityService {
     void setBudget(long uid,long aid,int budget);
     void joinAct(long uid,long aid, String reason);
     PageResult pageQueryBaseActInfoVO(BasePageQueryDTO basePageQueryDTO);
+    PageResult pageQueryUnCheckedUser(ActivityPageQueryDTO pageQueryDTO);
 }

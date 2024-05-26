@@ -13,11 +13,11 @@ public interface UserMapper {
     void insertUser(User user);
     // 查找用户
     User selectUserByPhone(String phoneNumber);
+    String getPhoneByUid(long uid);
     // 返回所有用户
     Page<GetUserVO> pageQueryAllUser();
     Page<String> pageQueryAllPhone();
     void setPwd(String passwd,String phoneNumber);
-    Long selectIdByPhone(String phoneNumber);
     String getUsernameById(long uid);
     JSONObject getActList(long uid);
     JSONObject getWantJoinActList(long uid);

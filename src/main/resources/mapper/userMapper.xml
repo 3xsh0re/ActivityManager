@@ -53,4 +53,9 @@
         set wantJoinActList = #{wantJoinActList, jdbcType=OTHER, typeHandler=com.example.activity_manage.Handler.JsonTypeHandler}
         where id = #{uid};
     </update>
+
+    <select id="getPhoneByUid">
+        select phoneNumber
+        from User where id = #{uid};
+    </select>
 </mapper>
