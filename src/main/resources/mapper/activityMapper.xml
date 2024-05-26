@@ -158,22 +158,4 @@
         select JSON_UNQUOTE(JSON_EXTRACT(userList, #{uid})) AS key1_value from Activity where id = #{aid};
     </select>
 
-    <update id="updateUserRole">
-        UPDATE Activity
-        SET userList = JSON_SET(userList, #{uid}, #{role})
-        WHERE id = #{aid};
-    </update>
-
-    <select id="getRoleNum">
-        select IFNULL(JSON_UNQUOTE(JSON_EXTRACT(roleList, #{role})), 0) AS key1_value
-        from Activity
-        where id = #{aid};
-    </select>
-
-    <update id="updateRoleList">
-        UPDATE Activity
-        SET roleList = JSON_MERGE_PATCH(roleList, JSON_OBJECT(#{role}, #{quantity}))
-        WHERE id = #{aid};
-    </update>
-
 </mapper>

@@ -35,7 +35,4 @@ public interface ActivityMapper {
     Page<ActInfoToAdminVO> pageQueryActInfoToAdmin(BasePageQueryDTO basePageQueryDTO);//分页返回给管理员的所有活动信息
     void updateActivityResource(long aid, String resourceName, int quantity); // 更新活动的资源
     String getUserRole(long aid, long uid); // 获取活动里指定用户的角色
-    void updateUserRole(long aid, long uid, String role); // 更新用户角色
-    int getRoleNum(long aid, String role); // 获取role的数量
-    void updateRoleList(long aid, String role, int quantity); // 更新roleList对应的数量
 }
