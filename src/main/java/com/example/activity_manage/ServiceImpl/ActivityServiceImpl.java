@@ -4,6 +4,7 @@ import ch.qos.logback.core.joran.sanity.Pair;
 import com.example.activity_manage.Constant.MessageConstant;
 import com.example.activity_manage.Entity.Activity;
 import com.example.activity_manage.Entity.DTO.ActivityCreateDTO;
+import com.example.activity_manage.Entity.DTO.ActivitySetParticipantRoleDTO;
 import com.example.activity_manage.Entity.DTO.ActivityPageQueryDTO;
 import com.example.activity_manage.Entity.DTO.BasePageQueryDTO;
 import com.example.activity_manage.Entity.VO.ActInfoToAllVO;
@@ -208,38 +209,6 @@ public class ActivityServiceImpl implements ActivityService {
         Page<BaseActInfoVO> page = activityMapper.pageQueryBaseActInfoVO(basePageQueryDTO);
         long total = page.getTotal();
         List<BaseActInfoVO> records = page.getResult();
-        return new PageResult(total, records);
-    }
-
-    @Override
-    public PageResult pageQueryUnCheckedUser(ActivityPageQueryDTO activityPageQueryDTO) {
-        long uid = activityPageQueryDTO.getUid();
-        long orgId = activityMapper.getUidByAid(activityPageQueryDTO.getAid());
-        if ( uid != orgId)
-        {
-            throw new ActivityException(MessageConstant.NOT_HAVE_THIS_PERMISSION);
-        }
-        //开始分页查询
-        JSONObject object = (JSONObject) activityMapper.getUnCheckedUserList(activityPageQueryDTO.getAid()).get("unCheckedUserList");
-        int page = activityPageQueryDTO.getPage();
-        int pageSize = activityPageQueryDTO.getPageSize();
-        Iterator<String> keys = object.keySet().iterator();
-        List<UnCheckedUserVO> records = new ArrayList<>();
-        int num = 0;
-        while (keys.hasNext()){
-            String key = keys.next(); //key为申请者id
-            if ( (page - 1) * pageSize <= num && num < page * pageSize ){
-                UnCheckedUserVO unCheckedUserVO = new UnCheckedUserVO();
-                unCheckedUserVO.setUid(Long.parseLong(key));
-                unCheckedUserVO.setUsername(userMapper.getUsernameById(Long.parseLong(key)));
-                unCheckedUserVO.setPhoneNumber(userMapper.getPhoneByUid(Long.parseLong(key)));
-                unCheckedUserVO.setReason((String) object.get(key));
-                records.add(unCheckedUserVO);
-            }
-            num++;
-        }
-
-        long total = records.size();
         return new PageResult(total, records);
     }
 }
