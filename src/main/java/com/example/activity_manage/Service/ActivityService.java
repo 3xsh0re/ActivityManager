@@ -8,12 +8,12 @@ import com.example.activity_manage.Entity.VO.ActInfoToAllVO;
 import com.example.activity_manage.Entity.VO.ActScheduleVO;
 import com.example.activity_manage.Result.PageResult;
 
-import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.List;
 
 public interface ActivityService {
     Boolean ActivityCreate(ActivityCreateDTO activityCreateDTO);
-    Pair<Date, Date> ActivityDateGet(long AID);
+    Pair<Timestamp, Timestamp> ActivityDateGet(long AID);
     Activity getActInfoToOrganizer(long uid,long aid); //面向组织者
     ActInfoToAllVO getActInfoToAll(long aid); //面向所有用户
     List<ActScheduleVO> getActSchedule(long uid); //获取某个用户的所有活动日程

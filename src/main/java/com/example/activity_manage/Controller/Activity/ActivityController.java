@@ -12,7 +12,7 @@ import com.example.activity_manage.Service.ActivityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.List;
 
 @RestController
@@ -24,11 +24,10 @@ public class ActivityController {
     @PostMapping("/createActivity")
     public Result<Boolean> activityCreate(@RequestBody ActivityCreateDTO activityCreateDTO)
     {
-        //TODO: 完善活动冲突图检测逻辑
         return Result.success(activityService.ActivityCreate(activityCreateDTO));
     }
     @GetMapping("/getDate")
-    public Result<Pair<Date, Date>> activityDateGet(@RequestParam("aid") long aid){
+    public Result<Pair<Timestamp, Timestamp>> activityDateGet(@RequestParam("aid") long aid){
         return Result.success(activityService.ActivityDateGet(aid));
     }
 

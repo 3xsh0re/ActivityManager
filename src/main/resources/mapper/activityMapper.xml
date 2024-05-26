@@ -3,8 +3,8 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.example.activity_manage.Mapper.ActivityMapper">
     <resultMap id="pairResultMap" type="ch.qos.logback.core.joran.sanity.Pair">
-        <result column="beginTime" javaType="java.sql.Date"/>
-        <result column="endTime" javaType="java.sql.Date"/>
+        <result column="beginTime" javaType="java.sql.Timestamp"/>
+        <result column="endTime" javaType="java.sql.Timestamp"/>
     </resultMap>
 
     <resultMap id="ActivityResultMap" type="com.example.activity_manage.Entity.Activity">
@@ -52,9 +52,10 @@
     <insert id="activityCreate" parameterType="com.example.activity_manage.Entity.DTO.ActivityCreateDTO">
         INSERT INTO Activity (uid, actName, actDescription, beginTime,
                               endTime, ifFileStore, status , totalBudget,
-                              roleList, actStatus)
+                              userList, roleList, actStatus)
         VALUES (#{uid}, #{actName}, #{actDescription}, #{beginTime},
                 #{endTime}, #{ifFileStore}, 0, 0,
+                #{userList, jdbcType=OTHER, typeHandler=com.example.activity_manage.Handler.JsonTypeHandler},
                 #{roleList, jdbcType=OTHER, typeHandler=com.example.activity_manage.Handler.JsonTypeHandler},
                 #{actStatus, jdbcType=OTHER, typeHandler=com.example.activity_manage.Handler.JsonTypeHandler})
     </insert>
@@ -115,5 +116,10 @@
                actDescription, status, place
         from Activity order by beginTime desc
     </select>
+    
+    <select id="getMaxId">
+        SELECT MAX(id) FROM Activity
+    </select>
+
 
 </mapper>

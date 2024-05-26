@@ -3,9 +3,9 @@ package com.example.activity_manage.Mapper;
 import com.example.activity_manage.Entity.User;
 import com.example.activity_manage.Entity.VO.GetUserVO;
 import com.github.pagehelper.Page;
+import net.minidev.json.JSONObject;
 import org.apache.ibatis.annotations.Mapper;
 
-import java.util.List;
 
 @Mapper
 public interface UserMapper {
@@ -19,4 +19,6 @@ public interface UserMapper {
     void setPwd(String passwd,String phoneNumber);
     Long selectIdByPhone(String phoneNumber);
     String getUsernameById(long uid);
+    JSONObject getActList(long uid);
+    void updateActList(long uid,JSONObject actList);
 }
