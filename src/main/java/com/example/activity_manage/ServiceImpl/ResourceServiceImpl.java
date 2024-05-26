@@ -7,8 +7,8 @@ import com.example.activity_manage.Entity.DTO.ResourceAdditionDTO;
 import com.example.activity_manage.Entity.DTO.ResourceReservationDTO;
 import com.example.activity_manage.Entity.Resource;
 import com.example.activity_manage.Exception.SystemException;
+import com.example.activity_manage.Mapper.ActivityMapper;
 import com.example.activity_manage.Mapper.ResourceMapper;
-import com.example.activity_manage.Service.ActivityService;
 import com.example.activity_manage.Result.PageResult;
 import com.example.activity_manage.Service.ResourceService;
 import com.github.pagehelper.Page;
@@ -17,25 +17,31 @@ import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.sql.Date;
+
+import java.util.Date;
 import java.util.List;
 
 @Service
 public class ResourceServiceImpl implements ResourceService {
     @Autowired
     ResourceMapper resourceMapper;
-    ActivityService activityService;
+    @Autowired
+    ActivityMapper activityMapper;
+
     protected static boolean isTimeConflict(Date activityBegin, Date activityEnd, Date specifiedBegin, Date specifiedEnd) {
         return (activityBegin.before(specifiedEnd) && activityEnd.after(specifiedBegin));
     }
     protected static void mergeResources(JSONObject total, JSONObject toAdd) {
-        for (String key : toAdd.keySet()) {
-            if (total.containsKey(key)) {
-                int existingValue = (int) total.get(key);
-                int additionalValue = (int) toAdd.get(key);
-                total.put(key, existingValue + additionalValue);
-            } else {
-                total.put(key, toAdd.get(key));
+        if (toAdd != null)
+        {
+            for (String key : toAdd.keySet()) {
+                if (total.containsKey(key)) {
+                    int existingValue = (int) total.get(key);
+                    int additionalValue = (int) toAdd.get(key);
+                    total.put(key, existingValue + additionalValue);
+                } else {
+                    total.put(key, toAdd.get(key));
+                }
             }
         }
     }
@@ -43,7 +49,7 @@ public class ResourceServiceImpl implements ResourceService {
         JSONObject totalResourceUsage = new JSONObject();
 
         for (Activity activity : activities) {
-            if (isTimeConflict((Date) activity.getBeginTime(), (Date) activity.getEndTime(), beginTime, endTime)) {
+            if (isTimeConflict(activity.getBeginTime(), activity.getEndTime(), beginTime, endTime)) {
                 JSONObject resource = activity.getResource();
                 mergeResources(totalResourceUsage, resource);
             }
@@ -56,8 +62,8 @@ public class ResourceServiceImpl implements ResourceService {
         String resourceName = resourceReservationDTO.getResource();
         int quantityNeed = resourceReservationDTO.getQuantity();
         Date beginTime = resourceReservationDTO.getBeginTime();
-        Date endTime = resourceReservationDTO.getEndTime();
-        List<Activity> actList = activityService.getAllActivity();
+        Date endTime   = resourceReservationDTO.getEndTime();
+        List<Activity> actList = activityMapper.getAllAct();
         // 计算在指定时间段内已经被占用的资源
         JSONObject totalResourceUsage = checkActivityConflicts(actList, beginTime, endTime);
         // 打印总资源使用情况（调试用）

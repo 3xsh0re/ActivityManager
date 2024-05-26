@@ -132,11 +132,6 @@ public class ActivityServiceImpl implements ActivityService {
         return l_actSchedule;
     }
 
-    @Override
-    public List<Activity> getAllActivity()
-    {
-        return activityMapper.getAllAct();
-    }
 
     @Override
     public void deleteActivity(long uid,long aid) {
