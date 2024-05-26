@@ -211,7 +211,6 @@ public class ActivityServiceImpl implements ActivityService {
         List<BaseActInfoVO> records = page.getResult();
         return new PageResult(total, records);
     }
-
     @Override
     public PageResult pageQueryUnCheckedUser(ActivityPageQueryDTO activityPageQueryDTO) {
         long uid = activityPageQueryDTO.getUid();
@@ -243,9 +242,31 @@ public class ActivityServiceImpl implements ActivityService {
         long total = records.size();
         return new PageResult(total, records);
     }
-
-    @Override
-    public Boolean setParticipantRole(ActivitySetParticipantRoleDTO activitySetParticipantRoleDTO) {
-        return null;
+    public Boolean setParticipantRole(ActivitySetParticipantRoleDTO activitySetParticipantRoleDTO)
+    {
+        long managerUid = activitySetParticipantRoleDTO.getManagerUid();
+        long aid = activitySetParticipantRoleDTO.getAid();
+        long participantUid = activitySetParticipantRoleDTO.getParticipantUid();
+        String newRole = activitySetParticipantRoleDTO.getRole();
+        String oriRole = activityMapper.getUserRole(aid, participantUid);
+        int oriRoleNum = activityMapper.getRoleNum(aid, oriRole);
+        // 获取操作者身份, 鉴权
+        Set<String> validRoles = new HashSet<>(Arrays.asList("组织者", "管理员"));
+        String managerRole = activityMapper.getUserRole(aid, managerUid);
+        if(validRoles.contains(managerRole))
+        {
+            // 如果用户原本有角色, 将roleList对应角色的数量减一
+            if(oriRole != null && oriRoleNum > 0)
+            {
+                activityMapper.updateRoleList(aid, oriRole, oriRoleNum - 1);
+            }
+            // 更新新角色的roleList对应quantity
+            int newRoleNum = activityMapper.getRoleNum(aid, newRole);
+            activityMapper.updateRoleList(aid, newRole, newRoleNum + 1);
+            // 更新userList的角色
+            activityMapper.updateUserRole(aid, participantUid, newRole);
+            return true;
+        }
+        return false;
     }
 }

@@ -4,7 +4,6 @@ import ch.qos.logback.core.joran.sanity.Pair;
 import com.example.activity_manage.Entity.Activity;
 import com.example.activity_manage.Entity.DTO.ActivityCreateDTO;
 import com.example.activity_manage.Entity.DTO.ActivitySetParticipantRoleDTO;
-import com.example.activity_manage.Entity.DTO.ActivityPageQueryDTO;
 import com.example.activity_manage.Entity.DTO.BasePageQueryDTO;
 import com.example.activity_manage.Entity.VO.ActInfoToAllVO;
 import com.example.activity_manage.Entity.VO.ActScheduleVO;
@@ -67,7 +66,12 @@ public class ActivityController {
         activityService.setBudget(uid,aid,budget);
         return Result.success();
     }
-
+    // 管理活动参与者角色
+    @PostMapping("/setParticipantRole")
+    public Result<Boolean> setParticipantRole(@RequestBody ActivitySetParticipantRoleDTO activitySetParticipantRoleDTO)
+    {
+        return Result.success(activityService.setParticipantRole(activitySetParticipantRoleDTO));
+    }
     // 用户参与活动
     @GetMapping("/JoinActivity")
     public Result<Boolean> joinAct(@RequestParam("uid") long uid,@RequestParam("aid") long aid,@RequestParam("reason") String reason){
