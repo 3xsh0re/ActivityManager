@@ -33,7 +33,6 @@ public interface ActivityMapper {
     JSONObject getUnCheckedUserList(long aid);
     Page<BaseActInfoVO>  pageQueryBaseActInfoVO(BasePageQueryDTO basePageQueryDTO);
     Page<ActInfoToAdminVO> pageQueryActInfoToAdmin(BasePageQueryDTO basePageQueryDTO);//分页返回给管理员的所有活动信息
-    void setRole(long aid, long uid, String role);  // 设置活动参与者的角色
     void updateActivityResource(long aid, String resourceName, int quantity); // 更新活动的资源
     String getUserRole(long aid, long uid); // 获取活动里指定用户的角色
     void updateUserRole(long aid, long uid, String role); // 更新用户角色
