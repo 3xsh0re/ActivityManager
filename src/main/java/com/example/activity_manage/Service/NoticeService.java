@@ -6,7 +6,7 @@ import com.example.activity_manage.Entity.Notice;
 import com.example.activity_manage.Result.PageResult;
 
 public interface NoticeService {
-    void createNotice(Notice n);
+    void createNotice(Notice n); //TODO:发送通知
     Boolean updateIfRead(long nid);
     PageResult getNoticeToUser(NoticePageQueryDTO pageQueryDTO);
     PageResult getNoticeToManager(NoticeToManagerPageQueryDTO pageQueryDTO);
