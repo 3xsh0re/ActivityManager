@@ -28,10 +28,7 @@ public class ResourceServiceImpl implements ResourceService {
     ActivityMapper activityMapper;
 
     protected static boolean isTimeConflict(Date activityBegin, Date activityEnd, Date specifiedBegin, Date specifiedEnd) {
-        return (activityBegin.before(specifiedEnd) && activityEnd.after(specifiedBegin)) ||
-                (activityBegin.after(specifiedBegin) && activityBegin.before(specifiedEnd)) ||
-                (activityEnd.after(specifiedBegin) && activityEnd.before(specifiedEnd)) ||
-                (activityBegin.before(specifiedBegin) && activityEnd.after(specifiedEnd));
+        return !((activityBegin.after(specifiedEnd)) || activityEnd.before(specifiedBegin));
     }
     protected static void mergeResources(JSONObject total, JSONObject toAdd) {
         if (toAdd != null)
