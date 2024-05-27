@@ -150,44 +150,46 @@
     <update id="updateActivityResource">
         UPDATE Activity
         SET resource = CASE
-           WHEN JSON_CONTAINS_PATH(resource, 'one', #{resourceName}) THEN
+           WHEN JSON_CONTAINS_PATH(resource, 'one', concat('$."',#{resourceName},'"')) THEN
                JSON_SET(resource, #{resourceName}, JSON_EXTRACT(resource, #{resourceName}) + #{quantity})
            ELSE
-               JSON_INSERT(resource, #{resourceName}, #{quantity})
+               JSON_MERGE_PATCH(IFNULL(resource , '{}'), JSON_OBJECT(#{resourceName}, #{quantity}))
         END
         WHERE id = #{aid};
     </update>
 
     <select id="getUserRole">
-        select JSON_UNQUOTE(JSON_EXTRACT(userList, #{uid})) AS key1_value from Activity where id = #{aid};
+        select JSON_UNQUOTE(JSON_EXTRACT(userList, CONCAT('$."', #{uid}, '"'))) AS key1_value from Activity where id = #{aid}
     </select>
 
     <update id="updateUserRole">
         UPDATE Activity
-        SET userList = JSON_SET(userList, #{uid}, #{role})
+        SET userList = JSON_SET(userList, CONCAT('$."', #{uid}, '"'), #{role})
         WHERE id = #{aid};
     </update>
 
     <select id="getRoleNum">
-        select IFNULL(JSON_UNQUOTE(JSON_EXTRACT(roleList, #{role})), 0) AS key1_value
+        select IFNULL(JSON_UNQUOTE(JSON_EXTRACT(roleList, CONCAT('$."', #{role}, '"'))), 0) AS key1_value
         from Activity
         where id = #{aid};
     </select>
 
     <update id="updateRoleList">
         UPDATE Activity
-        SET roleList = JSON_MERGE_PATCH(roleList, JSON_OBJECT(#{role}, #{quantity}))
+        SET roleList = JSON_MERGE_PATCH(
+            IFNULL(roleList , '{}'), JSON_OBJECT(#{role}, #{quantity}))
         WHERE id = #{aid};
     </update>
 
     <update id="updateUserGroup">
         UPDATE Activity
-        SET roleList = JSON_MERGE_PATCH(userGroup, JSON_OBJECT(#{uid}, #{group}))
+        SET userGroup = JSON_MERGE_PATCH(
+            IFNULL(userGroup , '{}'), JSON_OBJECT(CAST(#{uid} as CHAR), #{group}))
         WHERE id = #{aid};
     </update>
 
     <select id="checkUserExist">
-        SELECT JSON_CONTAINS_PATH(userList, 'one', #{uid}) AS containsUid
+        SELECT JSON_CONTAINS_PATH(userList, 'one', CONCAT('$."', #{uid}, '"')) AS containsUid
         FROM Activity
         WHERE id = #{aid};
     </select>
