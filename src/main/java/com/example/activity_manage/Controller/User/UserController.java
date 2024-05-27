@@ -3,6 +3,7 @@ package com.example.activity_manage.Controller.User;
 
 import com.example.activity_manage.Constant.MessageConstant;
 import com.example.activity_manage.Entity.DTO.NoticePageQueryDTO;
+import com.example.activity_manage.Entity.DTO.NoticeToManagerPageQueryDTO;
 import com.example.activity_manage.Entity.DTO.ResetPwdDTO;
 import com.example.activity_manage.Entity.DTO.UserLoginDTO;
 import com.example.activity_manage.Entity.User;
@@ -124,6 +125,11 @@ public class UserController {
     @GetMapping("/openNotice")
     public Result<Boolean> openNotice(@RequestParam("nid") long nid){
         return Result.success(noticeService.updateIfRead(nid));
+    }
+
+    @PostMapping("/getNoticeToManager")
+    public Result<PageResult> getNoticeToManager(@RequestBody NoticeToManagerPageQueryDTO pageQueryDTO){
+        return Result.success(noticeService.getNoticeToManager(pageQueryDTO));
     }
 
 }

@@ -10,7 +10,18 @@
         select id,type,sendUid,content,ifRead
         from Notice where receiveUid = #{uid}
     </select>
+    <select id="getActivityNotice" resultType="com.example.activity_manage.Entity.Notice">
+        select * from Notice where aid = #{aid}
+    </select>
     <update id="updateIfRead">
         update Notice set ifRead = 1 where id = #{nid};
     </update>
+    <select id="getReadCount">
+        select COUNT(id)
+        from Notice where groupId = #{groupId} and ifRead = 1;
+    </select>
+    <select id="getSendCount">
+        select COUNT(id)
+        from Notice where groupId = #{groupId};
+    </select>
 </mapper>
