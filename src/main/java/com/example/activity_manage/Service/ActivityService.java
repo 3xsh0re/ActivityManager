@@ -21,6 +21,7 @@ public interface ActivityService {
     void setBudget(long uid,long aid,int budget);
     Integer getBudget(long aid, long uid);
     void joinAct(long uid,long aid, String reason);
+    boolean checkApplication(long uid,long aid, long unCheckedId,boolean result);
     PageResult pageQueryBaseActInfoVO(BasePageQueryDTO basePageQueryDTO);
     PageResult pageQueryUnCheckedUser(ActivityPageQueryDTO pageQueryDTO);
     Boolean setParticipantRole(ActivitySetParticipantRoleDTO activitySetParticipantRoleDTO); // 设置活动参与者分组, 输入为: 管理者, 活动, 参与者

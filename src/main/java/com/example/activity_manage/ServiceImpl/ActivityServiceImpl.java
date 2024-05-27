@@ -4,6 +4,7 @@ import ch.qos.logback.core.joran.sanity.Pair;
 import com.example.activity_manage.Constant.MessageConstant;
 import com.example.activity_manage.Entity.Activity;
 import com.example.activity_manage.Entity.DTO.*;
+import com.example.activity_manage.Entity.Notice;
 import com.example.activity_manage.Entity.VO.ActInfoToAllVO;
 import com.example.activity_manage.Entity.VO.ActScheduleVO;
 import com.example.activity_manage.Entity.VO.BaseActInfoVO;
@@ -12,6 +13,7 @@ import com.example.activity_manage.Exception.ActivityException;
 import com.example.activity_manage.Exception.LoginRegisterException;
 import com.example.activity_manage.Exception.PageNotFoundException;
 import com.example.activity_manage.Mapper.ActivityMapper;
+import com.example.activity_manage.Mapper.NoticeMapper;
 import com.example.activity_manage.Mapper.UserMapper;
 import com.example.activity_manage.Result.PageResult;
 import com.example.activity_manage.Service.ActivityService;
@@ -30,6 +32,9 @@ public class ActivityServiceImpl implements ActivityService {
     ActivityMapper activityMapper;
     @Autowired
     UserMapper userMapper;
+    @Autowired
+    NoticeMapper noticeMapper;
+
     @Override
     public Boolean ActivityCreate(ActivityCreateDTO activityCreateDTO)
     {
@@ -58,10 +63,11 @@ public class ActivityServiceImpl implements ActivityService {
                 }
             }
         }
-        // 设定活动的第一个用户：组织者
+        // 设定活动的组织者
         JSONObject userList = new JSONObject();
         userList.put(Long.toString(activityCreateDTO.getUid()), "组织者");
         activityCreateDTO.setUserList(userList);
+
         // 创建活动,直接将activityCreateDTO传入即可
         activityMapper.activityCreate(activityCreateDTO);
         // 更新User表中字段
@@ -206,6 +212,41 @@ public class ActivityServiceImpl implements ActivityService {
             uCActList.put(Long.toString(uid),reason);
             activityMapper.updateUnCheckedUserList(aid,uCActList);
         }
+    }
+
+    // 审核用户申请
+    @Override
+    public boolean checkApplication(long uid, long aid, long unCheckedId,boolean result) {
+        // 审核通过
+        if (result){
+            // 更新Activity表
+            // 将新增的用户设为普通参与者
+            ActivitySetParticipantRoleDTO roleDTO = new ActivitySetParticipantRoleDTO(uid,aid,unCheckedId,"普通参与者");
+            setParticipantRole(roleDTO);
+        }
+        JSONObject jsonObject = activityMapper.getUnCheckedUserList(aid);
+        JSONObject unCheckedUserList = (JSONObject) jsonObject.get("unCheckedUserList");
+        // Activity删除审核过的用户
+        unCheckedUserList.remove(Long.toString(unCheckedId));
+        activityMapper.updateUnCheckedUserList(aid,unCheckedUserList);
+        // User删除审核过的活动
+        JSONObject jsonObject2 = userMapper.getWantJoinActList(unCheckedId);
+        JSONObject wantJoinActList = (JSONObject) jsonObject2.get("wantJoinActList");
+        wantJoinActList.remove(Long.toString(aid));
+        userMapper.updateWantJoinActList(unCheckedId,wantJoinActList);
+        // 发送通知,返回给用户审核结果
+        Notice notice = new Notice();
+        notice.setAid(aid);
+        notice.setType(0);
+        notice.setSendUid(uid);
+        notice.setReceiveUid(unCheckedId);
+        if (result) {
+            notice.setContent("审核通过");
+        } else {
+            notice.setContent("审核不通过");
+        }
+        noticeMapper.createNotice(notice);
+        return true;
     }
 
     //分页查询返回活动

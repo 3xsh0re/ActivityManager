@@ -93,9 +93,7 @@ public class ActivityController {
 
     // 审核活动参与申请
     @GetMapping("/CheckApplication")
-    public Result<Boolean> checkApplication(@RequestParam("uid") long uid,@RequestParam("aid") long aid, @RequestParam("result") boolean result){
-        return Result.success();
+    public Result<Boolean> checkApplication(@RequestParam("uid") long uid,@RequestParam("aid") long aid, @RequestParam("unCheckedId") long unCheckedId,@RequestParam("result") boolean result){
+        return Result.success(activityService.checkApplication(uid, aid, unCheckedId, result));
     }
-    // TODO:组织者审核申请
-
 }

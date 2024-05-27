@@ -1,5 +1,6 @@
 package com.example.activity_manage.Entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import net.minidev.json.JSONObject;
@@ -7,6 +8,7 @@ import net.minidev.json.JSONObject;
 import java.util.Date;
 
 @Data
+@AllArgsConstructor
 @NoArgsConstructor
 public class Activity {
     private long id;
