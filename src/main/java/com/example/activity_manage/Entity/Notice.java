@@ -13,4 +13,5 @@ public class Notice {
     private long sendUid;
     private long receiveUid;
     private String content;
+    private boolean ifRead;
 }
