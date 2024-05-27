@@ -61,8 +61,9 @@ public class ResourceServiceImpl implements ResourceService {
         long AID = resourceReservationDTO.getAid();
         String resourceName = resourceReservationDTO.getResource();
         int quantityNeed = resourceReservationDTO.getQuantity();
-        Date beginTime = resourceReservationDTO.getBeginTime();
-        Date endTime   = resourceReservationDTO.getEndTime();
+        Activity nowActivity = activityMapper.getActInfoToOrganizer(AID);
+        Date beginTime = nowActivity.getBeginTime();
+        Date endTime   = nowActivity.getEndTime();
         List<Activity> actList = activityMapper.getAllAct();
         // 计算在指定时间段内已经被占用的资源
         JSONObject totalResourceUsage = checkActivityConflicts(actList, beginTime, endTime);

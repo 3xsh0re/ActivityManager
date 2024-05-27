@@ -5,8 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
-
 @Data
 @Builder
 @NoArgsConstructor
@@ -16,6 +14,4 @@ public class ResourceReservationDTO {
     private long aid; // 申请活动的AID
     private String resource; // 资源名称
     private int quantity; //资源数量
-    private Date beginTime;
-    private Date endTime;
 }
