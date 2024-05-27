@@ -130,7 +130,7 @@
     <select id="pageQueryBaseActInfoVO" resultType="com.example.activity_manage.Entity.VO.BaseActInfoVO" >
         select id, actName, beginTime, endTime,
                actDescription, status, place
-        from Activity order by beginTime desc
+        from Activity
     </select>
     
     <select id="getMaxId">

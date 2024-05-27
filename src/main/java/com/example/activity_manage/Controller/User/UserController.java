@@ -2,12 +2,15 @@ package com.example.activity_manage.Controller.User;
 
 
 import com.example.activity_manage.Constant.MessageConstant;
+import com.example.activity_manage.Entity.DTO.NoticePageQueryDTO;
 import com.example.activity_manage.Entity.DTO.ResetPwdDTO;
 import com.example.activity_manage.Entity.DTO.UserLoginDTO;
 import com.example.activity_manage.Entity.User;
 import com.example.activity_manage.Entity.VO.UserLoginVO;
 import com.example.activity_manage.Exception.LoginRegisterException;
+import com.example.activity_manage.Result.PageResult;
 import com.example.activity_manage.Result.Result;
+import com.example.activity_manage.Service.NoticeService;
 import com.example.activity_manage.Utils.CaptchaUtil;
 import com.example.activity_manage.Service.UserService;
 import com.example.activity_manage.Utils.JwtUtil;
@@ -32,6 +35,8 @@ public class UserController {
     }
     @Autowired
     UserService userService;
+    @Autowired
+    NoticeService noticeService;
     @Autowired
     CaptchaUtil captchaUtil;
     @Autowired
@@ -108,6 +113,17 @@ public class UserController {
     public Result<Boolean> resetPasswd(@RequestBody ResetPwdDTO resetPwdDTO)
     {
         return Result.success(userService.ResetPwd(resetPwdDTO));
+    }
+
+    @PostMapping("/getNoticeToUser")
+    public Result<PageResult> getNoticeToUser(@RequestBody NoticePageQueryDTO pageQueryDTO)
+    {
+        return Result.success(noticeService.getNoticeToUser(pageQueryDTO));
+    }
+
+    @GetMapping("/openNotice")
+    public Result<Boolean> openNotice(@RequestParam("nid") long nid){
+        return Result.success(noticeService.updateIfRead(nid));
     }
 
 }

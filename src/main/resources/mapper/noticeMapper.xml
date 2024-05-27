@@ -6,4 +6,11 @@
         insert into Notice(aid, type, sendUid, content, receiveUid, ifRead)
         VALUES (#{aid},#{type},#{sendUid},#{content},#{receiveUid},0)
     </insert>
+    <select id="getNoticeToUser" resultType="com.example.activity_manage.Entity.Notice">
+        select id,type,sendUid,content,ifRead
+        from Notice where receiveUid = #{uid}
+    </select>
+    <update id="updateIfRead">
+        update Notice set ifRead = 1 where id = #{nid};
+    </update>
 </mapper>
