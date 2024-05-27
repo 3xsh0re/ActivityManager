@@ -151,7 +151,7 @@
         UPDATE Activity
         SET resource = CASE
            WHEN JSON_CONTAINS_PATH(resource, 'one', concat('$."',#{resourceName},'"')) THEN
-               JSON_SET(resource, #{resourceName}, JSON_EXTRACT(resource, #{resourceName}) + #{quantity})
+               JSON_SET(resource, concat('$."',#{resourceName},'"'), JSON_EXTRACT(resource, concat('$."',#{resourceName},'"')) + #{quantity})
            ELSE
                JSON_MERGE_PATCH(IFNULL(resource , '{}'), JSON_OBJECT(#{resourceName}, #{quantity}))
         END
