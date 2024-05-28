@@ -55,7 +55,7 @@ public class UserController {
         claims.put("id", user.getId());
         claims.put("username", user.getUsername());
         String token = JwtUtil.createJWT(
-                "123456",
+                MessageConstant.JWT_SECRET_KET,
                 60 * 60 * 24 * 3,
                 claims);
         UserLoginVO userLoginVO = UserLoginVO.builder()
@@ -67,8 +67,9 @@ public class UserController {
         userMap.put("username", user.getUsername());
         userMap.put("phoneNumber", user.getPhoneNumber());
         userMap.put("email", user.getEmail());
-        userMap.put("actList", user.getActList());
-        redisUtil.hmset("TOKEN_" + token, userMap ,60*60*24*5);
+        userMap.put("role", user.getRole());
+        userMap.put("token",token);
+        redisUtil.hmset("TOKEN_" + user.getId(), userMap ,60*60*24*3);
 
         return Result.success(userLoginVO);
     }
