@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class NoticePageQueryDTO extends BasePageQueryDTO{
+public class NoticePageQueryDTO {
     private long uid;
+    private int page;
+    private int  pageSize;
 }
