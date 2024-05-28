@@ -17,6 +17,7 @@ public class MessageConstant {
     public static final String SYSTEM_BUSY = "系统繁忙,请稍后重试";
     public static final String ALREADY_EXISTS = "已存在";
     public static final String PAGE_NOT_FOUND = "页面不存在";
+    public static final String NOT_ILLEGAL_INPUT = "不合法的输入参数";
     // 活动类
     public static final String ACTIVITY_TIME_CONFLICT = "活动时间冲突";
     public static final String ACTIVITY_NOT_EXIST = "此活动不存在";

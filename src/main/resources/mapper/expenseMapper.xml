@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.activity_manage.Mapper.ExpenseMapper">
+    <insert id="addNewExpense" parameterType="com.example.activity_manage.Entity.Expense">
+        insert into Expense (uid, aid, cost, content,status)
+        values (#{uid},#{aid},#{cost},#{content},0);
+    </insert>
+    <select id="getExpense" resultType="com.example.activity_manage.Entity.UploadFile">
+        select *
+        from ActFile where aid =#{aid};
+    </select>
+    <update id="checkExpense">
+        update Expense
+        set status = #{status}
+        where id=#{eid};
+    </update>
+</mapper>

@@ -96,4 +96,6 @@ public class ActivityController {
     public Result<Boolean> checkApplication(@RequestParam("uid") long uid,@RequestParam("aid") long aid, @RequestParam("unCheckedId") long unCheckedId,@RequestParam("result") boolean result){
         return Result.success(activityService.checkApplication(uid, aid, unCheckedId, result));
     }
+
+
 }
