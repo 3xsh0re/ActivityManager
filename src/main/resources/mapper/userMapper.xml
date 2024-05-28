@@ -58,4 +58,9 @@
         select phoneNumber
         from User where id = #{uid};
     </select>
+
+    <select id="getUserInfo" resultType="com.example.activity_manage.Entity.VO.UserInfoVO">
+        select id,username,phoneNumber,email,role
+        from User where id = #{uid};
+    </select>
 </mapper>

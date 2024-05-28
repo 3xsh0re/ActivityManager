@@ -7,6 +7,7 @@ import com.example.activity_manage.Entity.DTO.NoticeToManagerPageQueryDTO;
 import com.example.activity_manage.Entity.DTO.ResetPwdDTO;
 import com.example.activity_manage.Entity.DTO.UserLoginDTO;
 import com.example.activity_manage.Entity.User;
+import com.example.activity_manage.Entity.VO.UserInfoVO;
 import com.example.activity_manage.Entity.VO.UserLoginVO;
 import com.example.activity_manage.Exception.LoginRegisterException;
 import com.example.activity_manage.Result.PageResult;
@@ -130,6 +131,11 @@ public class UserController {
     @PostMapping("/getNoticeToManager")
     public Result<PageResult> getNoticeToManager(@RequestBody NoticeToManagerPageQueryDTO pageQueryDTO){
         return Result.success(noticeService.getNoticeToManager(pageQueryDTO));
+    }
+
+    @GetMapping("/getUserInfoByUid")
+    public Result<UserInfoVO> getUserInfo(@RequestParam("uid") long uid){
+        return Result.success(userService.getUserInfo(uid));
     }
 
 }

@@ -2,6 +2,7 @@ package com.example.activity_manage.Mapper;
 
 import com.example.activity_manage.Entity.User;
 import com.example.activity_manage.Entity.VO.GetUserVO;
+import com.example.activity_manage.Entity.VO.UserInfoVO;
 import com.github.pagehelper.Page;
 import net.minidev.json.JSONObject;
 import org.apache.ibatis.annotations.Mapper;
@@ -11,6 +12,9 @@ import org.apache.ibatis.annotations.Mapper;
 public interface UserMapper {
     // 添加用户
     void insertUser(User user);
+    // 返回用户信息
+    UserInfoVO getUserInfo(long uid);
+
     // 查找用户
     User selectUserByPhone(String phoneNumber);
     String getPhoneByUid(long uid);
