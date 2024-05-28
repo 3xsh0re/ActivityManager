@@ -1,17 +1,15 @@
-package com.example.activity_manage.Entity;
+package com.example.activity_manage.Entity.DTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Expense { // 报销单类
-    private long id;
-    private long uid;
+public class CheckExpenseDTO {
     private long aid;
-    private double cost;
-    private String content;
+    private long uid;
+    private long eid;
     private int status;
+    private String comment;
 }

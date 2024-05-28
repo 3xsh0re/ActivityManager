@@ -14,5 +14,5 @@ public class Notice {
     private long receiveUid;
     private String content;
     private boolean ifRead;
-    private long groupId; //记录消息发送的组,如果同时发送的消息为同一组,设为第一个Notice的id,主要是解决通知多发的情况
+    private String groupId; //记录消息发送的组,设置为当前时间hash(调用JwtUtil.getNowTimeHash()),主要是解决通知多发的情况
 }

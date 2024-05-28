@@ -195,4 +195,9 @@
         WHERE id = #{aid};
     </select>
 
+    <select id="getActNameByAid">
+        select actName
+        from Activity where id = #{aid};
+    </select>
+
 </mapper>

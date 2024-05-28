@@ -17,6 +17,7 @@ import com.example.activity_manage.Mapper.NoticeMapper;
 import com.example.activity_manage.Mapper.UserMapper;
 import com.example.activity_manage.Result.PageResult;
 import com.example.activity_manage.Service.ActivityService;
+import com.example.activity_manage.Utils.JwtUtil;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import net.minidev.json.JSONObject;
@@ -245,6 +246,7 @@ public class ActivityServiceImpl implements ActivityService {
         } else {
             notice.setContent("审核不通过");
         }
+        notice.setGroupId(JwtUtil.getNowTimeHash());
         noticeMapper.createNotice(notice);
         return true;
     }

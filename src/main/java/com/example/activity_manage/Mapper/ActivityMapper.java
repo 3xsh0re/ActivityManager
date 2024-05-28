@@ -18,6 +18,7 @@ import java.util.List;
 public interface ActivityMapper {
     Pair<Timestamp,Timestamp> activityDateGet(long aid);
     void activityCreate(ActivityCreateDTO activity);
+    String getActNameByAid(long aid);
     long getUidByAid(long aid);
     Activity getActInfoToOrganizer(long aid);
     List<Activity> getAllAct();

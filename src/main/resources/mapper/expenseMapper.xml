@@ -4,15 +4,23 @@
 <mapper namespace="com.example.activity_manage.Mapper.ExpenseMapper">
     <insert id="addNewExpense" parameterType="com.example.activity_manage.Entity.Expense">
         insert into Expense (uid, aid, cost, content,status)
-        values (#{uid},#{aid},#{cost},#{content},0);
+        values (#{uid},#{aid},#{cost},#{content},0)
     </insert>
-    <select id="getExpense" resultType="com.example.activity_manage.Entity.UploadFile">
+    <select id="getExpenseListToManger" resultType="com.example.activity_manage.Entity.Expense">
         select *
-        from ActFile where aid =#{aid};
+        from Expense where aid =#{aid}
+    </select>
+    <select id="getExpenseListToUser" resultType="com.example.activity_manage.Entity.Expense">
+        select *
+        from Expense where uid =#{uid}
+    </select>
+    <select id="getExpenseByEid" resultType="com.example.activity_manage.Entity.Expense">
+        select *
+        from Expense where id = #{eid}
     </select>
     <update id="checkExpense">
         update Expense
         set status = #{status}
-        where id=#{eid};
+        where id=#{eid}
     </update>
 </mapper>

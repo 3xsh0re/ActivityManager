@@ -2,9 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.example.activity_manage.Mapper.NoticeMapper">
-    <insert id="createNotice">
-        insert into Notice(aid, type, sendUid, content, receiveUid, ifRead)
-        VALUES (#{aid},#{type},#{sendUid},#{content},#{receiveUid},0)
+    <insert id="createNotice" parameterType="com.example.activity_manage.Entity.Notice">
+        insert into Notice(aid, type, sendUid, content, receiveUid, ifRead, groupId)
+        VALUES (#{aid},#{type},#{sendUid},#{content},#{receiveUid},0,#{groupId})
     </insert>
     <select id="getNoticeToUser" resultType="com.example.activity_manage.Entity.Notice">
         select id,type,sendUid,content,ifRead

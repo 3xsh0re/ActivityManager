@@ -1,5 +1,8 @@
 package com.example.activity_manage.Controller.Expense;
 
+import com.example.activity_manage.Entity.DTO.CheckExpenseDTO;
+import com.example.activity_manage.Entity.DTO.ExpensePageToManagerQueryDTO;
+import com.example.activity_manage.Entity.DTO.ExpensePageToUserQueryDTO;
 import com.example.activity_manage.Entity.Expense;
 import com.example.activity_manage.Result.PageResult;
 import com.example.activity_manage.Result.Result;
@@ -18,14 +21,20 @@ public class ExpenseController {
         return Result.success(expenseService.commitExpense(expense));
     }
     // 组织者或者有审核权限的用户可以审核某个报销单
-    @GetMapping("/checkExpense")
-    Result<Boolean> checkExpense(@RequestParam("aid") long aid,@RequestParam("uid") long uid,@RequestParam("eid") long eid,@RequestParam("status") int status,@RequestParam("comment") String comment)
+    @PostMapping("/checkExpense")
+    Result<Boolean> checkExpense(@RequestBody CheckExpenseDTO checkExpenseDTO)
     {
-        return Result.success(expenseService.checkCommitExpense(aid, uid, eid, status,comment));
+        return Result.success(expenseService.checkCommitExpense(checkExpenseDTO));
     }
     // 审核员获取报销单的列表
-    Result<PageResult> getExpenseList(@RequestParam("aid") long aid,@RequestParam("uid") long uid){
-        return Result.success();
+    @PostMapping("/getExpenseListToManager")
+    Result<PageResult> getExpenseListToManager(@RequestBody ExpensePageToManagerQueryDTO queryDTO){
+        return Result.success(expenseService.getExpenseListToManager(queryDTO));
     }
 
+    // 所有用户获取自己提交的报销单列表
+    @PostMapping("/getExpenseListToUser")
+    Result<PageResult> getExpenseListToUser(@RequestBody ExpensePageToUserQueryDTO pageToUserQueryDTO){
+        return Result.success(expenseService.getExpenseListToUser(pageToUserQueryDTO));
+    }
 }
