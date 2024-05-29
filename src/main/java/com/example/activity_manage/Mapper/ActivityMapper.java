@@ -46,4 +46,5 @@ public interface ActivityMapper {
     void updateUserGroup(long aid, long uid, String group); // 更新用户分组
     void insertMessage(long aid, String timestamp, String message); // 发送消息
     Boolean checkUserInActivity(long aid, long uid); // 检查用户UID是否存在于指定活动中
+    List<JSONObject> getAllMessage(long aid); // 获取活动全部消息记录
 }

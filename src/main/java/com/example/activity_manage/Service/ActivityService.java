@@ -6,6 +6,7 @@ import com.example.activity_manage.Entity.DTO.*;
 import com.example.activity_manage.Entity.VO.ActInfoToAllVO;
 import com.example.activity_manage.Entity.VO.ActScheduleVO;
 import com.example.activity_manage.Result.PageResult;
+import net.minidev.json.JSONObject;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -27,4 +28,5 @@ public interface ActivityService {
     Boolean setParticipantRole(ActivitySetParticipantRoleDTO activitySetParticipantRoleDTO); // 设置活动参与者分组, 输入为: 管理者, 活动, 参与者
     Boolean serParticipantGroup(ActivitySetParticipantGroupDTO activitySetParticipantGroupDTO); // 设置分组
     Boolean participantInteractiveSend(ActivityParticipantInteractiveSendDTO activityParticipantInteractiveSendDTO); // 发送消息
+    List<JSONObject> participantInteractiveReceive(ActivityParticipantInteractiveReceiveDTO activityParticipantInteractiveReceiveDTO); // 接收全部消息
 }
