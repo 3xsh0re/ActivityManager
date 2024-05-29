@@ -26,4 +26,5 @@ public interface ActivityService {
     PageResult pageQueryUnCheckedUser(ActivityPageQueryDTO pageQueryDTO);
     Boolean setParticipantRole(ActivitySetParticipantRoleDTO activitySetParticipantRoleDTO); // 设置活动参与者分组, 输入为: 管理者, 活动, 参与者
     Boolean serParticipantGroup(ActivitySetParticipantGroupDTO activitySetParticipantGroupDTO); // 设置分组
+    Boolean participantInteractiveSend(ActivityParticipantInteractiveSendDTO activityParticipantInteractiveSendDTO); // 发送消息
 }

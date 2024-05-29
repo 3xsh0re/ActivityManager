@@ -44,4 +44,6 @@ public interface ActivityMapper {
     int getRoleNum(long aid, String role); // 获取role的数量
     void updateRoleList(long aid, String role, int quantity); // 更新roleList对应的数量
     void updateUserGroup(long aid, long uid, String group); // 更新用户分组
+    void insertMessage(long aid, String timestamp, String message); // 发送消息
+    Boolean checkUserInActivity(long aid, long uid); // 检查用户UID是否存在于指定活动中
 }

@@ -103,4 +103,9 @@ public class ActivityController {
         return Result.success(activityService.setRankForAct(uid,aid,rank));
     }
 
+    @PostMapping("/participantInteractiveSend")
+    public Result<Boolean> participantInteractiveSend((@RequestBody ActivityParticipantInteractiveSendDTO activityParticipantInteractiveSendDTO)
+    {
+        return Result.success(activityService.participantInteractiveSend(activityParticipantInteractiveSendDTO));
+    }
 }
