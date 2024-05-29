@@ -32,6 +32,8 @@ public interface ActivityMapper {
     void deleteActivity(long aid);
     void setBudget(long aid,int budget);
     int getBudget(long aid);
+    void setRankForAct(long aid, JSONObject rankList, double score);// 为活动评分
+    JSONObject getRankList(long aid);
     void updateUnCheckedUserList(long aid,JSONObject unCheckedUserList);
     JSONObject getUnCheckedUserList(long aid);
     Page<BaseActInfoVO>  pageQueryBaseActInfoVO(BasePageQueryDTO basePageQueryDTO);

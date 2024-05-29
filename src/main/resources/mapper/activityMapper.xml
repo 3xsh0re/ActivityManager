@@ -47,6 +47,9 @@
     <resultMap id="userListResultMap" type="net.minidev.json.JSONObject">
         <result column="userList" jdbcType="OTHER" property="userList" javaType="net.minidev.json.JSONObject" typeHandler="com.example.activity_manage.Handler.JsonTypeHandler"/>
     </resultMap>
+    <resultMap id="rankListResultMap" type="net.minidev.json.JSONObject">
+        <result column="rankList" jdbcType="OTHER" property="rankList" javaType="net.minidev.json.JSONObject" typeHandler="com.example.activity_manage.Handler.JsonTypeHandler"/>
+    </resultMap>
 
     <resultMap id="unCheckedUserListResultMap" type="net.minidev.json.JSONObject">
         <result column="unCheckedUserList" jdbcType="OTHER" property="unCheckedUserList" javaType="net.minidev.json.JSONObject" typeHandler="com.example.activity_manage.Handler.JsonTypeHandler"/>
@@ -199,5 +202,21 @@
         select actName
         from Activity where id = #{aid};
     </select>
+
+    <update id="setRankForAct">
+        update Activity
+        set score = #{score},rankList = #{rankList, jdbcType=OTHER, typeHandler=com.example.activity_manage.Handler.JsonTypeHandler}
+        where id = #{aid};
+    </update>
+    <select id="getScore">
+        select score
+        from Activity where id = #{aid};
+    </select>
+    <select id="getRankList" resultMap="rankListResultMap">
+        select rankList
+        from Activity where id = #{aid};
+    </select>
+
+
 
 </mapper>

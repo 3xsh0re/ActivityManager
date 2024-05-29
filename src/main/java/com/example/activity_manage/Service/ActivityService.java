@@ -16,12 +16,12 @@ public interface ActivityService {
     Activity getActInfoToOrganizer(long uid,long aid); //面向组织者
     ActInfoToAllVO getActInfoToAll(long aid); //面向所有用户
     List<ActScheduleVO> getActSchedule(long uid); //获取某个用户的所有活动日程
-//    List<Activity> getAllActivity(); // 获取全部活动数据
     void deleteActivity(long uid,long aid);
     void setBudget(long uid,long aid,int budget);
     Integer getBudget(long aid, long uid);
     void joinAct(long uid,long aid, String reason);
     boolean checkApplication(long uid,long aid, long unCheckedId,boolean result);
+    boolean setRankForAct(long uid,long aid,double rank);
     PageResult pageQueryBaseActInfoVO(BasePageQueryDTO basePageQueryDTO);
     PageResult pageQueryUnCheckedUser(ActivityPageQueryDTO pageQueryDTO);
     Boolean setParticipantRole(ActivitySetParticipantRoleDTO activitySetParticipantRoleDTO); // 设置活动参与者分组, 输入为: 管理者, 活动, 参与者

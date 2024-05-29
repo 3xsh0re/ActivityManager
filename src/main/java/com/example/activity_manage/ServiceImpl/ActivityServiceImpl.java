@@ -251,6 +251,34 @@ public class ActivityServiceImpl implements ActivityService {
         return true;
     }
 
+    @Override
+    public boolean setRankForAct(long uid, long aid, double rank) {
+        String role = activityMapper.getUserRole(aid,uid);
+        if (role == null)
+        {
+            throw new ActivityException(MessageConstant.NOT_HAVE_THIS_PERMISSION);
+        }
+        JSONObject jsonObject = activityMapper.getRankList(aid);
+        if (jsonObject != null)
+        {
+            JSONObject rankList   = (JSONObject) jsonObject.get("rankList");
+            rankList.put(Long.toString(uid) , rank);
+            Set<String> keySet = rankList.keySet();
+            double score = 0;
+            int rankPeopleNum = rankList.size();
+            for (String key: keySet) {
+                score += (double) rankList.get(key);
+            }
+            activityMapper.setRankForAct(aid,rankList,score/rankPeopleNum);
+        }
+        else {
+            JSONObject rankList = new JSONObject();
+            rankList.put(Long.toString(uid) , rank);
+            activityMapper.setRankForAct(aid,rankList,rank);
+        }
+        return true;
+    }
+
     //分页查询返回活动
     public PageResult pageQueryBaseActInfoVO(BasePageQueryDTO basePageQueryDTO) {
         //开始分页查询

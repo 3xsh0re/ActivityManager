@@ -97,5 +97,10 @@ public class ActivityController {
         return Result.success(activityService.checkApplication(uid, aid, unCheckedId, result));
     }
 
+    // 用户为活动评分
+    @GetMapping("/setRankForAct")
+    public Result<Boolean> setRankForAct(@RequestParam("uid") long uid,@RequestParam long aid,@RequestParam double rank){
+        return Result.success(activityService.setRankForAct(uid,aid,rank));
+    }
 
 }
