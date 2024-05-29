@@ -369,7 +369,7 @@ public class ActivityServiceImpl implements ActivityService {
         if(activityMapper.checkUserInActivity(aid, uid)) // 只有该活动成员能够发送消息
         {
             String message = activityParticipantInteractiveSendDTO.getMessage();
-            message = Long.toString(uid) + ":" + message;
+            message = uid + ":" + message;
             String timestamp = Long.toString(System.currentTimeMillis());
             activityMapper.insertMessage(aid, timestamp, message);
             return true;
