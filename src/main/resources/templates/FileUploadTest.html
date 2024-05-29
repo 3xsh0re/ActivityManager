@@ -22,7 +22,7 @@
             formData.append("uid", uid); // 将 uid 添加到 FormData 中
 
             var request = new XMLHttpRequest();
-            request.open("POST", "http://127.0.0.1:18088/file/upload");
+            request.open("POST", "http://47.93.254.31:18088/file/upload");
             request.onreadystatechange = function() {
                 if (request.readyState === 4) {
                     if (request.status === 200) {
