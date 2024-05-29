@@ -225,12 +225,17 @@
         WHERE id = #{aid};
     </update>
 
-    <select id="checkUserInActivity">
+    <select id="checkUserInActivity" resultType="boolean">
         SELECT EXISTS (
             SELECT 1
             FROM Activity
-            WHERE JSON_CONTAINS_PATH(userList, 'one', CONCAT('$."', #{uid}, '"'))
+            WHERE id = #{aid}
+              AND JSON_CONTAINS_PATH(userList, 'one', CONCAT('$.', #{uid}))
         ) AS key_exists;
+    </select>
+
+    <select id="getAllMessage">
+        SELECT message FROM Activity WHERE id = #{aid};
     </select>
 
 </mapper>

@@ -376,4 +376,14 @@ public class ActivityServiceImpl implements ActivityService {
         }
         return false;
     }
+    public List<JSONObject> participantInteractiveReceive(ActivityParticipantInteractiveReceiveDTO activityParticipantInteractiveReceiveDTO)
+    {
+        long aid = activityParticipantInteractiveReceiveDTO.getAid();
+        long uid = activityParticipantInteractiveReceiveDTO.getUid();
+        if(activityMapper.checkUserInActivity(aid, uid)) {
+            return activityMapper.getAllMessage(aid);
+        }
+        return null;
+    }
+
 }
