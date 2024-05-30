@@ -180,12 +180,25 @@ public class ActivityServiceImpl implements ActivityService {
     @Override
     public void joinAct(long uid, long aid, String reason) {
         ActInfoToAllVO activity = activityMapper.getActInfoToAll(aid);
-        String  username = userMapper.getUsernameById(uid);
-        //TODO:需要添加判断当前参加活动是否和用户已经参加的活动冲突
-
         if (activity == null)
         {
             throw new ActivityException(MessageConstant.ACTIVITY_NOT_EXIST);
+        }
+        Date begin = activity.getBeginTime();
+        Date end   = activity.getEndTime();
+        String  username = userMapper.getUsernameById(uid);
+        // 判断当前参加活动是否和用户已经参加的活动冲突
+        JSONObject jsonObject = userMapper.getActList(uid);
+        JSONObject actList  = (JSONObject) jsonObject.get("actList");
+        Set<String> keys = actList.keySet();
+        for (String key:keys) {
+            Activity activity_Joined = activityMapper.getActInfoToOrganizer(Long.parseLong(key));
+            Date beginTime = activity_Joined.getBeginTime();
+            Date endTime   = activity_Joined.getEndTime();
+            // 判断时间是否冲突
+            if ( !(begin.after(endTime) || end.before(beginTime))){
+                throw new ActivityException(MessageConstant.ACTIVITY_TIME_CONFLICT + "\n发送冲突的活动为：" + activity_Joined.getActName());
+            }
         }
         if (username == null){
             throw new LoginRegisterException(MessageConstant.ACCOUNT_NOT_FOUND);
