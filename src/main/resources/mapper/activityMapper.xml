@@ -210,15 +210,34 @@
         set score = #{score},rankList = #{rankList, jdbcType=OTHER, typeHandler=com.example.activity_manage.Handler.JsonTypeHandler}
         where id = #{aid};
     </update>
+
     <select id="getScore">
         select score
         from Activity where id = #{aid};
     </select>
+
     <select id="getRankList" resultMap="rankListResultMap">
         select rankList
         from Activity where id = #{aid};
     </select>
 
+    <update id="insertMessage">
+        UPDATE Activity
+        SET message = JSON_MERGE_PATCH(IFNULL(message , '{}'), JSON_OBJECT(#{timestamp}, #{message}))
+        WHERE id = #{aid};
+    </update>
 
+    <select id="checkUserInActivity" resultType="boolean">
+        SELECT EXISTS (
+            SELECT 1
+            FROM Activity
+            WHERE id = #{aid}
+              AND JSON_CONTAINS_PATH(userList, 'one', CONCAT('$."', #{uid}, '"'))
+        ) AS key_exists;
+    </select>
+
+    <select id="getAllMessage">
+        SELECT message FROM Activity WHERE id = #{aid};
+    </select>
 
 </mapper>

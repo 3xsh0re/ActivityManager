@@ -365,4 +365,27 @@ public class ActivityServiceImpl implements ActivityService {
         }
         return false;
     }
+    public Boolean participantInteractiveSend(ActivityParticipantInteractiveSendDTO activityParticipantInteractiveSendDTO) {
+        long aid = activityParticipantInteractiveSendDTO.getAid();
+        long uid = activityParticipantInteractiveSendDTO.getUid();
+        if(activityMapper.checkUserInActivity(aid, uid)) // 只有该活动成员能够发送消息
+        {
+            String message = activityParticipantInteractiveSendDTO.getMessage();
+            message = uid + ":" + message;
+            String timestamp = Long.toString(System.currentTimeMillis());
+            activityMapper.insertMessage(aid, timestamp, message);
+            return true;
+        }
+        return false;
+    }
+    public List<JSONObject> participantInteractiveReceive(ActivityParticipantInteractiveReceiveDTO activityParticipantInteractiveReceiveDTO)
+    {
+        long aid = activityParticipantInteractiveReceiveDTO.getAid();
+        long uid = activityParticipantInteractiveReceiveDTO.getUid();
+        if(activityMapper.checkUserInActivity(aid, uid)) {
+            return activityMapper.getAllMessage(aid);
+        }
+        return null;
+    }
+
 }

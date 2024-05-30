@@ -8,6 +8,7 @@ import com.example.activity_manage.Entity.VO.ActScheduleVO;
 import com.example.activity_manage.Result.PageResult;
 import com.example.activity_manage.Result.Result;
 import com.example.activity_manage.Service.ActivityService;
+import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -103,4 +104,15 @@ public class ActivityController {
         return Result.success(activityService.setRankForAct(uid,aid,rank));
     }
 
+    @PostMapping("/participantInteractiveSend")
+    public Result<Boolean> participantInteractiveSend(@RequestBody ActivityParticipantInteractiveSendDTO activityParticipantInteractiveSendDTO)
+    {
+        return Result.success(activityService.participantInteractiveSend(activityParticipantInteractiveSendDTO));
+    }
+
+    @PostMapping("/participantInteractiveReceive")
+    public Result<List<JSONObject>> participantInteractiveReceive(@RequestBody ActivityParticipantInteractiveReceiveDTO activityParticipantInteractiveReceiveDTO)
+    {
+        return Result.success(activityService.participantInteractiveReceive(activityParticipantInteractiveReceiveDTO));
+    }
 }
