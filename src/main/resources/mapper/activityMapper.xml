@@ -154,13 +154,15 @@
     <update id="updateActivityResource">
         UPDATE Activity
         SET resource = CASE
-           WHEN JSON_CONTAINS_PATH(resource, 'one', concat('$."',#{resourceName},'"')) THEN
-               JSON_SET(resource, concat('$."',#{resourceName},'"'), JSON_EXTRACT(resource, concat('$."',#{resourceName},'"')) + #{quantity})
-           ELSE
-               JSON_MERGE_PATCH(IFNULL(resource , '{}'), JSON_OBJECT(#{resourceName}, #{quantity}))
-        END
+               WHEN JSON_CONTAINS_PATH(resource, 'one', concat('$."', #{resourceName}, '"')) THEN
+                   JSON_SET(resource,concat('$."', #{resourceName}, '"'),
+                           CAST(JSON_EXTRACT(resource, concat('$."', #{resourceName}, '"')) AS UNSIGNED) + CAST(#{quantity} AS UNSIGNED))
+               ELSE
+                   JSON_MERGE_PATCH(IFNULL(resource, '{}'),JSON_OBJECT(#{resourceName}, CAST(#{quantity} AS UNSIGNED)))
+            END
         WHERE id = #{aid};
     </update>
+
 
     <select id="getUserRole">
         select JSON_UNQUOTE(JSON_EXTRACT(userList, CONCAT('$."', #{uid}, '"'))) AS key1_value from Activity where id = #{aid}

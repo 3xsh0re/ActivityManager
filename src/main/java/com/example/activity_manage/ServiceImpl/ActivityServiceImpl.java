@@ -181,6 +181,8 @@ public class ActivityServiceImpl implements ActivityService {
     public void joinAct(long uid, long aid, String reason) {
         ActInfoToAllVO activity = activityMapper.getActInfoToAll(aid);
         String  username = userMapper.getUsernameById(uid);
+        //TODO:需要添加判断当前参加活动是否和用户已经参加的活动冲突
+
         if (activity == null)
         {
             throw new ActivityException(MessageConstant.ACTIVITY_NOT_EXIST);
