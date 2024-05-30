@@ -197,7 +197,7 @@ public class ActivityServiceImpl implements ActivityService {
             Date endTime   = activity_Joined.getEndTime();
             // 判断时间是否冲突
             if ( !(begin.after(endTime) || end.before(beginTime))){
-                throw new ActivityException(MessageConstant.ACTIVITY_TIME_CONFLICT + "\n发送冲突的活动为：" + activity_Joined.getActName());
+                throw new ActivityException(MessageConstant.ACTIVITY_TIME_CONFLICT + "\n发生冲突的活动为：" + activity_Joined.getActName());
             }
         }
         if (username == null){
@@ -227,6 +227,42 @@ public class ActivityServiceImpl implements ActivityService {
             JSONObject uCActList = (JSONObject) objectActivity.get("unCheckedUserList");
             uCActList.put(Long.toString(uid),reason);
             activityMapper.updateUnCheckedUserList(aid,uCActList);
+        }
+    }
+
+    @Override
+    public void exitAct(long uid, long aid) {
+        JSONObject json = userMapper.getWantJoinActList(uid);
+        JSONObject wtjList = (JSONObject) json.get("wantJoinActList");
+        if (wtjList.containsKey(Long.toString(aid)))
+        {
+            // 如果用户还未加入
+            userMapper.deleteActInWantJoinList(Long.toString(aid),uid);
+            activityMapper.deleteUserInUnCheckedList(aid,Long.toString(uid));
+        }
+        else {
+            // 如果用户已经加入,更新用户的参与活动列表已经活动中的用户表
+            JSONObject jsonObject = userMapper.getActList(uid);
+            JSONObject actList    = (JSONObject) jsonObject.get("actList");
+            JSONObject jsonObject1 = activityMapper.getUserList(aid);
+            JSONObject userList   = (JSONObject) jsonObject1.get("userList");
+            Set<String> keys = actList.keySet();
+            for (String key:keys) {
+                if (Long.toString(aid).equals(key)){
+                    // 对于用户表,更新actList即可
+                    actList.remove(key);
+                    // 对于活动表,需要更新userList,roleList,userGroup
+                    userList.remove(Long.toString(uid));
+                    String role = activityMapper.getUserRole(aid,uid);
+                    int num = activityMapper.getRoleNum(aid,role);
+
+                    userMapper.updateActList(uid,actList);
+                    activityMapper.updateRoleList(aid,role,num-1);
+                    activityMapper.deleteUserInGroup(aid,Long.toString(uid));
+                    activityMapper.updateUserList(aid,userList);
+                    return;
+                }
+            }
         }
     }
 

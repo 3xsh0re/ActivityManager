@@ -88,4 +88,10 @@ public class AdminServiceImpl implements AdminService {
         return activityMapper.checkActContent(aid,status,result);
     }
 
+    @Override
+    public Boolean deleteUser(long uid) {
+        userMapper.deleteUser(uid);
+        return true;
+    }
+
 }

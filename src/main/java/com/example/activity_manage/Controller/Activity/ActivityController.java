@@ -81,6 +81,13 @@ public class ActivityController {
         activityService.joinAct(uid, aid, reason);
         return Result.success();
     }
+    // 用户退出活动
+    @GetMapping("/exitActivity")
+    public Result<Boolean> exitAct(@RequestParam("uid") long uid,@RequestParam("aid") long aid){
+        activityService.exitAct(uid,aid);
+        return Result.success();
+    }
+
     // 分页返回用户申请活动请求
     @PostMapping("/GetUnCheckedUserList")
     public Result<PageResult> getUnCheckedUserList(@RequestBody ActivityPageQueryDTO pageQueryDTO){

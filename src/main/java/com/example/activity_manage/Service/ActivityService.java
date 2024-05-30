@@ -21,6 +21,7 @@ public interface ActivityService {
     void setBudget(long uid,long aid,int budget);
     Integer getBudget(long aid, long uid);
     void joinAct(long uid,long aid, String reason);
+    void exitAct(long uid,long aid);
     boolean checkApplication(long uid,long aid, long unCheckedId,boolean result);
     boolean setRankForAct(long uid,long aid,double rank);
     PageResult pageQueryBaseActInfoVO(BasePageQueryDTO basePageQueryDTO);

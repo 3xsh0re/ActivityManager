@@ -36,6 +36,9 @@ public interface ActivityMapper {
     void setRankForAct(long aid, JSONObject rankList, double score);// 为活动评分
     JSONObject getRankList(long aid);
     void updateUnCheckedUserList(long aid,JSONObject unCheckedUserList);
+    void deleteUserInUnCheckedList(long aid,String uid);
+    void updateUserList(long aid,JSONObject userList);
+    void deleteUserInGroup(long aid, String uid);
     JSONObject getUnCheckedUserList(long aid);
     Page<BaseActInfoVO>  pageQueryBaseActInfoVO(BasePageQueryDTO basePageQueryDTO);
     Page<ActInfoToManagerVO> pageQueryActInfoToAdmin(BasePageQueryDTO basePageQueryDTO);//分页返回给管理员的所有活动信息

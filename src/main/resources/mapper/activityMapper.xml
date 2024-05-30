@@ -140,10 +140,28 @@
         SELECT MAX(id) FROM Activity
     </select>
 
+    <update id="updateUserList">
+        update Activity
+        set userList = #{userList, jdbcType=OTHER, typeHandler=com.example.activity_manage.Handler.JsonTypeHandler}
+        where id = #{aid}
+    </update>
+
     <update id="updateUnCheckedUserList">
         update Activity
         set unCheckedUserList = #{unCheckedUserList, jdbcType=OTHER, typeHandler=com.example.activity_manage.Handler.JsonTypeHandler}
-        where id = #{aid};
+        where id = #{aid}
+    </update>
+
+    <update id="deleteUserInGroup">
+        UPDATE Activity
+        SET userGroup = JSON_REMOVE(userGroup, CONCAT('$."', #{uid},'"'))
+        WHERE id = #{aid};
+    </update>
+
+    <update id="deleteUserInUnCheckedList">
+        UPDATE Activity
+        SET unCheckedUserList = JSON_REMOVE(unCheckedUserList, CONCAT('$."', #{uid} , '"'))
+        WHERE id = #{aid};
     </update>
 
     <select id="pageQueryUnCheckedUser" resultMap="unCheckedUserListResultMap">

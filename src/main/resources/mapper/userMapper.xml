@@ -63,4 +63,14 @@
         select id,username,phoneNumber,email,role
         from User where id = #{uid};
     </select>
+
+    <delete id="deleteUser">
+        delete from User where id = #{uid}
+    </delete>
+
+    <update id="deleteActInWantJoinList">
+        UPDATE User
+        SET wantJoinActList = JSON_REMOVE(wantJoinActList, CONCAT('$.', #{aid}))
+        WHERE id = #{uid};
+    </update>
 </mapper>

@@ -22,6 +22,8 @@ public interface UserMapper {
     Page<GetUserVO> pageQueryAllUser();
     Page<String> pageQueryAllPhone();
     void setPwd(String passwd,String phoneNumber);
+    void deleteUser(long uid);
+    void deleteActInWantJoinList(String aid,long uid);
     String getUsernameById(long uid);
     JSONObject getActList(long uid);
     JSONObject getWantJoinActList(long uid);

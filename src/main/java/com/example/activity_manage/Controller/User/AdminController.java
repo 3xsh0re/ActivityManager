@@ -34,8 +34,8 @@ public class AdminController {
     }
     //删除用户
     @GetMapping("/deleteUser")
-    public Result<Boolean> deleteUser(@RequestParam("id") long uid, @RequestParam("deleteId") long deleteId){
-        return Result.success();
+    public Result<Boolean> deleteUser(@RequestParam("deleteId") long deleteId){
+        return Result.success(adminService.deleteUser(deleteId));
     }
 
 }
