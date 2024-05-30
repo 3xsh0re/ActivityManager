@@ -4,7 +4,7 @@ import ch.qos.logback.core.joran.sanity.Pair;
 import com.example.activity_manage.Entity.Activity;
 import com.example.activity_manage.Entity.DTO.ActivityCreateDTO;
 import com.example.activity_manage.Entity.DTO.BasePageQueryDTO;
-import com.example.activity_manage.Entity.VO.ActInfoToAdminVO;
+import com.example.activity_manage.Entity.VO.ActInfoToManagerVO;
 import com.example.activity_manage.Entity.VO.ActInfoToAllVO;
 import com.example.activity_manage.Entity.VO.BaseActInfoVO;
 import com.github.pagehelper.Page;
@@ -32,12 +32,13 @@ public interface ActivityMapper {
     void deleteActivity(long aid);
     void setBudget(long aid,int budget);
     int getBudget(long aid);
+    int getReQuantityByReName(long aid,String resourceName);
     void setRankForAct(long aid, JSONObject rankList, double score);// 为活动评分
     JSONObject getRankList(long aid);
     void updateUnCheckedUserList(long aid,JSONObject unCheckedUserList);
     JSONObject getUnCheckedUserList(long aid);
     Page<BaseActInfoVO>  pageQueryBaseActInfoVO(BasePageQueryDTO basePageQueryDTO);
-    Page<ActInfoToAdminVO> pageQueryActInfoToAdmin(BasePageQueryDTO basePageQueryDTO);//分页返回给管理员的所有活动信息
+    Page<ActInfoToManagerVO> pageQueryActInfoToAdmin(BasePageQueryDTO basePageQueryDTO);//分页返回给管理员的所有活动信息
     void updateActivityResource(long aid, String resourceName, int quantity); // 更新活动的资源
     String getUserRole(long aid, long  uid); // 获取活动里指定用户的角色
     void updateUserRole(long aid, long uid, String role); // 更新用户角色

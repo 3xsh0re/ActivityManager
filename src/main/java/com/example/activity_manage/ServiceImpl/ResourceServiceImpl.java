@@ -6,6 +6,7 @@ import com.example.activity_manage.Entity.DTO.BasePageQueryDTO;
 import com.example.activity_manage.Entity.DTO.ResourceAdditionDTO;
 import com.example.activity_manage.Entity.DTO.ResourceReservationDTO;
 import com.example.activity_manage.Entity.Resource;
+import com.example.activity_manage.Exception.ActivityException;
 import com.example.activity_manage.Exception.SystemException;
 import com.example.activity_manage.Mapper.ActivityMapper;
 import com.example.activity_manage.Mapper.ResourceMapper;
@@ -64,6 +65,10 @@ public class ResourceServiceImpl implements ResourceService {
     }
     @Transactional
     public Boolean resourceReservation(ResourceReservationDTO resourceReservationDTO) {
+        int quantityNeed = resourceReservationDTO.getQuantity();
+        if (quantityNeed < 0){
+            throw new ActivityException(MessageConstant.NOT_ILLEGAL_INPUT);
+        }
         long UID = resourceReservationDTO.getUid(); // 获取申请者UID, 鉴权, 只有活动创建者与活动管理员可以申请资源
         long AID = resourceReservationDTO.getAid();
         // redis锁：控制并发场景下资源预约
@@ -75,18 +80,14 @@ public class ResourceServiceImpl implements ResourceService {
             if (!lockAcquired) {
                 throw new SystemException(MessageConstant.SYSTEM_BUSY);
             }
-
             // 预约资源逻辑
             String resourceName = resourceReservationDTO.getResource();
-            int quantityNeed = resourceReservationDTO.getQuantity();
             Activity nowActivity = activityMapper.getActInfoToOrganizer(AID);
             Date beginTime = nowActivity.getBeginTime();
             Date endTime   = nowActivity.getEndTime();
             List<Activity> actList = activityMapper.getAllAct();
             // 计算在指定时间段内已经被占用的资源
             JSONObject totalResourceUsage = checkActivityConflicts(actList, beginTime, endTime);
-            // 打印总资源使用情况（调试用）
-            // System.out.println("总资源使用情况: " + totalResourceUsage.toString());
             // 获取操作者的角色
             String userRole = activityMapper.getUserRole(AID, UID);
             // 设置哪些角色有权限进行资源申请

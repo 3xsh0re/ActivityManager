@@ -95,7 +95,7 @@
         select * from Activity
     </select>
 
-    <select id="pageQueryActInfoToAdmin" resultType="com.example.activity_manage.Entity.VO.ActInfoToAdminVO">
+    <select id="pageQueryActInfoToAdmin" resultType="com.example.activity_manage.Entity.VO.ActInfoToManagerVO">
         select uid, actName, status, actDescription, beginTime,
                endTime, totalBudget, place, score
         from Activity order by beginTime desc
@@ -155,13 +155,15 @@
         UPDATE Activity
         SET resource = CASE
                WHEN JSON_CONTAINS_PATH(resource, 'one', concat('$."', #{resourceName}, '"')) THEN
-                   JSON_SET(resource,concat('$."', #{resourceName}, '"'),
-                           CAST(JSON_EXTRACT(resource, concat('$."', #{resourceName}, '"')) AS UNSIGNED) + CAST(#{quantity} AS UNSIGNED))
+                   JSON_SET(resource,concat('$."', #{resourceName}, '"'),CAST(#{quantity} AS UNSIGNED))
                ELSE
                    JSON_MERGE_PATCH(IFNULL(resource, '{}'),JSON_OBJECT(#{resourceName}, CAST(#{quantity} AS UNSIGNED)))
             END
         WHERE id = #{aid};
     </update>
+    <select id="getReQuantityByReName">
+        select JSON_UNQUOTE(JSON_EXTRACT(resource, CONCAT('$."', #{resourceName}, '"'))) AS key1_value from Activity where id = #{aid}
+    </select>
 
 
     <select id="getUserRole">

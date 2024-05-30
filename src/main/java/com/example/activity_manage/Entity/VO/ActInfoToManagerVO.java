@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import net.minidev.json.JSONObject;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -12,7 +11,7 @@ import java.util.Date;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ActInfoToAdminVO implements Serializable {
+public class ActInfoToManagerVO implements Serializable {
     private long uid; //组织者id
     private String username; //组织者姓名
     private String actName;

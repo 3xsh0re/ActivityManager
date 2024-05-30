@@ -2,8 +2,7 @@ package com.example.activity_manage.ServiceImpl;
 
 import com.example.activity_manage.Constant.MessageConstant;
 import com.example.activity_manage.Entity.DTO.BasePageQueryDTO;
-import com.example.activity_manage.Entity.VO.ActInfoToAdminVO;
-import com.example.activity_manage.Entity.VO.BaseActInfoVO;
+import com.example.activity_manage.Entity.VO.ActInfoToManagerVO;
 import com.example.activity_manage.Entity.VO.GetUserVO;
 import com.example.activity_manage.Exception.AdminException;
 import com.example.activity_manage.Exception.SystemException;
@@ -59,10 +58,10 @@ public class AdminServiceImpl implements AdminService {
         try {
             //开始分页查询
             PageHelper.startPage(basePageQueryDTO.getPage(), basePageQueryDTO.getPageSize());
-            Page<ActInfoToAdminVO> page = activityMapper.pageQueryActInfoToAdmin(basePageQueryDTO);
+            Page<ActInfoToManagerVO> page = activityMapper.pageQueryActInfoToAdmin(basePageQueryDTO);
             long total = page.getTotal();
-            List<ActInfoToAdminVO> records = page.getResult();
-            for (ActInfoToAdminVO act : records){
+            List<ActInfoToManagerVO> records = page.getResult();
+            for (ActInfoToManagerVO act : records){
                 act.setUsername(userMapper.getUsernameById(act.getUid()));
             }
             return new PageResult(total, records);
