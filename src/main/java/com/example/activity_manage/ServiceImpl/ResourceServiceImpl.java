@@ -71,8 +71,9 @@ public class ResourceServiceImpl implements ResourceService {
         }
         long UID = resourceReservationDTO.getUid(); // 获取申请者UID, 鉴权, 只有活动创建者与活动管理员可以申请资源
         long AID = resourceReservationDTO.getAid();
+        String resourceName = resourceReservationDTO.getResource();
         // redis锁：控制并发场景下资源预约
-        String lockKey = "R_LOCK_" + UID;
+        String lockKey = "R_LOCK_" + resourceMapper.getRidByResourceName(resourceName);
         String lockValue = JwtUtil.getNowTimeHash(); // 当前系统时间的hash作为value
         try{
             // 尝试获取锁
@@ -81,7 +82,6 @@ public class ResourceServiceImpl implements ResourceService {
                 throw new SystemException(MessageConstant.SYSTEM_BUSY);
             }
             // 预约资源逻辑
-            String resourceName = resourceReservationDTO.getResource();
             Activity nowActivity = activityMapper.getActInfoToOrganizer(AID);
             Date beginTime = nowActivity.getBeginTime();
             Date endTime   = nowActivity.getEndTime();

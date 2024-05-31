@@ -10,6 +10,6 @@ public interface ResourceMapper {
     int selectResourceByName(String ResourceName);
     void updateResourceQuantityByName(String ResourceName, int quantity);
     void insertResource(String ResourceName, int quantity, int type);
-//    List<Resource> getAllResource();
+    long getRidByResourceName(String resourceName);
     Page<Resource> pageQueryAllResource();
 }

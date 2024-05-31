@@ -52,7 +52,7 @@ public class TokenInterceptor implements HandlerInterceptor {
         String requestURI = request.getRequestURI();
 
         // 非管理员用户访问/admin/*路径时拒绝访问
-        if ((role == 0) && requestURI.startsWith("/admin/")) {
+        if ((role == 0) && (requestURI.startsWith("/admin/") || requestURI.startsWith("resource/resourceReservation"))) {
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             response.getWriter().write("非系统管理员用户访问!");
             return false;
@@ -65,7 +65,7 @@ public class TokenInterceptor implements HandlerInterceptor {
     }
 
     @Override
-    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
+    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView){
         // 获取Token
         String token = request.getHeader("Authorization");
         Claims claims = JwtUtil.parseJWT(MessageConstant.JWT_SECRET_KET,token);

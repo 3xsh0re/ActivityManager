@@ -20,6 +20,10 @@
     <select id="pageQueryAllResource" resultType="com.example.activity_manage.Entity.Resource">
         SELECT * FROM Resource
     </select>
+    <select id="getRidByResourceName">
+        select id
+        from Resource where resourceName = #{resourceName};
+    </select>
 </mapper>
 
 
