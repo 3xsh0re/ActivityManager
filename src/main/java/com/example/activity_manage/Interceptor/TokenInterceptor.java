@@ -39,8 +39,7 @@ public class TokenInterceptor implements HandlerInterceptor {
         }
 
         // 验证redis中是否含有token
-        String userId = claims.get("id").toString();
-        String redisKey = "TOKEN_" + userId;
+        String redisKey = "TOKEN_" + token;
 
         if (!redisUtil.hasKey(redisKey)) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -68,14 +67,11 @@ public class TokenInterceptor implements HandlerInterceptor {
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView){
         // 获取Token
         String token = request.getHeader("Authorization");
-        Claims claims = JwtUtil.parseJWT(MessageConstant.JWT_SECRET_KET,token);
-        // 验证redis中是否含有token
-        String userId = claims.get("id").toString();
 
         // 检查Token是否存在
-        if (token != null && redisUtil.hasKey("TOKEN_" + userId)) {
+        if (token != null && redisUtil.hasKey("TOKEN_" + token)) {
             // 更新Token的过期时间
-            redisUtil.expire("TOKEN_" + userId, 60 * 60 * 24 * 2);
+            redisUtil.expire("TOKEN_" + token, 60 * 60 * 24 * 2);
         }
     }
 }

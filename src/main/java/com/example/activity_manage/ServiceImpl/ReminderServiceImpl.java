@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 
 @Service
@@ -26,16 +25,9 @@ public class ReminderServiceImpl implements ReminderService {
     RedisUtil redisUtil;
 
     @Override
-    public void createNewReminder(Reminder reminder) {
-        String key = "TOKEN_" + reminder.getUid();
-        Map<Object, Object> userMap  = redisUtil.hmget(key);
-        if (userMap.isEmpty())
-        {
-            throw new ActivityException(MessageConstant.NOT_HAVE_THIS_PERMISSION);
-        }
-        int id = (int)userMap.get("id");
+    public void createNewReminder(Reminder reminder,long uid) {
         // 从redis中取出id判断是否为当前用户操作
-        if (id != reminder.getUid())
+        if (reminder.getUid() != uid)
         {
             throw new ActivityException(MessageConstant.NOT_HAVE_THIS_PERMISSION);
         }
@@ -47,22 +39,19 @@ public class ReminderServiceImpl implements ReminderService {
     }
 
     @Override
-    public void deleteReminderById(long id) {
+    public void deleteReminderById(long id ,long uid,long uidInRedis) {
+        // 从redis中取出id判断是否为当前用户操作
+        if (uidInRedis != uid)
+        {
+            throw new ActivityException(MessageConstant.NOT_HAVE_THIS_PERMISSION);
+        }
         reminderMapper.deleteReminderById(id);
     }
 
     @Override
-    public PageResult pageQueryReminder(ReminderPageQueryDTO pageQueryDTO) {
-        long uid = pageQueryDTO.getUid();
-        String key = "TOKEN_" + uid;
-        Map<Object, Object> userMap  = redisUtil.hmget(key);
-        if (userMap.isEmpty())
-        {
-            throw new ActivityException(MessageConstant.NOT_HAVE_THIS_PERMISSION);
-        }
-        int id = (int)userMap.get("id");
+    public PageResult pageQueryReminder(ReminderPageQueryDTO pageQueryDTO,long uid) {
         // 从redis中取出id判断是否为当前用户操作
-        if (id != uid)
+        if (pageQueryDTO.getUid() != uid)
         {
             throw new ActivityException(MessageConstant.NOT_HAVE_THIS_PERMISSION);
         }

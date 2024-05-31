@@ -19,7 +19,6 @@ import com.example.activity_manage.Utils.JwtUtil;
 import com.example.activity_manage.Utils.RedisUtil;
 import com.example.activity_manage.Utils.SendUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -52,10 +51,11 @@ public class UserController {
         // 登录成功后，生成jwt令牌
         Map<String, Object> claims = new HashMap<>();
         claims.put("id", user.getId());
-        claims.put("username", user.getUsername());
+        claims.put("role", user.getRole());
+
         String token = JwtUtil.createJWT(
                 MessageConstant.JWT_SECRET_KET,
-                60 * 60 * 24 * 2,
+                60 * 60 * 24 * 2 * 1000,
                 claims);
         UserLoginVO userLoginVO = UserLoginVO.builder()
                 .id(user.getId())
@@ -65,8 +65,7 @@ public class UserController {
         Map<String, Object> userMap = new HashMap<>();
         userMap.put("id", user.getId());
         userMap.put("role", user.getRole());
-        userMap.put("token",token);
-        redisUtil.hmset("TOKEN_" + user.getId(), userMap ,60*60*24*2);
+        redisUtil.hmset("TOKEN_" + token, userMap ,60*60*24*2);
 
         return Result.success(userLoginVO);
     }
