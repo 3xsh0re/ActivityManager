@@ -19,7 +19,6 @@ import com.example.activity_manage.Utils.JwtUtil;
 import com.example.activity_manage.Utils.RedisUtil;
 import com.example.activity_manage.Utils.SendUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.bind.annotation.*;
 
@@ -64,9 +63,7 @@ public class UserController {
                 .build();
         // token存入redis
         Map<String, Object> userMap = new HashMap<>();
-        userMap.put("username", user.getUsername());
-        userMap.put("phoneNumber", user.getPhoneNumber());
-        userMap.put("email", user.getEmail());
+        userMap.put("id", user.getId());
         userMap.put("role", user.getRole());
         userMap.put("token",token);
         redisUtil.hmset("TOKEN_" + user.getId(), userMap ,60*60*24*2);
@@ -78,23 +75,12 @@ public class UserController {
     public Result<Boolean> Register(@RequestBody UserLoginDTO userLoginDTO){
         return Result.success(userService.Register(userLoginDTO));
     }
-    @Autowired
-    private JavaMailSender sender;
-    @GetMapping("/getCaptchaByEmail/{email}")
-    public Result<Boolean> getCaptchaByEmail(@PathVariable("email") String email){
-
-        SimpleMailMessage message = new SimpleMailMessage();
-        //设置邮件标题
-        message.setSubject("ActivityManager");
+    @GetMapping("/getCaptchaByEmail")
+    public Result<Boolean> getCaptchaByEmail(@RequestParam("email") String email){
         //设置邮件内容
         String captcha = captchaUtil.generateCaptcha(email);
-        message.setText("[ActivityManager]您正在进行邮箱验证，验证码为：" + captcha + "，请在5分钟内按页面提示提交验证码，切勿将验证码泄露于他人");
-        message.setTo(email);
-        //邮件发送者，这里要与配置文件中的保持一致
-        message.setFrom("xieyuheng_ustb@163.com");
-        //发送
-        sender.send(message);
-        return Result.success(Boolean.TRUE);
+        boolean t = sendUtil.SendMessageByEmail(email,"[ActivityManager]您正在进行邮箱验证，验证码为：" + captcha + "，请在5分钟内按页面提示提交验证码，切勿将验证码泄露于他人");
+        return Result.success(t);
     }
 
     @GetMapping("/getCaptchaByPhone")
@@ -110,7 +96,7 @@ public class UserController {
         }
         String phoneCaptcha = captchaUtil.generateCaptcha(phoneNumber);
 
-        return Result.success(sendUtil.SendMessage(phoneNumber,phoneCaptcha));
+        return Result.success(sendUtil.SendMessageByPhone(phoneNumber,phoneCaptcha));
     }
     @PostMapping("/resetPasswd")
     public Result<Boolean> resetPasswd(@RequestBody ResetPwdDTO resetPwdDTO)
