@@ -5,10 +5,12 @@ import com.example.activity_manage.Entity.Activity;
 import com.example.activity_manage.Entity.DTO.BasePageQueryDTO;
 import com.example.activity_manage.Entity.DTO.ResourceAdditionDTO;
 import com.example.activity_manage.Entity.DTO.ResourceReservationDTO;
+import com.example.activity_manage.Entity.Notice;
 import com.example.activity_manage.Entity.Resource;
 import com.example.activity_manage.Exception.ActivityException;
 import com.example.activity_manage.Exception.SystemException;
 import com.example.activity_manage.Mapper.ActivityMapper;
+import com.example.activity_manage.Mapper.NoticeMapper;
 import com.example.activity_manage.Mapper.ResourceMapper;
 import com.example.activity_manage.Result.PageResult;
 import com.example.activity_manage.Service.ResourceService;
@@ -31,6 +33,8 @@ public class ResourceServiceImpl implements ResourceService {
     ResourceMapper resourceMapper;
     @Autowired
     ActivityMapper activityMapper;
+    @Autowired
+    NoticeMapper noticeMapper;
     @Autowired
     RedisUtil redisUtil;
 
@@ -117,11 +121,45 @@ public class ResourceServiceImpl implements ResourceService {
         String resourceName = resourceAdditionDTO.getResource();
         int quantity = resourceAdditionDTO.getQuantity();
         int type = resourceAdditionDTO.getType();
+        if ( type != 1 && type !=0){
+            throw new ActivityException(MessageConstant.NOT_ILLEGAL_INPUT);
+        }
+        // 资源数量不能小于0
+        if (quantity < 0){
+            throw new ActivityException(MessageConstant.NOT_ILLEGAL_INPUT);
+        }
+        // 对于地点类资源,quantity只能为0或1
+        if (type == 1 && (quantity > 1)){
+            throw new ActivityException(MessageConstant.NOT_ILLEGAL_INPUT);
+        }
+        // 对于资源,在调整时,需要对已经分配对应资源的活动进行判断,如果资源调整后小于了需要的资源,需要发出通知告知该活动的组织者
+        List<Activity> actList = activityMapper.getAllAct();
+        for (Activity act: actList) {
+            // 获取当前时间的hash,用于发送消息
+            String timeHash = JwtUtil.getNowTimeHash();
+            // 初始化消息类对象
+            Notice notice = new Notice();
+            notice.setSendUid(1);
+            notice.setContent("活动资源{" + resourceName + "}由于管理员对其数量进行调整现已经被设置为0,请重新预约该资源!");
+            notice.setType(0);
+            notice.setGroupId(timeHash);
+            notice.setIfRead(false);
+            // 取出每个活动中该资源的使用数量
+            long aid = act.getId();
+            int usedCount = activityMapper.getReQuantityByReName(aid,resourceName);
+            // 设定后的该资源比使用量小,需要修改对应活动的资源使用量为0,并通知用户重新预约资源
+            if (usedCount > quantity){
+                activityMapper.updateActivityResource(aid,resourceName,0);
+                // 对于需要的活动,发送消息
+                notice.setAid(aid);
+                notice.setReceiveUid(act.getUid());
+                noticeMapper.createNotice(notice);
+            }
+        }
+        // 判断是修改资源还是添加资源
         if(resourceMapper.checkResourceByName(resourceName))
         {
-            int quantityCurr = resourceMapper.selectResourceByName(resourceName);
-            int quantityNew = quantity + quantityCurr;
-            resourceMapper.updateResourceQuantityByName(resourceName, quantityNew);
+            resourceMapper.updateResourceQuantityByName(resourceName, quantity);
         }
         else
         {

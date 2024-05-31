@@ -179,10 +179,10 @@
             END
         WHERE id = #{aid};
     </update>
-    <select id="getReQuantityByReName">
-        select JSON_UNQUOTE(JSON_EXTRACT(resource, CONCAT('$."', #{resourceName}, '"'))) AS key1_value from Activity where id = #{aid}
-    </select>
 
+    <select id="getReQuantityByReName">
+        select IFNULL(JSON_UNQUOTE(JSON_EXTRACT(resource, CONCAT('$."', #{resourceName}, '"'))),0) AS key1_value from Activity where id = #{aid}
+    </select>
 
     <select id="getUserRole">
         select JSON_UNQUOTE(JSON_EXTRACT(userList, CONCAT('$."', #{uid}, '"'))) AS key1_value from Activity where id = #{aid}

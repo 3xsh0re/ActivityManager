@@ -183,7 +183,9 @@ public class ActivityServiceImpl implements ActivityService {
         {
             return activityMapper.getBudget(aid);
         }
-        return null;
+        else {
+            throw new ActivityException(MessageConstant.ACCOUNT_NOT_JOIN);
+        }
     }
 
     @Override

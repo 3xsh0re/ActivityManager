@@ -9,6 +9,7 @@ public class MessageConstant {
     public static final String PASSWORD_ERROR = "密码错误";
     public static final String ACCOUNT_NOT_FOUND = "账号不存在";
     public static final String ACCOUNT_NOT_LOGIN = "此用户尚未登陆系统";
+    public static final String ACCOUNT_NOT_JOIN = "此用户未参与此活动";
     public static final String ACCOUNT_NOT_ADMIN = "此账号非管理员用户";
     public static final String NOT_ILLEGAL_CHECK_STATUS = "不是管理员审核后的合法状态";
     public static final String NOT_HAVE_THIS_PERMISSION = "没有此操作权限";
