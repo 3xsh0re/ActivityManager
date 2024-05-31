@@ -5,18 +5,18 @@ import com.example.activity_manage.Entity.DTO.ReminderPageQueryDTO;
 import com.example.activity_manage.Entity.Reminder;
 import com.example.activity_manage.Exception.ActivityException;
 import com.example.activity_manage.Mapper.ReminderMapper;
+import com.example.activity_manage.Result.PageResult;
 import com.example.activity_manage.Service.ReminderService;
 import com.example.activity_manage.Utils.RedisUtil;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static java.time.LocalDateTime.*;
 
 @Service
 public class ReminderServiceImpl implements ReminderService {
@@ -52,8 +52,26 @@ public class ReminderServiceImpl implements ReminderService {
     }
 
     @Override
-    public void pageQueryReminder(ReminderPageQueryDTO pageQueryDTO) {
-
+    public PageResult pageQueryReminder(ReminderPageQueryDTO pageQueryDTO) {
+        long uid = pageQueryDTO.getUid();
+        String key = "TOKEN_" + uid;
+        Map<Object, Object> userMap  = redisUtil.hmget(key);
+        if (userMap.isEmpty())
+        {
+            throw new ActivityException(MessageConstant.NOT_HAVE_THIS_PERMISSION);
+        }
+        int id = (int)userMap.get("id");
+        // 从redis中取出id判断是否为当前用户操作
+        if (id != uid)
+        {
+            throw new ActivityException(MessageConstant.NOT_HAVE_THIS_PERMISSION);
+        }
+        //开始分页查询
+        PageHelper.startPage(pageQueryDTO.getPage(), pageQueryDTO.getPageSize());
+        Page<Reminder> page = reminderMapper.getReminderList(uid);
+        long total = page.getTotal();
+        List<Reminder> records = page.getResult();
+        return new PageResult(total, records);
     }
 
     @Override

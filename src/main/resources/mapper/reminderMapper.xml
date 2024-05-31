@@ -12,7 +12,7 @@
     </delete>
     <select id="getReminderList">
         select *
-        from Reminder where uid = #{uid};
+        from Reminder where uid = #{uid}
     </select>
 
     <select id="getUpcomingReminders" resultType="com.example.activity_manage.Entity.Reminder">
