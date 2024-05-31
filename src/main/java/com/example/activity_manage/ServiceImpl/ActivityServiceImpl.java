@@ -5,10 +5,7 @@ import com.example.activity_manage.Constant.MessageConstant;
 import com.example.activity_manage.Entity.Activity;
 import com.example.activity_manage.Entity.DTO.*;
 import com.example.activity_manage.Entity.Notice;
-import com.example.activity_manage.Entity.VO.ActInfoToAllVO;
-import com.example.activity_manage.Entity.VO.ActScheduleVO;
-import com.example.activity_manage.Entity.VO.BaseActInfoVO;
-import com.example.activity_manage.Entity.VO.UnCheckedUserVO;
+import com.example.activity_manage.Entity.VO.*;
 import com.example.activity_manage.Exception.ActivityException;
 import com.example.activity_manage.Exception.LoginRegisterException;
 import com.example.activity_manage.Exception.PageNotFoundException;
@@ -18,6 +15,7 @@ import com.example.activity_manage.Mapper.UserMapper;
 import com.example.activity_manage.Result.PageResult;
 import com.example.activity_manage.Service.ActivityService;
 import com.example.activity_manage.Utils.JwtUtil;
+import com.example.activity_manage.Utils.RedisUtil;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import net.minidev.json.JSONObject;
@@ -35,10 +33,21 @@ public class ActivityServiceImpl implements ActivityService {
     UserMapper userMapper;
     @Autowired
     NoticeMapper noticeMapper;
+    @Autowired
+    RedisUtil redisUtil;
 
     @Override
     public Boolean ActivityCreate(ActivityCreateDTO activityCreateDTO)
     {
+        UserInfoVO user = userMapper.getUserInfo(activityCreateDTO.getUid());
+        // 从redis中判断用户是否登陆
+        if (redisUtil.hasKey("TOKEN" + activityCreateDTO.getUid())){
+            throw new ActivityException(MessageConstant.ACCOUNT_NOT_LOGIN);
+        }
+        // 判断用户是否存在
+        if (user == null){
+            throw new ActivityException(MessageConstant.ACCOUNT_NOT_FOUND);
+        }
         JSONObject jsonObject = userMapper.getActList(activityCreateDTO.getUid());//获取当前用户参与的活动表
         if (jsonObject != null)
         {
