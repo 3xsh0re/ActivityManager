@@ -10,6 +10,7 @@ import com.example.activity_manage.Exception.ActivityException;
 import com.example.activity_manage.Exception.LoginRegisterException;
 import com.example.activity_manage.Exception.PageNotFoundException;
 import com.example.activity_manage.Mapper.ActivityMapper;
+import com.example.activity_manage.Mapper.CommentsMapper;
 import com.example.activity_manage.Mapper.NoticeMapper;
 import com.example.activity_manage.Mapper.UserMapper;
 import com.example.activity_manage.Result.PageResult;
@@ -33,6 +34,8 @@ public class ActivityServiceImpl implements ActivityService {
     UserMapper userMapper;
     @Autowired
     NoticeMapper noticeMapper;
+    @Autowired
+    CommentsMapper commentsMapper;
     @Autowired
     RedisUtil redisUtil;
 
@@ -157,6 +160,9 @@ public class ActivityServiceImpl implements ActivityService {
         }
         if (uid == activityMapper.getUidByAid(aid) || uid == 1)//非组织者或者管理员不能删除活动
         {
+            // 删除活动的评论
+            commentsMapper.deleteAllCommentToAct(aid);
+            // 删除活动表中的数据
             activityMapper.deleteActivity(aid);
         }
         else {

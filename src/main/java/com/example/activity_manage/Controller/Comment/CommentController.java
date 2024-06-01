@@ -35,6 +35,11 @@ public class CommentController {
         commentsService.undoLikes(cid,uid);
         return Result.success();
     }
+    @GetMapping("/deleteComment")
+    public Result<Boolean> deleteComment(@RequestParam("cid") long cid,@RequestParam("uid") long uid){
+        commentsService.deleteComment(cid,uid);
+        return Result.success();
+    }
 
 
 }
