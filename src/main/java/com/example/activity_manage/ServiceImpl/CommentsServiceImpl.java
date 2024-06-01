@@ -31,8 +31,15 @@ public class CommentsServiceImpl implements CommentsService {
 
     @Override
     public void addNewComment(Comments comments) {
-        if (comments.getContent() == null){
+        if (comments.getContent().equals("")){
             throw new ActivityException("评论不能为空!");
+        }
+        long uid = comments.getUid();
+        long aid = comments.getAid();
+        String role = activityMapper.getUserRole(aid,uid);
+        if (role == null )
+        {
+            throw new ActivityException("尚未参与此活动,不能参加评论!");
         }
         // 过滤评论内容中XSS攻击
         String filteredComment = XSSFilterUtil.filter(comments.getContent());
@@ -62,7 +69,12 @@ public class CommentsServiceImpl implements CommentsService {
 
     @Override
     public void addLikes(long cid, long uid) {
-        JSONObject jsonObject = commentsMapper.getLikeUserList(cid);
+        JSONObject jsonObject = commentsMapper.getLikeUserList(cid,uid);
+        if (jsonObject == null)
+        {
+            commentsMapper.addLikes(cid,uid);
+            return;
+        }
         JSONObject likeUserList = (JSONObject) jsonObject.get("likeUserList");
         if (likeUserList.containsKey(Long.toString(uid)))
         {
@@ -73,7 +85,12 @@ public class CommentsServiceImpl implements CommentsService {
 
     @Override
     public void undoLikes(long cid, long uid) {
-        JSONObject jsonObject = commentsMapper.getLikeUserList(cid);
+        JSONObject jsonObject = commentsMapper.getLikeUserList(cid,uid);
+        if (jsonObject == null)
+        {
+            commentsMapper.addLikes(cid,uid);
+            return;
+        }
         JSONObject likeUserList = (JSONObject) jsonObject.get("likeUserList");
         if (!likeUserList.containsKey(Long.toString(uid)))
         {

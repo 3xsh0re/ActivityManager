@@ -22,19 +22,18 @@
 
     <update id="addLikes">
         update Comment
-        set likes = likes + 1,likeUserList = JSON_SET(likeUserList, CONCAT('$."', #{uid}, '"'), #{uid})
+        set likes = likes + 1,likeUserList = JSON_MERGE_PATCH( IFNULL(likeUserList , '{}'), JSON_OBJECT(#{uid}, #{uid}))
         where id =#{cid}
     </update>
 
     <update id="undoLikes">
         update Comment
-        set likes = likes - 1,likeUserList = JSON_SET(likeUserList, CONCAT('$."', #{uid}, '"'), #{uid})
+        set likes = likes - 1,likeUserList = JSON_REMOVE(likeUserList, CONCAT('$."', #{uid},'"'))
         where id =#{cid}
     </update>
 
     <select id="getLikeUserList" resultMap="likeUserListResultMap">
-        select likeUserList
-        from Comment where id = #{cid}
+        select likeUserList from Comment where id = #{cid}
     </select>
 
     <delete id="deleteComment">

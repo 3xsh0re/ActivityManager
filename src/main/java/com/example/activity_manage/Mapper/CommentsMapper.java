@@ -12,7 +12,7 @@ public interface CommentsMapper {
     Comments getCommentByCid(long cid);
     void addLikes(long cid,long uid);
     void undoLikes(long cid,long uid);
-    JSONObject getLikeUserList(long cid);
+    JSONObject getLikeUserList(long cid,long uid);
     void deleteComment(long cid);
     void deleteAllCommentToAct(long aid);
 }
