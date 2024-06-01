@@ -292,6 +292,11 @@ public class ActivityServiceImpl implements ActivityService {
             // 将新增的用户设为普通参与者
             ActivitySetParticipantRoleDTO roleDTO = new ActivitySetParticipantRoleDTO(uid,aid,unCheckedId,"普通参与者");
             setParticipantRole(roleDTO);
+            // 为用户新增活动
+            JSONObject jsonObject3 = userMapper.getActList(unCheckedId);
+            JSONObject actList = (JSONObject) jsonObject3.get("actList");
+            actList.put(Long.toString(aid),activityMapper.getActNameByAid(aid));
+            userMapper.updateActList(unCheckedId,actList);
         }
         JSONObject jsonObject = activityMapper.getUnCheckedUserList(aid);
         JSONObject unCheckedUserList = (JSONObject) jsonObject.get("unCheckedUserList");
