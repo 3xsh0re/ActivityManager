@@ -1,34 +1,34 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.example.activity_manage.Mapper.CommentMapper">
+<mapper namespace="com.example.activity_manage.Mapper.CommentsMapper">
     <resultMap id="likeUserListResultMap" type="net.minidev.json.JSONObject">
         <result column="likeUserList" jdbcType="OTHER" property="likeUserList" javaType="net.minidev.json.JSONObject" typeHandler="com.example.activity_manage.Handler.JsonTypeHandler"/>
     </resultMap>
 
-    <insert id="addNewComment" parameterType="com.example.activity_manage.Entity.Comment">
-        insert into Comment (uid, aid, content,commentTime)
-        values (#{uid},#{aid},#{content},#{commentTime})
+    <insert id="addNewComment" parameterType="com.example.activity_manage.Entity.Comments">
+        insert into Comment (uid, aid, content,likes,commentTime)
+        values (#{uid},#{aid},#{content}, 0 ,#{commentTime})
     </insert>
 
-    <select id="getCommentsToAct" resultType="com.example.activity_manage.Entity.Comment">
+    <select id="getCommentsToAct" resultType="com.example.activity_manage.Entity.Comments">
         select * from Comment where aid =#{aid}
     </select>
 
-    <select id="getCommentByCid" resultType="com.example.activity_manage.Entity.Comment">
+    <select id="getCommentByCid" resultType="com.example.activity_manage.Entity.Comments">
         select *
         from Comment where id = #{cid}
     </select>
 
     <update id="addLikes">
         update Comment
-        set likes = likes + 1,likeUserList = JSON_SET(likeUserList, CONCAT('$."', #{uid}, '"'), #{})
+        set likes = likes + 1,likeUserList = JSON_SET(likeUserList, CONCAT('$."', #{uid}, '"'), #{uid})
         where id =#{cid}
     </update>
 
     <update id="undoLikes">
         update Comment
-        set likes = likes - 1,likeUserList = JSON_SET(likeUserList, CONCAT('$."', #{uid}, '"'), #{})
+        set likes = likes - 1,likeUserList = JSON_SET(likeUserList, CONCAT('$."', #{uid}, '"'), #{uid})
         where id =#{cid}
     </update>
 

@@ -30,4 +30,5 @@ public class Activity {
     private JSONObject rankList; //用户评分列表
     private JSONObject actStatus; //活动内部细节流程<StatusName,StatusDescription>
     private JSONObject unCheckedUserList; //待审核的用户列表<uid,reason>
+    private JSONObject message;
 }

@@ -93,7 +93,7 @@ public class ActivityController {
     public Result<PageResult> getUnCheckedUserList(@RequestBody ActivityPageQueryDTO pageQueryDTO){
         return Result.success(activityService.pageQueryUnCheckedUser(pageQueryDTO));
     }
-    @PostMapping("/serParticipantGroup")
+    @PostMapping("/setParticipantGroup")
     public Result<Boolean> serParticipantGroup(@RequestBody ActivitySetParticipantGroupDTO activitySetParticipantGroupDTO)
     {
         return Result.success(activityService.serParticipantGroup(activitySetParticipantGroupDTO));
