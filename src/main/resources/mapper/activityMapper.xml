@@ -96,9 +96,9 @@
     </select>
 
     <select id="pageQueryActInfoToAdmin" resultType="com.example.activity_manage.Entity.VO.ActInfoToManagerVO">
-        select uid, actName, status, actDescription, beginTime,
+        select id, uid, actName, status, actDescription, beginTime,
                endTime, totalBudget, place, score
-        from Activity order by beginTime desc
+        from Activity
     </select>
 
     <update id="checkActContent">

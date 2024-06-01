@@ -12,6 +12,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ActInfoToManagerVO implements Serializable {
+    private long id;
     private long uid; //组织者id
     private String username; //组织者姓名
     private String actName;
