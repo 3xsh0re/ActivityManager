@@ -102,6 +102,9 @@ public class CommentsServiceImpl implements CommentsService {
     @Override
     public void deleteComment(long cid, long uid) {
         Comments comments = commentsMapper.getCommentByCid(cid);
+        if (comments == null) {
+            throw new ActivityException("此评论已被删除!");
+        }
         if (comments.getUid() != uid){
             throw new ActivityException(MessageConstant.NOT_HAVE_THIS_PERMISSION);
         }
