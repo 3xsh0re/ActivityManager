@@ -13,8 +13,10 @@ import org.springframework.stereotype.Component;
 import javax.swing.*;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 // 用于触发定时任务
 @Component
@@ -30,10 +32,18 @@ public class ReminderScheduler {
     @Scheduled(fixedRate = 60000) // 每分钟执行一次
     public void checkReminders() {
         List<Reminder> reminders = reminderService.getUpcomingReminders();
-        System.out.println("TimeClicked!");
+        Date currentDate = new Date();
+        // 创建Calendar实例，并设置为当前时间，同时指定时区为中国标准时间
+        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("Asia/Shanghai"));
+        calendar.setTime(currentDate);
+        // 将时间增加8小时
+        calendar.add(Calendar.HOUR_OF_DAY, 8);
+        // 获取加上8小时后的时间
+        Date nowTime = calendar.getTime();
+
         for (Reminder reminder : reminders) {
             System.out.println(reminder);
-            if (isReminderDue(reminder.getReminderTime())) {
+            if (reminder.getReminderTime().before(nowTime)) {
                 UserInfoVO userInfoVO = userService.getUserInfo(reminder.getUid());
                 System.out.println("SendClicked!");
                 // 邮箱提醒
@@ -51,11 +61,5 @@ public class ReminderScheduler {
                 noticeService.createNotice(notice);
             }
         }
-    }
-    private boolean isReminderDue(Date reminderTime) {
-        LocalDateTime reminderLocalDateTime = reminderTime.toInstant()
-                .atZone(ZoneId.systemDefault())
-                .toLocalDateTime();
-        return reminderLocalDateTime.isBefore(LocalDateTime.now().plusMinutes(1));
     }
 }
