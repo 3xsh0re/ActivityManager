@@ -10,9 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import javax.swing.*;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -38,6 +35,7 @@ public class ReminderScheduler {
         calendar.setTime(currentDate);
         // 将时间增加8小时
         calendar.add(Calendar.HOUR_OF_DAY, 8);
+        calendar.add(Calendar.MINUTE,1);
         // 获取加上8小时后的时间
         Date nowTime = calendar.getTime();
 
@@ -45,7 +43,6 @@ public class ReminderScheduler {
             System.out.println(reminder);
             if (reminder.getReminderTime().before(nowTime)) {
                 UserInfoVO userInfoVO = userService.getUserInfo(reminder.getUid());
-                System.out.println("SendClicked!");
                 // 邮箱提醒
                 String email = userInfoVO.getEmail();
                 sendUtil.SendMessageByEmail(email,reminder.getContent());
