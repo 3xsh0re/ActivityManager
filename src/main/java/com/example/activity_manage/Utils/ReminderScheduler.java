@@ -26,7 +26,7 @@ public class ReminderScheduler {
     NoticeService noticeService;
     @Autowired
     SendUtil sendUtil;
-    @Scheduled(fixedRate = 60000) // 每分钟执行一次
+    @Scheduled(fixedRate = 30000) // 每分钟执行一次
     public void checkReminders() {
         List<Reminder> reminders = reminderService.getUpcomingReminders();
         Date currentDate = new Date();
