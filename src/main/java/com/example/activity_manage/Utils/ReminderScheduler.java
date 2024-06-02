@@ -30,9 +30,12 @@ public class ReminderScheduler {
     @Scheduled(fixedRate = 60000) // 每分钟执行一次
     public void checkReminders() {
         List<Reminder> reminders = reminderService.getUpcomingReminders();
+        System.out.println("TimeClicked!");
         for (Reminder reminder : reminders) {
+            System.out.println(reminder);
             if (isReminderDue(reminder.getReminderTime())) {
                 UserInfoVO userInfoVO = userService.getUserInfo(reminder.getUid());
+                System.out.println("SendClicked!");
                 // 邮箱提醒
                 String email = userInfoVO.getEmail();
                 sendUtil.SendMessageByEmail(email,reminder.getContent());
