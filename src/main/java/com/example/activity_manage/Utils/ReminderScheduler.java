@@ -40,7 +40,6 @@ public class ReminderScheduler {
         Date nowTime = calendar.getTime();
 
         for (Reminder reminder : reminders) {
-            System.out.println(reminder);
             if (reminder.getReminderTime().before(nowTime)) {
                 UserInfoVO userInfoVO = userService.getUserInfo(reminder.getUid());
                 // 邮箱提醒
