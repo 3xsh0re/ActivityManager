@@ -70,6 +70,15 @@ public class ActivityController {
     public Result<Integer> getBudget(@RequestParam("aid") long aid,@RequestParam("uid") long uid){
         return Result.success(activityService.getBudget(aid, uid));
     }
+
+    // 活动流程更新
+    @PostMapping("/updateActProcess")
+    public Result<Boolean> updateActProcess(@RequestBody UpdateActProcessDTO updateActProcessDTO){
+        activityService.updateActProcess(updateActProcessDTO);
+        return Result.success();
+    }
+
+
     // 管理活动参与者角色
     @PostMapping("/setParticipantRole")
     public Result<Boolean> setParticipantRole(@RequestBody ActivitySetParticipantRoleDTO activitySetParticipantRoleDTO)

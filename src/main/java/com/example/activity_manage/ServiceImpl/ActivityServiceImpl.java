@@ -177,8 +177,8 @@ public class ActivityServiceImpl implements ActivityService {
         List<JSONObject> messageList = activityMapper.getAllMessage(aid);
         reportVO.setMessageNum(messageList.size());
         // 获取活动内部流程
-        JSONObject jsonActStatus = activityMapper.getActStatus(aid);
-        JSONObject actStatus   = (JSONObject) jsonActStatus.get("actStatus");
+        JSONObject jsonActProcess = activityMapper.getActProcess(aid);
+        JSONObject actStatus   = (JSONObject) jsonActProcess.get("actStatus");
         List<String> statusList = JwtUtil.sortJSONObjectByValue(actStatus);
         reportVO.setActStatus(statusList);
         // 获取前五个高赞评论
@@ -237,6 +237,24 @@ public class ActivityServiceImpl implements ActivityService {
         else {
             throw new ActivityException(MessageConstant.ACCOUNT_NOT_JOIN);
         }
+    }
+
+    @Override
+    public void updateActProcess(UpdateActProcessDTO updateActProcessDTO) {
+        long uid = updateActProcessDTO.getUid();
+        long aid = updateActProcessDTO.getAid();
+        Activity activity = activityMapper.getActInfoToOrganizer(aid);
+        if (activity == null)
+        {
+            throw new ActivityException(MessageConstant.ACTIVITY_NOT_EXIST);
+        }
+        long orgId = activityMapper.getUidByAid(aid);
+        if (uid != orgId) // 只有组织者有更新活动流程的权限
+        {
+            throw new ActivityException(MessageConstant.NOT_HAVE_THIS_PERMISSION);
+        }
+        JSONObject actProcess =  updateActProcessDTO.getActStatus();
+        activityMapper.updateActProcess(aid,actProcess);
     }
 
     @Override

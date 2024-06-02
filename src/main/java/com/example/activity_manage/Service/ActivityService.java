@@ -22,9 +22,10 @@ public interface ActivityService {
     void deleteActivity(long uid,long aid);
     void setBudget(long uid,long aid,int budget);
     Integer getBudget(long aid, long uid);
-    void joinAct(long uid,long aid, String reason);
-    void exitAct(long uid,long aid);
-    boolean checkApplication(long uid,long aid, long unCheckedId,boolean result);
+    void updateActProcess(UpdateActProcessDTO updateActProcessDTO); // 更新活动流程
+    void joinAct(long uid,long aid, String reason); // 用户发出加入活动申请
+    void exitAct(long uid,long aid);  // 用户退出活动
+    boolean checkApplication(long uid,long aid, long unCheckedId,boolean result); // 审核活动申请
     boolean setRankForAct(long uid,long aid,double rank);
     PageResult pageQueryBaseActInfoVO(BasePageQueryDTO basePageQueryDTO);
     PageResult pageQueryUnCheckedUser(ActivityPageQueryDTO pageQueryDTO);

@@ -264,9 +264,15 @@
         SELECT message FROM Activity WHERE id = #{aid};
     </select>
 
-    <select id="getActStatus" resultMap="actStatusResultMap">
+    <select id="getActProcess" resultMap="actStatusResultMap">
         select actStatus
         from Activity where id = #{aid};
     </select>
+
+    <update id="updateActProcess">
+        update Activity
+        set  actStatus = #{actStatus, jdbcType=OTHER, typeHandler=com.example.activity_manage.Handler.JsonTypeHandler}
+        where id = #{aid};
+    </update>
 
 </mapper>
