@@ -4,6 +4,7 @@ import ch.qos.logback.core.joran.sanity.Pair;
 import com.example.activity_manage.Entity.Activity;
 import com.example.activity_manage.Entity.DTO.*;
 import com.example.activity_manage.Entity.VO.ActInfoToAllVO;
+import com.example.activity_manage.Entity.VO.ActReportVO;
 import com.example.activity_manage.Entity.VO.ActScheduleVO;
 import com.example.activity_manage.Result.PageResult;
 import com.example.activity_manage.Result.Result;
@@ -121,5 +122,11 @@ public class ActivityController {
     public Result<List<JSONObject>> participantInteractiveReceive(@RequestBody ActivityParticipantInteractiveReceiveDTO activityParticipantInteractiveReceiveDTO)
     {
         return Result.success(activityService.participantInteractiveReceive(activityParticipantInteractiveReceiveDTO));
+    }
+
+    // 生成活动报告
+    @GetMapping("/getActReport")
+    public Result<ActReportVO> getActReport(@RequestParam("aid") long aid, @RequestParam("uid") long uid){
+        return Result.success(activityService.getActReport(aid,uid));
     }
 }

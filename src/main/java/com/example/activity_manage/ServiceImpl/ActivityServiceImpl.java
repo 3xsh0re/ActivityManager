@@ -3,6 +3,7 @@ package com.example.activity_manage.ServiceImpl;
 import ch.qos.logback.core.joran.sanity.Pair;
 import com.example.activity_manage.Constant.MessageConstant;
 import com.example.activity_manage.Entity.Activity;
+import com.example.activity_manage.Entity.Comments;
 import com.example.activity_manage.Entity.DTO.*;
 import com.example.activity_manage.Entity.Notice;
 import com.example.activity_manage.Entity.VO.*;
@@ -149,6 +150,50 @@ public class ActivityServiceImpl implements ActivityService {
             }
         }
         return l_actSchedule;
+    }
+
+    @Override
+    public ActReportVO getActReport(long aid, long uid) {
+        String role = activityMapper.getUserRole(aid,uid);
+        if (role==null)
+        {
+            throw new ActivityException(MessageConstant.NOT_HAVE_THIS_PERMISSION);
+        }
+        if (!role.equals("组织者") && !role.equals("管理员"))
+        {
+            throw new ActivityException(MessageConstant.NOT_HAVE_THIS_PERMISSION);
+        }
+        Activity activity = activityMapper.getActInfoToOrganizer(aid);
+        ActReportVO reportVO = new ActReportVO();
+        reportVO.setAid(aid);
+        reportVO.setActName(activity.getActName());
+        reportVO.setOrgName(userMapper.getUsernameById(uid));
+        reportVO.setRank(activity.getRank());
+        JSONObject jsonObject = activityMapper.getUserList(aid);
+        // 获取活动参与人数
+        JSONObject userList   = (JSONObject) jsonObject.get("userList");
+        reportVO.setParticipantNum(userList.size());
+        // 获取聊天室消息数
+        List<JSONObject> messageList = activityMapper.getAllMessage(aid);
+        reportVO.setMessageNum(messageList.size());
+        // 获取活动内部流程
+        JSONObject jsonActStatus = activityMapper.getActStatus(aid);
+        JSONObject actStatus   = (JSONObject) jsonActStatus.get("actStatus");
+        List<String> statusList = JwtUtil.sortJSONObjectByValue(actStatus);
+        reportVO.setActStatus(statusList);
+        // 获取前五个高赞评论
+        List<Comments> commentsList = commentsMapper.getAllCommentToAct(aid);
+        commentsList.sort(Comparator.comparingInt(Comments::getLikes).reversed());
+        List<String> highLikesList = new ArrayList<>();
+        int index = 0;
+        for (Comments c: commentsList) {
+            if (index == 5)
+                break;
+            highLikesList.add(c.getContent());
+            index++;
+        }
+        reportVO.setHighLikesCommentList(highLikesList);
+        return reportVO;
     }
 
 

@@ -55,6 +55,10 @@
         <result column="unCheckedUserList" jdbcType="OTHER" property="unCheckedUserList" javaType="net.minidev.json.JSONObject" typeHandler="com.example.activity_manage.Handler.JsonTypeHandler"/>
     </resultMap>
 
+    <resultMap id="actStatusResultMap" type="net.minidev.json.JSONObject">
+        <result column="actStatus" jdbcType="OTHER" property="actStatus" javaType="net.minidev.json.JSONObject" typeHandler="com.example.activity_manage.Handler.JsonTypeHandler"/>
+    </resultMap>
+
     <select id="activityDateGet" resultMap="pairResultMap">
         SELECT beginTime, endTime FROM Activity WHERE id = #{AID};
     </select>
@@ -258,6 +262,11 @@
 
     <select id="getAllMessage">
         SELECT message FROM Activity WHERE id = #{aid};
+    </select>
+
+    <select id="getActStatus" resultMap="actStatusResultMap">
+        select actStatus
+        from Activity where id = #{aid};
     </select>
 
 </mapper>

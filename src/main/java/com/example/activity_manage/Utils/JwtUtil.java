@@ -3,14 +3,14 @@ package com.example.activity_manage.Utils;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import net.minidev.json.JSONObject;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Map;
+import java.util.*;
 
 public class JwtUtil {
     /**
@@ -81,6 +81,22 @@ public class JwtUtil {
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    // 对JSONObject排序：按照value从小到大,返回key列表
+    public static List<String> sortJSONObjectByValue(JSONObject jsonObject) {
+        // 将 JSONObject 转换为 List<Map.Entry<String, Integer>>
+        List<Map.Entry<String, Integer>> entries = new ArrayList<>();
+        for (String key : jsonObject.keySet()) {
+            entries.add(new AbstractMap.SimpleEntry<>(key, (Integer) jsonObject.get(key)));
+        }
+        // 对 List 进行排序
+        entries.sort(Map.Entry.comparingByValue());
+        List<String> result = new ArrayList<>();
+        for (Map.Entry<String, Integer> map: entries ) {
+            result.add(map.getKey());
+        }
+        return result;
     }
 
 }

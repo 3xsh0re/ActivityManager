@@ -47,4 +47,8 @@
         from Comment
         where aid = #{aid}
     </delete>
+
+    <select id="getAllCommentToAct" resultType="com.example.activity_manage.Entity.Comments">
+        select * from Comment where aid = #{aid};
+    </select>
 </mapper>

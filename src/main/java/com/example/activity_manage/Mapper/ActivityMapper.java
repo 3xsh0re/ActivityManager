@@ -26,7 +26,8 @@ public interface ActivityMapper {
     JSONObject getUserList(long aid); //获取参与此活动的全部用户
     Boolean checkUserExist(long aid, long uid); // 判断指定用户是否存在于指定活动中
     Boolean checkActContent(long aid, int status, String checkResult);//更新审核活动结果
-    int getStatusById(long aid);
+    int getStatusById(long aid); // 获取活动当前的状态审核
+    JSONObject getActStatus(long aid); //获取活动的流程
     long getMaxId();
     void deleteActivity(long aid);
     void setBudget(long aid,int budget);
