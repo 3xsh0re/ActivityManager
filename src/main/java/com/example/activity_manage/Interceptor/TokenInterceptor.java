@@ -22,10 +22,12 @@ public class TokenInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {
         String token = request.getHeader("Authorization");
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html;charset=UTF-8");
 
         if (token == null || token.isEmpty()) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("用户未登录!");
+            response.getWriter().write(MessageConstant.ACCOUNT_NOT_LOGIN);
             return false;
         }
 
@@ -43,7 +45,7 @@ public class TokenInterceptor implements HandlerInterceptor {
 
         if (!redisUtil.hasKey(redisKey)) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("用户未登录!");
+            response.getWriter().write(MessageConstant.ACCOUNT_NOT_LOGIN);
             return false;
         }
 
@@ -53,7 +55,7 @@ public class TokenInterceptor implements HandlerInterceptor {
         // 非管理员用户访问/admin/*路径时拒绝访问
         if ((role == 0) && (requestURI.startsWith("/admin/") || requestURI.startsWith("resource/resourceReservation"))) {
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            response.getWriter().write("非系统管理员用户访问!");
+            response.getWriter().write(MessageConstant.NOT_HAVE_THIS_PERMISSION);
             return false;
         }
 
