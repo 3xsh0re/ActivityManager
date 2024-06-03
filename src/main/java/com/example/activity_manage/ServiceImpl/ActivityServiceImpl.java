@@ -324,10 +324,8 @@ public class ActivityServiceImpl implements ActivityService {
             // 如果用户已经加入,更新用户的参与活动列表已经活动中的用户表
             JSONObject jsonObject = userMapper.getActList(uid);
             JSONObject actList    = (JSONObject) jsonObject.get("actList");
-            System.out.println("actList: " + actList);
             JSONObject jsonObject1 = activityMapper.getUserList(aid);
             JSONObject userList   = (JSONObject) jsonObject1.get("userList");
-            System.out.println("userList: " + actList);
             Set<String> keys = actList.keySet();
             for (String key:keys) {
                 if (Long.toString(aid).equals(key)){
@@ -335,12 +333,10 @@ public class ActivityServiceImpl implements ActivityService {
                     actList.remove(key);
                     // 对于活动表,需要更新userList,roleList,userGroup
                     userList.remove(Long.toString(uid));
-                    System.out.println("被删除的活动: " + key);
+
                     String role = activityMapper.getUserRole(aid,uid);
                     int num = activityMapper.getRoleNum(aid,role);
 
-                    System.out.println("Deleted actList: " + actList);
-                    System.out.println("Deleted userList: " + userList);
                     userMapper.updateActList(uid,actList);
                     activityMapper.updateRoleList(aid,role,num-1);
                     activityMapper.deleteUserInGroup(aid,Long.toString(uid));

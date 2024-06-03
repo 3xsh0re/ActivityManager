@@ -13,8 +13,8 @@ public class InterceptorConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         //测试接口暂时注释
-        registry.addInterceptor(tokenInterceptor)
-                .addPathPatterns("/activity/*","/user/*","/reminder/*","/file/*","/resource/*")
-                .excludePathPatterns("/user/login", "/user/register"); // 排除不需要拦截的路径
+//        registry.addInterceptor(tokenInterceptor)
+//                .addPathPatterns("/activity/*","/user/*","/reminder/*","/file/*","/resource/*")
+//                .excludePathPatterns("/user/login", "/user/register"); // 排除不需要拦截的路径
     }
 }
