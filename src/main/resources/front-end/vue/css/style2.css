@@ -1,3 +1,4 @@
+/* Existing CSS content */
 body {
   font-family: Arial, sans-serif;
   background-color: #f5f5f5;
@@ -14,7 +15,7 @@ body {
   align-items: center;
 }
 
-.activity-link{
+.activity-link {
   color: white;
   text-decoration: none;
   cursor: pointer;
@@ -34,7 +35,7 @@ body {
   background: white;
   padding: 20px;
   border-radius: 10px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 h2 {
@@ -83,7 +84,7 @@ h2 {
   color: white;
   padding: 20px;
   border-radius: 10px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   margin-right: 20px;
 }
 
@@ -111,7 +112,7 @@ h2 {
   background: white;
   padding: 20px;
   border-radius: 10px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .profile-info p {
@@ -153,6 +154,8 @@ h2 {
   max-width: 600px;
   width: 100%;
   position: relative;
+  max-height: 80vh; /* 限制模态框的最大高度 */
+  overflow-y: auto; /* 启用垂直滚动 */
 }
 
 .close {
@@ -162,7 +165,6 @@ h2 {
   font-size: 24px;
   cursor: pointer;
 }
-
 
 .form-group {
   margin-bottom: 15px;
@@ -180,4 +182,89 @@ h2 {
   padding: 8px;
   border: 1px solid #ddd;
   border-radius: 5px;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.pagination button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 5px;
+  margin: 0 5px;
+}
+
+.pagination button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* Timeline styles */
+.timeline {
+  position: relative;
+  margin: 20px 0;
+  padding: 20px 0;
+  list-style: none;
+}
+
+.timeline:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 20px;
+  width: 4px;
+  background: #007bff;
+}
+
+.timeline-item {
+  position: relative;
+  margin: 0 0 20px;
+  padding-left: 40px;
+}
+
+.timeline-item:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 12px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #007bff;
+}
+
+.timeline-content {
+  padding: 10px;
+  background: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.timeline-content h3 {
+  margin-top: 0;
+}
+
+.button-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.rating-group {
+  margin-top: 10px;
+}
+
+.expense-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }

@@ -6,13 +6,13 @@ body {
 }
 
 #admin-app {
-  max-width: 1400px; /* 增加宽度 */
+  max-width: 1400px;
   margin: 40px auto;
   background-color: #ffffff;
   padding: 30px;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  min-height: 800px; /* 增加最小高度 */
+  min-height: 800px;
 }
 
 h1 {
@@ -65,7 +65,7 @@ h1 {
   padding: 20px;
   border-radius: 0 10px 10px 0;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  min-height: 800px; /* 增加最小高度 */
+  min-height: 800px;
 }
 
 .section {
@@ -154,4 +154,49 @@ button:hover {
   right: 20px;
   font-size: 24px;
   cursor: pointer;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: calc(100% - 20px);
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.pagination button {
+  margin: 0 5px;
+  padding: 5px 10px;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.pagination button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.pagination span {
+  margin: 0 10px;
 }

@@ -12,7 +12,7 @@
       <a @click="switchToMain" class="activity-link">管理系统</a>
       <a @click="switchToProfile" class="profile-link">个人主页</a>
     </div>
-
+  
     <!-- 活动列表视图 -->
     <section v-if="showActivityList" id="activity-list" class="section">
       <div class="container">
@@ -22,17 +22,27 @@
         <div class="activity-list">
           <!-- 活动卡片 -->
           <div class="activity-card" v-for="activity in activities" :key="activity.id">
-            <h3>{{ activity.title }}</h3>
-            <p>时间：{{ activity.time }}</p>
-            <p>地点：{{ activity.location }}</p>
-            <p>进度：<span :class="getProgressClass(activity.status)">{{ activity.status }}</span></p>
-            <!-- 更多活动信息 -->
-            <button class="btn">查看详情</button>
+            <h3>{{ activity.actName }}</h3>
+            <p>开始时间：{{ formatDateTime(activity.beginTime) }}</p>
+            <p>结束时间：{{ formatDateTime(activity.endTime) }}</p>
+            <p>描述：{{ activity.actDescription }}</p>
+            <p>状态：{{ activity.status }}</p>
+            <p v-if="activity.place">地点：{{ activity.place }}</p>
+            <button class="btn" @click="fetchActivityDetails(activity.id)">查看详情</button>
+            <button class="btn" @click="openJoinActivityModal(activity.id)">申请参与</button>
+            <button class="btn" @click="generateActivityReport(activity.id)">生成活动报告</button> <!-- 新增 -->
           </div>
+        </div>
+  
+        <!-- 分页控制 -->
+        <div class="pagination">
+          <button @click="changePage(page - 1)" :disabled="page === 1">上一页</button>
+          <span>第 {{ page }} 页，共 {{ Math.ceil(total / pageSize) }} 页</span>
+          <button @click="changePage(page + 1)" :disabled="page === Math.ceil(total / pageSize)">下一页</button>
         </div>
       </div>
     </section>
-
+  
     <!-- 创建活动模态框 -->
     <div v-if="showCreateActivityModal" class="modal">
       <div class="modal-content">
@@ -40,8 +50,35 @@
         <h2>创建活动</h2>
         <form @submit.prevent="createActivity">
           <div class="form-group">
-            <label for="activityTitle">活动标题</label>
-            <input type="text" id="activityTitle" v-model="newActivity.title" required>
+            <label for="activityName">活动名称</label>
+            <input type="text" id="activityName" v-model="newActivity.activityName" required>
+          </div>
+          <div class="form-group">
+            <label for="activityDescription">活动描述</label>
+            <textarea id="activityDescription" v-model="newActivity.activityDescription" required></textarea>
+          </div>
+          <div class="form-group">
+            <label for="beginTime">开始时间</label>
+            <input type="datetime-local" id="beginTime" v-model="newActivity.beginTime" required>
+          </div>
+          <div class="form-group">
+            <label for="endTime">结束时间</label>
+            <input type="datetime-local" id="endTime" v-model="newActivity.endTime" required>
+          </div>
+          <div class="form-group">
+            <label for="ifFileStore">是否开启文件上传</label>
+            <select id="ifFileStore" v-model="newActivity.ifFileStore" required>
+              <option value="1">是</option>
+              <option value="0">否</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="roleList">身份列表</label>
+            <textarea id="roleList" v-model="newActivity.roleList" required></textarea>
+          </div>
+          <div class="form-group">
+            <label for="actStatus">活动状态</label>
+            <textarea id="actStatus" v-model="newActivity.actStatus" required></textarea>
           </div>
           <div class="form-group">
             <label for="activityTemplate">选择活动模板</label>
@@ -51,34 +88,276 @@
               <!-- 可以添加更多模板 -->
             </select>
           </div>
-
-          <!-- 根据选择的模板显示相应的表单字段 -->
-          <div v-if="selectedTemplate === 'custom'">
-            <div class="form-group">
-              <label for="activityDetails">活动详情</label>
-              <textarea id="activityDetails" v-model="newActivity.details" required></textarea>
-            </div>
-          </div>
-          <div v-if="selectedTemplate === 'meeting'">
-            <div class="form-group">
-              <label for="meetingAgenda">议程设置</label>
-              <textarea id="meetingAgenda" v-model="newActivity.agenda" required></textarea>
-            </div>
-            <div class="form-group">
-              <label for="meetingParticipants">参会人员管理</label>
-              <textarea id="meetingParticipants" v-model="newActivity.participants" required></textarea>
-            </div>
-            <div class="form-group">
-              <label for="meetingMaterials">资料分享</label>
-              <textarea id="meetingMaterials" v-model="newActivity.materials" required></textarea>
-            </div>
-          </div>
-
           <button type="submit" class="btn">创建</button>
         </form>
       </div>
     </div>
+  
+    <!-- 活动详情模态框 -->
+    <div v-if="showActivityDetailsModal" class="modal">
+      <div class="modal-content">
+        <span class="close" @click="closeActivityDetailsModal">&times;</span>
+        <h2>活动详情</h2>
+        <div v-if="selectedActivity">
+          <p><strong>活动名称：</strong>{{ selectedActivity.actName }}</p>
+          <p><strong>开始时间：</strong>{{ formatDateTime(selectedActivity.beginTime) }}</p>
+          <p><strong>结束时间：</strong>{{ formatDateTime(selectedActivity.endTime) }}</p>
+          <p><strong>描述：</strong>{{ selectedActivity.actDescription }}</p>
+          <p><strong>状态：</strong>{{ selectedActivity.status }}</p>
+          <p v-if="selectedActivity.place"><strong>地点：</strong>{{ selectedActivity.place }}</p>
+          <!-- 更多活动详情字段 -->
+          <p><strong>组织者ID：</strong>{{ selectedActivity.orgId }}</p>
+          <p><strong>组织者用户名：</strong>{{ selectedActivity.username }}</p>
+          <p><strong>总预算：</strong>{{ selectedActivity.totalBudget }}</p>
+          <p><strong>评分：</strong>{{ selectedActivity.rank }}</p>
+          <p><strong>用户组：</strong>{{ selectedActivity.userGroup }}</p>
+          <p><strong>用户列表：</strong>{{ selectedActivity.userList }}</p>
+          <p><strong>活动状态：</strong></p>
+          <ul>
+            <li v-for="(step, key) in selectedActivity.actStatus" :key="key">{{ key }}: {{ step }}</li>
+          </ul>
+          <div class="comments-section">
+            <h3>评论</h3>
+            <form @submit.prevent="addComment">
+              <textarea v-model="newComment.content" placeholder="写下你的评论..." required></textarea>
+              <button type="submit" class="btn">提交评论</button>
+            </form>
+            <div v-for="comment in comments" :key="comment.id" class="comment">
+              <p><strong>{{ comment.username }}:</strong> {{ comment.content }}</p>
+              <p><small>{{ formatDateTime(comment.commentTime) }}</small></p>
+              <button class="btn" @click="likeComment(comment.id)">点赞 ({{ comment.likes }})</button>
+              <button class="btn" @click="unlikeComment(comment.id)">取消点赞</button>
+              <button v-if="comment.username === userProfile.username" class="btn" @click="deleteComment(comment.id)">删除</button>
+            </div>
+            <div class="pagination">
+              <button @click="changeCommentPage(commentPage - 1)" :disabled="commentPage === 1">上一页</button>
+              <span>第 {{ commentPage }} 页，共 {{ Math.ceil(commentTotal / commentPageSize) }} 页</span>
+              <button @click="changeCommentPage(commentPage + 1)" :disabled="commentPage === Math.ceil(commentTotal / commentPageSize)">下一页</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <!-- 修改活动模态框 -->
+    <div v-if="showEditActivityModal" class="modal">
+      <div class="modal-content">
+        <span class="close" @click="closeEditActivityModal">&times;</span>
+        <h2>修改活动</h2>
+        <div v-if="editActivity">
+          <form @submit.prevent="updateActivity">
+            <div class="form-group">
+              <label for="editActName">活动名称</label>
+              <input type="text" id="editActName" v-model="editActivity.actName" required>
+            </div>
+            <div class="form-group">
+              <label for="editActDescription">活动描述</label>
+              <textarea id="editActDescription" v-model="editActivity.actDescription" required></textarea>
+            </div>
+            <div class="form-group">
+              <label for="editBeginTime">开始时间</label>
+              <input type="datetime-local" id="editBeginTime" v-model="editActivity.beginTime" required>
+            </div>
+            <div class="form-group">
+              <label for="editEndTime">结束时间</label>
+              <input type="datetime-local" id="editEndTime" v-model="editActivity.endTime" required>
+            </div>
+            <div class="form-group">
+              <label for="editIfFileStore">是否开启文件上传</label>
+              <select id="editIfFileStore" v-model="editActivity.ifFileStore" required>
+                <option value="true">是</option>
+                <option value="false">否</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="editTotalBudget">总预算</label>
+              <input type="number" id="editTotalBudget" v-model="editActivity.totalBudget" required>
+            </div>
+            <div class="form-group">
+              <label for="editPlace">地点</label>
+              <input type="text" id="editPlace" v-model="editActivity.place">
+            </div>
+            <div class="form-group">
+              <label for="editRank">评分</label>
+              <input type="number" id="editRank" v-model="editActivity.rank">
+            </div>
+            <div class="form-group">
+              <label for="editUserCost">用户费用</label>
+              <input type="number" id="editUserCost" v-model="editActivity.userCost">
+            </div>
+            <div class="form-group">
+              <label for="editUserGroup">用户组</label>
+              <textarea id="editUserGroup" v-model="editActivity.userGroup"></textarea>
+            </div>
+            <div class="form-group">
+              <label for="editResource">资源</label>
+              <textarea id="editResource" v-model="editActivity.resource"></textarea>
+            </div>
+            <div class="form-group">
+              <label for="editUserList">用户列表</label>
+              <textarea id="editUserList" v-model="editActivity.userList"></textarea>
+            </div>
+            <div class="form-group">
+              <label for="editRoleList">身份列表</label>
+              <textarea id="editRoleList" v-model="editActivity.roleList" required></textarea>
+            </div>
+            <div class="form-group">
+              <label for="editRankList">评分列表</label>
+              <textarea id="editRankList" v-model="editActivity.rankList"></textarea>
+            </div>
+            <div class="form-group">
+              <label for="editActStatus">活动状态</label>
+              <textarea id="editActStatus" v-model="editActivity.actStatus" required></textarea>
+            </div>
+            <button type="submit" class="btn">保存修改</button>
+          </form>
+        </div>
+      </div>
+    </div>
 
+    <!-- 参与者管理模态框 -->
+    <div v-if="showParticipantManagementModal" class="modal">
+      <div class="modal-content">
+        <span class="close" @click="closeParticipantManagementModal">&times;</span>
+        <h2>参与者管理</h2>
+        <form @submit.prevent="setParticipantGroup">
+          <div class="form-group">
+            <label for="groupParticipantUid">参与者UID</label>
+            <input type="number" id="groupParticipantUid" v-model="participantUid" required>
+          </div>
+          <div class="form-group">
+            <label for="participantGroup">分组</label>
+            <input type="text" id="participantGroup" v-model="participantGroup" required>
+          </div>
+          <button type="submit" class="btn">设置分组</button>
+        </form>
+        <form @submit.prevent="setParticipantRole">
+          <div class="form-group">
+            <label for="roleParticipantUid">参与者UID</label>
+            <input type="number" id="roleParticipantUid" v-model="participantUid" required>
+          </div>
+          <div class="form-group">
+            <label for="participantRole">角色</label>
+            <input type="text" id="participantRole" v-model="participantRole" required>
+          </div>
+          <button type="submit" class="btn">设置角色</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- 资源预约模态框 -->
+    <div v-if="showResourceReservationModal" class="modal">
+      <div class="modal-content">
+        <span class="close" @click="closeResourceReservationModal">&times;</span>
+        <h2>资源预约</h2>
+        <form @submit.prevent="reserveResource">
+          <div class="form-group">
+            <label for="resource">资源</label>
+            <input type="text" id="resource" v-model="resourceReservation.resource" required>
+          </div>
+          <div class="form-group">
+            <label for="quantity">数量</label>
+            <input type="number" id="quantity" v-model="resourceReservation.quantity" required>
+          </div>
+          <div class="form-group">
+            <label for="resourceBeginTime">开始时间</label>
+            <input type="datetime-local" id="resourceBeginTime" v-model="resourceReservation.beginTime" required>
+          </div>
+          <div class="form-group">
+            <label for="resourceEndTime">结束时间</label>
+            <input type="datetime-local" id="resourceEndTime" v-model="resourceReservation.endTime" required>
+          </div>
+          <button type="submit" class="btn">预约资源</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- 申请参与活动模态框 -->
+    <div v-if="showJoinActivityModal" class="modal">
+      <div class="modal-content">
+        <span class="close" @click="closeJoinActivityModal">&times;</span>
+        <h2>申请参与活动</h2>
+        <form @submit.prevent="joinActivity">
+          <div class="form-group">
+            <label for="joinActivityReason">申请理由</label>
+            <textarea id="joinActivityReason" v-model="joinActivityReason" required></textarea>
+          </div>
+          <button type="submit" class="btn">提交申请</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- 查看参与申请模态框 -->
+    <div v-if="showUnCheckedUserListModal" class="modal">
+      <div class="modal-content">
+        <span class="close" @click="closeUnCheckedUserListModal">&times;</span>
+        <h2>待审核参与申请</h2>
+        <div v-for="unCheckedUser in unCheckedUserList" :key="unCheckedUser.uid">
+          <p><strong>用户名：</strong>{{ unCheckedUser.username }}</p>
+          <p><strong>电话：</strong>{{ unCheckedUser.phoneNumber }}</p>
+          <p><strong>申请理由：</strong>{{ unCheckedUser.reason }}</p>
+          <button class="btn" @click="checkApplication(unCheckedUser.uid, 1)">通过</button>
+          <button class="btn" @click="checkApplication(unCheckedUser.uid, 0)">拒绝</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 设定预算模态框 -->
+    <div v-if="showSetBudgetModal" class="modal">
+      <div class="modal-content">
+        <span class="close" @click="closeSetBudgetModal">&times;</span>
+        <h2>设定预算</h2>
+        <form @submit.prevent="setBudget">
+          <div class="form-group">
+            <label for="budget">预算金额</label>
+            <input type="number" id="budget" v-model="budget" required>
+          </div>
+          <button type="submit" class="btn">提交</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- 提交报销单模态框 -->
+    <div v-if="showCommitExpenseModal" class="modal">
+      <div class="modal-content">
+        <span class="close" @click="closeCommitExpenseModal">&times;</span>
+        <h2>提交报销单</h2>
+        <form @submit.prevent="commitExpense">
+          <div class="form-group">
+            <label for="expenseContent">报销缘由</label>
+            <textarea id="expenseContent" v-model="expense.content" required></textarea>
+          </div>
+          <div class="form-group">
+            <label for="expenseCost">花销金额</label>
+            <input type="number" id="expenseCost" v-model="expense.cost" required>
+          </div>
+          <button type="submit" class="btn">提交</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- 报销单审核模态框 -->
+    <div v-if="showExpenseListModal" class="modal">
+      <div class="modal-content">
+        <span class="close" @click="closeExpenseListModal">&times;</span>
+        <h2>活动报销单列表</h2>
+        <div v-for="expense in activityExpenses" :key="expense.eid">
+          <p><strong>提交用户：</strong>{{ expense.postUsername }}</p>
+          <p><strong>花销：</strong>{{ expense.cost }}</p>
+          <p><strong>缘由：</strong>{{ expense.content }}</p>
+          <p><strong>状态：</strong>{{ expense.status === 0 ? '待审核' : expense.status === 1 ? '已通过' : '已拒绝' }}</p>
+          <div v-if="expense.status === 0">
+            <button class="btn" @click="checkExpense(expense.eid, 1, '')">通过</button>
+            <button class="btn" @click="rejectExpense(expense.eid)">拒绝</button>
+          </div>
+        </div>
+        <div class="pagination">
+          <button @click="changeExpensePage(expensePage - 1)" :disabled="expensePage === 1">上一页</button>
+          <span>第 {{ expensePage }} 页，共 {{ Math.ceil(expenseTotal / expensePageSize) }} 页</span>
+          <button @click="changeExpensePage(expensePage + 1)" :disabled="expensePage === Math.ceil(expenseTotal / expensePageSize)">下一页</button>
+        </div>
+      </div>
+    </div>
 
     <!-- 用户个人主页视图 -->
     <div v-if="showUserProfile" class="profile-page">
@@ -87,6 +366,9 @@
         <ul>
           <li @click="switchToInfo">个人信息</li>
           <li @click="switchToMyActivities">我的活动</li>
+          <li @click="switchToMyExpenses">我的报销单</li>
+          <li @click="switchToUserNotifications">我的通知</li>
+          <li @click="switchToReminders">我的提醒</li>
         </ul>
       </nav>
       <!-- 个人主页内容 -->
@@ -94,27 +376,155 @@
         <div v-if="showInfo">
           <h2>个人信息</h2>
           <div class="profile-info">
-            <p><strong>姓名：</strong>{{ userProfile.name }}</p>
+            <p><strong>用户名：</strong>{{ userProfile.username }}</p>
             <p><strong>邮箱：</strong>{{ userProfile.email }}</p>
-            <p><strong>手机号：</strong>{{ userProfile.phone }}</p>
-            <p><strong>用户权限：</strong>{{ userProfile.role }}</p>
+            <p><strong>手机号：</strong>{{ userProfile.phoneNumber }}</p>
+            <p><strong>用户权限：</strong>{{ userProfile.role ? '管理员' : '普通用户' }}</p>
           </div>
         </div>
         <div v-if="showMyActivities">
-          <h2>我的活动</h2>
-          <div class="activity-list">
-            <div class="activity-card" v-for="activity in userActivities" :key="activity.id">
-              <h3>{{ activity.title }}</h3>
-              <p>时间：{{ activity.time }}</p>
-              <p>地点：{{ activity.location }}</p>
-              <p>进度：<span :class="getProgressClass(activity.status)">{{ activity.status }}</span></p>
+          <h2>活动日程</h2>
+          <div class="timeline">
+            <div class="timeline-item" v-for="(item, index) in userSchedule" :key="item.aid">
+              <div class="timeline-icon"></div>
+              <div class="timeline-content">
+                <h3>{{ item.actName }}</h3>
+                <p><strong>开始时间：</strong>{{ formatDateTime(item.beginTime) }}</p>
+                <p><strong>结束时间：</strong>{{ formatDateTime(item.endTime) }}</p>
+                <p><strong>角色：</strong>{{ item.role }}</p>
+                <div class="button-group">
+                  <button class="btn" @click="fetchEditActivityDetails(item.aid)">修改活动</button>
+                  <button v-if="item.orgId == userProfile.uid || userProfile.role" class="btn" @click="openParticipantManagementModal(item.aid)">参与者管理</button>
+                  <button v-if="item.orgId == userProfile.uid || userProfile.role" class="btn" @click="openResourceReservationModal(item.aid)">资源预约</button>
+                  <button class="btn" @click="exitActivity(item.aid)">退出活动</button>
+                  <button class="btn" @click="openUnCheckedUserListModal(item.aid)">查看参与申请</button>
+                  <button class="btn" @click="fetchActivityBudget(item.aid)">查看预算</button>
+                  <button v-if="item.orgId == userProfile.uid || userProfile.role" class="btn" @click="openSetBudgetModal(item.aid)">设定预算</button>
+                  <button class="btn" @click="openCommitExpenseModal(item.aid)">提交报销单</button>
+                  <button v-if="item.orgId == userProfile.uid || userProfile.role" class="btn" @click="openExpenseListModal(item.aid)">查看报销单</button>
+                  <button v-if="item.orgId == userProfile.uid || userProfile.role" class="btn" @click="switchToActivityNotifications(item.aid)">查看活动通知</button>
+                  <button class="btn" @click="openFileManagementModal(item.aid)">文件管理</button>
+                </div>
+                <div class="rating-group">
+                  <label for="rank">评分</label>
+                  <input type="number" v-model="item.rank" id="rank" @change="setRank(item.aid, item.rank)" />
+                  <button class="btn" @click="setRank(item.aid, item.rank)">提交评分</button>
+                </div>
+              </div>
             </div>
+          </div>
+        </div>
+        <div v-if="showMyExpenses">
+          <h2>我的报销单</h2>
+          <div class="expense-list">
+            <div v-for="expense in userExpenses" :key="expense.eid">
+              <p><strong>活动名称：</strong>{{ expense.actName }}</p>
+              <p><strong>花销：</strong>{{ expense.cost }}</p>
+              <p><strong>缘由：</strong>{{ expense.content }}</p>
+              <p><strong>状态：</strong>{{ expense.status === 0 ? '待审核' : '已审核' }}</p>
+            </div>
+            <div class="pagination">
+              <button @click="changeExpensePage(expensePage - 1)" :disabled="expensePage === 1">上一页</button>
+              <span>第 {{ expensePage }} 页，共 {{ Math.ceil(expenseTotal / expensePageSize) }} 页</span>
+              <button @click="changeExpensePage(expensePage + 1)" :disabled="expensePage === Math.ceil(expenseTotal / expensePageSize)">下一页</button>
+            </div>
+          </div>
+        </div>
+        <div v-if="showUserNotifications">
+          <h2>我的通知</h2>
+          <div class="notification-list">
+            <div v-for="notification in userNotifications" :key="notification.nid">
+              <p><strong>发送人：</strong>{{ notification.sendUser }}</p>
+              <p><strong>内容：</strong>{{ notification.content }}</p>
+              <p><strong>已读状态：</strong>{{ notification.ifRead ? '已读' : '未读' }}</p>
+              <button class="btn" @click="openNotification(notification.nid)">标记为已读</button>
+            </div>
+            <div class="pagination">
+              <button @click="changeNotificationPage(notificationPage - 1)" :disabled="notificationPage === 1">上一页</button>
+              <span>第 {{ notificationPage }} 页，共 {{ Math.ceil(notificationTotal / notificationPageSize) }} 页</span>
+              <button @click="changeNotificationPage(notificationPage + 1)" :disabled="notificationPage === Math.ceil(notificationTotal / notificationPageSize)">下一页</button>
+            </div>
+          </div>
+        </div>
+        <div v-if="showActivityNotifications">
+          <h2>活动通知</h2>
+          <div class="notification-list">
+            <div v-for="notification in activityNotifications" :key="notification.nid">
+              <p><strong>发送人：</strong>{{ notification.sendUser }}</p>
+              <p><strong>内容：</strong>{{ notification.content }}</p>
+              <p><strong>总发送：</strong>{{ notification.totalSend }}</p>
+              <p><strong>已读人数：</strong>{{ notification.totalRead }}</p>
+            </div>
+            <div class="pagination">
+              <button @click="changeNotificationPage(notificationPage - 1)" :disabled="notificationPage === 1">上一页</button>
+              <span>第 {{ notificationPage }} 页，共 {{ Math.ceil(notificationTotal / notificationPageSize) }} 页</span>
+              <button @click="changeNotificationPage(notificationPage + 1)" :disabled="notificationPage === Math.ceil(notificationTotal / notificationPageSize)">下一页</button>
+            </div>
+          </div>
+        </div>
+        <div v-if="showReminders">
+          <h2>我的提醒</h2>
+          <div class="reminder-list">
+            <div v-for="reminder in reminders" :key="reminder.id">
+              <p><strong>内容：</strong>{{ reminder.content }}</p>
+              <p><strong>提醒时间：</strong>{{ formatDateTime(reminder.reminderTime) }}</p>
+              <button class="btn" @click="deleteReminder(reminder.id)">删除</button>
+            </div>
+            <div class="pagination">
+              <button @click="changeReminderPage(reminderPage - 1)" :disabled="reminderPage === 1">上一页</button>
+              <span>第 {{ reminderPage }} 页，共 {{ Math.ceil(reminderTotal / reminderPageSize) }} 页</span>
+              <button @click="changeReminderPage(reminderPage + 1)" :disabled="reminderPage === Math.ceil(reminderTotal / reminderPageSize)">下一页</button>
+            </div>
+          </div>
+          <div class="add-reminder">
+            <h3>添加提醒</h3>
+            <form @submit.prevent="addReminder">
+              <div class="form-group">
+                <label for="reminderContent">提醒内容</label>
+                <textarea id="reminderContent" v-model="newReminder.content" required></textarea>
+              </div>
+              <div class="form-group">
+                <label for="reminderTime">提醒时间</label>
+                <input type="datetime-local" id="reminderTime" v-model="newReminder.reminderTime" required>
+              </div>
+              <button type="submit" class="btn">添加提醒</button>
+            </form>
           </div>
         </div>
       </section>
     </div>
+  
+    <!-- 文件管理模态框 -->
+    <div v-if="showFileManagementModal" class="modal">
+      <div class="modal-content">
+        <span class="close" @click="closeFileManagementModal">&times;</span>
+        <h2>文件管理</h2>
+        <form @submit.prevent="uploadFile">
+          <div class="form-group">
+            <label for="file">选择文件</label>
+            <input type="file" id="file" @change="handleFileUpload">
+          </div>
+          <button type="submit" class="btn">上传文件</button>
+        </form>
+        <div class="file-list">
+          <h3>已上传文件</h3>
+          <div v-for="file in files" :key="file.fid">
+            <p><strong>文件名：</strong>{{ file.fileName }}</p>
+            <p><strong>上传时间：</strong>{{ formatDateTime(file.uploadDate) }}</p>
+            <p><strong>下载次数：</strong>{{ file.downloadTimes }}</p>
+            <button class="btn" @click="downloadFile(file.fid, file.fileName)">下载</button>
+            <button class="btn" @click="deleteFile(file.fid)">删除</button>
+          </div>
+        </div>
+        <div class="pagination">
+          <button @click="changeFilePage(filePage - 1)" :disabled="filePage === 1">上一页</button>
+          <span>第 {{ filePage }} 页，共 {{ Math.ceil(fileTotal / filePageSize) }} 页</span>
+          <button @click="changeFilePage(filePage + 1)" :disabled="filePage === Math.ceil(fileTotal / filePageSize) ">下一页</button>
+        </div>
+      </div>
+    </div>
   </div>
-
+  
   <script src="https://cdn.bootcdn.net/ajax/libs/vue/2.6.0/vue.js"></script>
   <script src="https://cdn.bootcdn.net/ajax/libs/axios/0.24.0/axios.min.js"></script>
   <script src="js/script2.js"></script>

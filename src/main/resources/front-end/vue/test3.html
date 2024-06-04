@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <title>管理员页面</title>
-  <link rel="stylesheet" href="css/style3.css">
+  <link rel="stylesheet" href="/css/style3.css">
   <script src="https://cdn.bootcdn.net/ajax/libs/vue/2.6.0/vue.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
@@ -16,47 +16,57 @@
           <li @click="currentView = 'activities'">活动列表</li>
           <li @click="currentView = 'resources'">可用资源列表</li>
           <li @click="currentView = 'users'">用户列表</li>
-          <li @click="currentView = 'reimbursements'">报销审核列表</li>
         </ul>
       </nav>
       <div class="content">
         <div v-if="currentView === 'activities'" class="section">
           <h2>活动列表</h2>
           <ul>
-            <li v-for="activity in activities" :key="activity.orgId">
+            <li v-for="activity in activities" :key="activity.id">
               活动名：{{ activity.actName }} 时间：{{ activity.beginTime }} 至 {{ activity.endTime }} 地点：{{ activity.place }}
-              <button @click="viewActivity(activity)">查看</button>
-              <button @click="approveActivity(activity.orgId)">审核</button>
-              <button @click="deleteActivity(activity.orgId)">删除</button>
+              <button @click="viewActivity(activity.id)">查看</button>
+              <button @click="openApproveModal(activity.id)">审核</button>
+              <button @click="deleteActivity(activity.id, 2)">删除</button>
             </li>
           </ul>
+          <div class="pagination">
+            <button @click="changePage(page - 1)" :disabled="page === 1">上一页</button>
+            <span>第 {{ page }} 页，共 {{ totalPages(totalActivities) }} 页</span>
+            <button @click="changePage(page + 1)" :disabled="page === totalPages(totalActivities)">下一页</button>
+          </div>
         </div>
         <div v-if="currentView === 'resources'" class="section">
           <h2>可用资源列表</h2>
           <ul>
             <li v-for="resource in resources" :key="resource.id">
-              {{ resource.resourceName }} - Quantity: {{ resource.quantity }}
+              {{ resource.resourceName }} - 数量: {{ resource.quantity }}
+              <button @click="openEditModal(resource)">修改</button>
             </li>
           </ul>
+          <div class="pagination">
+            <button @click="changePage(page - 1)" :disabled="page === 1">上一页</button>
+            <span>第 {{ page }} 页，共 {{ totalPages(totalResources) }} 页</span>
+            <button @click="changePage(page + 1)" :disabled="page === totalPages(totalResources)">下一页</button>
+          </div>
+          <button @click="openAddModal">添加资源</button>
         </div>
         <div v-if="currentView === 'users'" class="section">
           <h2>用户列表</h2>
           <ul>
             <li v-for="user in users" :key="user.id">
               {{ user.username }} - {{ user.email }} - {{ user.phoneNumber }}
+              <button @click="deleteUser(user.id)">删除</button>
             </li>
           </ul>
-        </div>
-        <div v-if="currentView === 'reimbursements'" class="section">
-          <h2>报销审核列表</h2>
-          <ul>
-            <li v-for="reimbursement in reimbursements" :key="reimbursement.id">
-              {{ reimbursement.reimbursementid }} - {{ reimbursement.status }}
-            </li>
-          </ul>
+          <div class="pagination">
+            <button @click="changePage(page - 1)" :disabled="page === 1">上一页</button>
+            <span>第 {{ page }} 页，共 {{ totalPages(totalUsers) }} 页</span>
+            <button @click="changePage(page + 1)" :disabled="page === totalPages(totalUsers)">下一页</button>
+          </div>
         </div>
       </div>
     </div>
+    
     <!-- 查看活动模态框 -->
     <div v-if="showActivityModal" class="modal">
       <div class="modal-content">
@@ -71,6 +81,75 @@
         <p><strong>状态：</strong>{{ selectedActivity.status }}</p>
       </div>
     </div>
+    
+    <!-- 审核活动模态框 -->
+    <div v-if="showApproveModal" class="modal">
+      <div class="modal-content">
+        <span class="close" @click="closeApproveModal">&times;</span>
+        <h2>审核活动</h2>
+        <form @submit.prevent="approveActivity">
+          <div class="form-group">
+            <label for="approvalStatus">审核状态</label>
+            <select id="approvalStatus" v-model="approvalStatus" required>
+              <option value="1">通过</option>
+              <option value="-1">未通过</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="approvalResult">审核结果评论</label>
+            <textarea id="approvalResult" v-model="approvalResult" required></textarea>
+          </div>
+          <button type="submit" class="btn">提交审核</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- 添加资源模态框 -->
+    <div v-if="showAddModal" class="modal">
+      <div class="modal-content">
+        <span class="close" @click="closeAddModal">&times;</span>
+        <h2>添加资源</h2>
+        <form @submit.prevent="addResource">
+          <div class="form-group">
+            <label for="resourceName">资源名</label>
+            <input type="text" id="resourceName" v-model="newResource.resourceName" required>
+          </div>
+          <div class="form-group">
+            <label for="resourceQuantity">数量</label>
+            <input type="number" id="resourceQuantity" v-model="newResource.quantity" required>
+          </div>
+          <div class="form-group">
+            <label for="resourceType">类型</label>
+            <input type="number" id="resourceType" v-model="newResource.type" required>
+          </div>
+          <button type="submit">提交</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- 修改资源模态框 -->
+    <div v-if="showEditModal" class="modal">
+      <div class="modal-content">
+        <span class="close" @click="closeEditModal">&times;</span>
+        <h2>修改资源</h2>
+        <form @submit.prevent="editResource">
+          <div class="form-group">
+            <label for="editResourceName">资源名</label>
+            <input type="text" id="editResourceName" v-model="selectedResource.resourceName" required disabled>
+          </div>
+          <div class="form-group">
+            <label for="editResourceQuantity">数量</label>
+            <input type="number" id="editResourceQuantity" v-model="selectedResource.quantity" required>
+          </div>
+          <div class="form-group">
+            <label for="editResourceType">类型</label>
+            <input type="number" id="editResourceType" v-model="selectedResource.type" required disabled>
+          </div>
+          <button type="submit">提交</button>
+        </form>
+      </div>
+    </div>
+    
   </div>
   <script src="js/script3.js"></script>
 </body>
