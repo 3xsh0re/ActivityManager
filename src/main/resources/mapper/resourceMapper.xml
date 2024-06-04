@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.example.activity_manage.Mapper.ResourceMapper">
-    <select id="getAllResource">
+    <select id="getAllResource" resultType="com.example.activity_manage.Entity.Resource">
         SELECT * FROM Resource
     </select>
     <select id="checkResourceByName">
@@ -17,6 +17,13 @@
     <insert id="insertResource">
         INSERT INTO Resource (resourceName, type, quantity) VALUES (#{ResourceName}, #{type}, #{quantity});
     </insert>
+    <select id="pageQueryAllResource" resultType="com.example.activity_manage.Entity.Resource">
+        SELECT * FROM Resource
+    </select>
+    <select id="getRidByResourceName">
+        select id
+        from Resource where resourceName = #{resourceName};
+    </select>
 </mapper>
 
 

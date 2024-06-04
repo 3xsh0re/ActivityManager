@@ -2,20 +2,31 @@ package com.example.activity_manage.Mapper;
 
 import com.example.activity_manage.Entity.User;
 import com.example.activity_manage.Entity.VO.GetUserVO;
+import com.example.activity_manage.Entity.VO.UserInfoVO;
+import com.github.pagehelper.Page;
+import net.minidev.json.JSONObject;
 import org.apache.ibatis.annotations.Mapper;
 
-import java.util.List;
 
 @Mapper
 public interface UserMapper {
     // 添加用户
-    public void insertUser(User user);
+    void insertUser(User user);
+    // 返回用户信息
+    UserInfoVO getUserInfo(long uid);
+
     // 查找用户
-    public User selectUserByPhone(String phoneNumber);
+    User selectUserByPhone(String phoneNumber);
+    String getPhoneByUid(long uid);
     // 返回所有用户
-    public List<GetUserVO> selectAllUser();
-    public List<String> selectAllPhone();
-    public void setPwd(String passwd,String phoneNumber);
-    public Long selectIdByPhone(String phoneNumber);
+    Page<GetUserVO> pageQueryAllUser();
+    Page<String> pageQueryAllPhone();
+    void setPwd(String passwd,String phoneNumber);
+    void deleteUser(long uid);
+    void deleteActInWantJoinList(String aid,long uid);
     String getUsernameById(long uid);
+    JSONObject getActList(long uid);
+    JSONObject getWantJoinActList(long uid);
+    void updateActList(long uid,JSONObject actList);//更新用户参与的活动
+    void updateWantJoinActList(long uid,JSONObject wantJoinActList);
 }

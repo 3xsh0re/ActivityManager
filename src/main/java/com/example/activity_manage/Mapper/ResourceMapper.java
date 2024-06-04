@@ -1,15 +1,15 @@
 package com.example.activity_manage.Mapper;
 
 import com.example.activity_manage.Entity.Resource;
+import com.github.pagehelper.Page;
 import org.apache.ibatis.annotations.Mapper;
-
-import java.util.List;
 
 @Mapper
 public interface ResourceMapper {
-    public boolean checkResourceByName(String ResourceName);
-    public int selectResourceByName(String ResourceName);
-    public void updateResourceQuantityByName(String ResourceName, int quantity);
-    public void insertResource(String ResourceName, int quantity, int type);
-    public List<Resource> getAllResource();
+    boolean checkResourceByName(String ResourceName);
+    int selectResourceByName(String ResourceName);
+    void updateResourceQuantityByName(String ResourceName, int quantity);
+    void insertResource(String ResourceName, int quantity, int type);
+    long getRidByResourceName(String resourceName);
+    Page<Resource> pageQueryAllResource();
 }

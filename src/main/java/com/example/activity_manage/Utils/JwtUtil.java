@@ -3,9 +3,17 @@ package com.example.activity_manage.Utils;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import net.minidev.json.JSONObject;
+import org.springframework.stereotype.Component;
+
 import java.nio.charset.StandardCharsets;
-import java.util.Date;
-import java.util.Map;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.*;
 
 public class JwtUtil {
     /**
@@ -55,5 +63,43 @@ public class JwtUtil {
         return claims;
     }
 
+    public static String getNowTimeHash() {
+        // 获取当前时间
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String now = sdf.format(new Date());
+
+        // 计算哈希值
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] hash = md.digest(now.getBytes());
+
+            // 将哈希值转换为十六进制字符串
+            StringBuilder hexString = new StringBuilder();
+            for (byte b : hash) {
+                String hex = Integer.toHexString(0xff & b);
+                if (hex.length() == 1) hexString.append('0');
+                hexString.append(hex);
+            }
+            return hexString.toString();
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    // 对JSONObject排序：按照value从小到大,返回key列表
+    public static List<String> sortJSONObjectByValue(JSONObject jsonObject) {
+        // 将 JSONObject 转换为 List<Map.Entry<String, Integer>>
+        List<Map.Entry<String, Integer>> entries = new ArrayList<>();
+        for (String key : jsonObject.keySet()) {
+            entries.add(new AbstractMap.SimpleEntry<>(key, (Integer) jsonObject.get(key)));
+        }
+        // 对 List 进行排序
+        entries.sort(Map.Entry.comparingByValue());
+        List<String> result = new ArrayList<>();
+        for (Map.Entry<String, Integer> map: entries ) {
+            result.add(map.getKey());
+        }
+        return result;
+    }
 }
 

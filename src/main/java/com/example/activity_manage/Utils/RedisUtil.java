@@ -2,8 +2,9 @@ package com.example.activity_manage.Utils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -14,6 +15,37 @@ public class RedisUtil {
 
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
+
+    /**
+     * 获取锁
+     * @param key 锁的key
+     * @param value 锁的值，通常是唯一标识，比如 UUID
+     * @param timeout 锁的超时时间
+     * @param timeUnit 超时时间单位
+     * @return 是否成功获取锁
+     */
+    public boolean tryLock(String key, String value, long timeout, TimeUnit timeUnit) {
+        ValueOperations<String, String> ops = stringRedisTemplate.opsForValue();
+        return Boolean.TRUE.equals(ops.setIfAbsent(key, value, timeout, timeUnit));
+    }
+
+    /**
+     * 释放锁
+     * @param key 锁的key
+     * @param value 锁的值，只有匹配的值才能释放锁
+     * @return 是否成功释放锁
+     */
+    public boolean unlock(String key, String value) {
+        ValueOperations<String, String> ops = stringRedisTemplate.opsForValue();
+        String currentValue = ops.get(key);
+        if (value.equals(currentValue)) {
+            stringRedisTemplate.delete(key);
+            return true;
+        }
+        return false;
+    }
 
     /**
      * 指定缓存失效时间 @param key 键 @param time 时间(秒) @return
@@ -46,20 +78,6 @@ public class RedisUtil {
             return false;
         }
     }
-
-    /**
-     * 删除缓存 @param key 可以传一个值 或多个
-     */
-/*    @SuppressWarnings("unchecked")
-    public void del(String... key) {
-        if (key != null && key.length > 0) {
-            if (key.length == 0) {
-                redisTemplate.delete(key[0]);
-            } else {
-                redisTemplate.delete(CollectionUtils.arrayToList(key));
-            }
-        }
-    }*/
 
     /* ============================String=============================*/
 

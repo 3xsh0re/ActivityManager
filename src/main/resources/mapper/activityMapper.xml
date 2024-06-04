@@ -3,8 +3,8 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.example.activity_manage.Mapper.ActivityMapper">
     <resultMap id="pairResultMap" type="ch.qos.logback.core.joran.sanity.Pair">
-        <result column="beginTime" javaType="java.sql.Date"/>
-        <result column="endTime" javaType="java.sql.Date"/>
+        <result column="beginTime" javaType="java.sql.Timestamp"/>
+        <result column="endTime" javaType="java.sql.Timestamp"/>
     </resultMap>
 
     <resultMap id="ActivityResultMap" type="com.example.activity_manage.Entity.Activity">
@@ -16,7 +16,7 @@
         <result column="beginTime" jdbcType="TIMESTAMP" property="beginTime" />
         <result column="endTime" jdbcType="TIMESTAMP" property="endTime" />
         <result column="totalBudget" jdbcType="INTEGER" property="totalBudget" />
-        <result column="place" jdbcType="VARCHAR" property="place" />
+        <result column="place" jdbcType="VARCHAR" javaType="String" property="place" />
         <result column="ifFileStore" jdbcType="TINYINT" property="ifFileStore" />
         <result column="score" jdbcType="DOUBLE" property="rank" />
         <result column="userCost" jdbcType="OTHER" property="userCost" javaType="net.minidev.json.JSONObject" typeHandler="com.example.activity_manage.Handler.JsonTypeHandler"/>
@@ -26,6 +26,7 @@
         <result column="rankList" jdbcType="OTHER" property="rankList" javaType="net.minidev.json.JSONObject" typeHandler="com.example.activity_manage.Handler.JsonTypeHandler"/>
         <result column="roleList" jdbcType="OTHER" property="roleList" javaType="net.minidev.json.JSONObject" typeHandler="com.example.activity_manage.Handler.JsonTypeHandler"/>
         <result column="actStatus" jdbcType="OTHER" property="actStatus" javaType="net.minidev.json.JSONObject" typeHandler="com.example.activity_manage.Handler.JsonTypeHandler"/>
+        <result column="unCheckedUserList" jdbcType="OTHER" property="unCheckedUserList" javaType="net.minidev.json.JSONObject" typeHandler="com.example.activity_manage.Handler.JsonTypeHandler"/>
     </resultMap>
 
     <resultMap id="ActInfoToAllVOResultMap" type="com.example.activity_manage.Entity.VO.ActInfoToAllVO">
@@ -43,6 +44,21 @@
         <result column="actStatus" jdbcType="OTHER" property="actStatus" javaType="net.minidev.json.JSONObject" typeHandler="com.example.activity_manage.Handler.JsonTypeHandler"/>
     </resultMap>
 
+    <resultMap id="userListResultMap" type="net.minidev.json.JSONObject">
+        <result column="userList" jdbcType="OTHER" property="userList" javaType="net.minidev.json.JSONObject" typeHandler="com.example.activity_manage.Handler.JsonTypeHandler"/>
+    </resultMap>
+    <resultMap id="rankListResultMap" type="net.minidev.json.JSONObject">
+        <result column="rankList" jdbcType="OTHER" property="rankList" javaType="net.minidev.json.JSONObject" typeHandler="com.example.activity_manage.Handler.JsonTypeHandler"/>
+    </resultMap>
+
+    <resultMap id="unCheckedUserListResultMap" type="net.minidev.json.JSONObject">
+        <result column="unCheckedUserList" jdbcType="OTHER" property="unCheckedUserList" javaType="net.minidev.json.JSONObject" typeHandler="com.example.activity_manage.Handler.JsonTypeHandler"/>
+    </resultMap>
+
+    <resultMap id="actStatusResultMap" type="net.minidev.json.JSONObject">
+        <result column="actStatus" jdbcType="OTHER" property="actStatus" javaType="net.minidev.json.JSONObject" typeHandler="com.example.activity_manage.Handler.JsonTypeHandler"/>
+    </resultMap>
+
     <select id="activityDateGet" resultMap="pairResultMap">
         SELECT beginTime, endTime FROM Activity WHERE id = #{AID};
     </select>
@@ -50,9 +66,10 @@
     <insert id="activityCreate" parameterType="com.example.activity_manage.Entity.DTO.ActivityCreateDTO">
         INSERT INTO Activity (uid, actName, actDescription, beginTime,
                               endTime, ifFileStore, status , totalBudget,
-                              roleList, actStatus)
+                              userList, roleList, actStatus)
         VALUES (#{uid}, #{actName}, #{actDescription}, #{beginTime},
                 #{endTime}, #{ifFileStore}, 0, 0,
+                #{userList, jdbcType=OTHER, typeHandler=com.example.activity_manage.Handler.JsonTypeHandler},
                 #{roleList, jdbcType=OTHER, typeHandler=com.example.activity_manage.Handler.JsonTypeHandler},
                 #{actStatus, jdbcType=OTHER, typeHandler=com.example.activity_manage.Handler.JsonTypeHandler})
     </insert>
@@ -75,17 +92,17 @@
         SELECT uid, actName, status, actDescription, beginTime, endTime, totalBudget, place,
                score, userGroup, userList, actStatus
         FROM Activity
-        WHERE uid = #{uid};
+        WHERE uid = #{uid}
     </select>
 
     <select id="getAllAct" resultMap="ActivityResultMap">
-        select * from Activity;
+        select * from Activity
     </select>
 
-    <select id="getAllActInfoToAdmin" resultType="com.example.activity_manage.Entity.VO.ActInfoToAdminVO">
-        select uid, actName, status, actDescription, beginTime, endTime, totalBudget,
-               place, score
-        from Activity;
+    <select id="pageQueryActInfoToAdmin" resultType="com.example.activity_manage.Entity.VO.ActInfoToManagerVO">
+        select id, uid, actName, status, actDescription, beginTime,
+               endTime, totalBudget, place, score
+        from Activity
     </select>
 
     <update id="checkActContent">
@@ -93,6 +110,169 @@
     </update>
 
     <select id="getStatusById">
-        select status from Activity where id =#{aid};
+        select status from Activity where id =#{aid}
     </select>
+
+    <select id="getUserList" resultMap="userListResultMap">
+        select userList from Activity where id = #{aid};
+    </select>
+
+    <select id="getUnCheckedUserList" resultMap="unCheckedUserListResultMap">
+        select unCheckedUserList
+        from Activity where id = #{aid};
+    </select>
+
+    <delete id="deleteActivity">
+        delete from Activity where id = #{aid}
+    </delete>
+
+    <update id="setBudget">
+        update Activity SET totalBudget = #{budget} where id = #{aid}
+    </update>
+
+    <select id="getBudget">
+        select totalBudget from Activity where id = #{aid}
+    </select>
+
+    <select id="pageQueryBaseActInfoVO" resultType="com.example.activity_manage.Entity.VO.BaseActInfoVO" >
+        select id, actName, beginTime, endTime,
+               actDescription, status, place
+        from Activity
+    </select>
+    
+    <select id="getMaxId">
+        SELECT MAX(id) FROM Activity
+    </select>
+
+    <update id="updateUserList">
+        update Activity
+        set userList = #{userList, jdbcType=OTHER, typeHandler=com.example.activity_manage.Handler.JsonTypeHandler}
+        where id = #{aid}
+    </update>
+
+    <update id="updateUnCheckedUserList">
+        update Activity
+        set unCheckedUserList = #{unCheckedUserList, jdbcType=OTHER, typeHandler=com.example.activity_manage.Handler.JsonTypeHandler}
+        where id = #{aid}
+    </update>
+
+    <update id="deleteUserInGroup">
+        UPDATE Activity
+        SET userGroup = JSON_REMOVE(userGroup, CONCAT('$."', #{uid},'"'))
+        WHERE id = #{aid};
+    </update>
+
+    <update id="deleteUserInUnCheckedList">
+        UPDATE Activity
+        SET unCheckedUserList = JSON_REMOVE(unCheckedUserList, CONCAT('$."', #{uid} , '"'))
+        WHERE id = #{aid};
+    </update>
+
+    <select id="pageQueryUnCheckedUser" resultMap="unCheckedUserListResultMap">
+        select unCheckedUserList
+        from Activity where id = #{aid}
+    </select>
+
+    <update id="updateActivityResource">
+        UPDATE Activity
+        SET resource = CASE
+               WHEN JSON_CONTAINS_PATH(resource, 'one', concat('$."', #{resourceName}, '"')) THEN
+                   JSON_SET(resource,concat('$."', #{resourceName}, '"'),CAST(#{quantity} AS UNSIGNED))
+               ELSE
+                   JSON_MERGE_PATCH(IFNULL(resource, '{}'),JSON_OBJECT(#{resourceName}, CAST(#{quantity} AS UNSIGNED)))
+            END
+        WHERE id = #{aid};
+    </update>
+
+    <select id="getReQuantityByReName">
+        select IFNULL(JSON_UNQUOTE(JSON_EXTRACT(resource, CONCAT('$."', #{resourceName}, '"'))),0) AS key1_value from Activity where id = #{aid}
+    </select>
+
+    <select id="getUserRole">
+        select JSON_UNQUOTE(JSON_EXTRACT(userList, CONCAT('$."', #{uid}, '"'))) AS key1_value from Activity where id = #{aid}
+    </select>
+
+    <update id="updateUserRole">
+        UPDATE Activity
+        SET userList = JSON_SET(userList, CONCAT('$."', #{uid}, '"'), #{role})
+        WHERE id = #{aid};
+    </update>
+
+    <select id="getRoleNum">
+        select IFNULL(JSON_UNQUOTE(JSON_EXTRACT(roleList, CONCAT('$."', #{role}, '"'))), 0) AS key1_value
+        from Activity
+        where id = #{aid};
+    </select>
+
+    <update id="updateRoleList">
+        UPDATE Activity
+        SET roleList = JSON_MERGE_PATCH(
+            IFNULL(roleList , '{}'), JSON_OBJECT(#{role}, #{quantity}))
+        WHERE id = #{aid};
+    </update>
+
+    <update id="updateUserGroup">
+        UPDATE Activity
+        SET userGroup = JSON_MERGE_PATCH(
+            IFNULL(userGroup , '{}'), JSON_OBJECT(CAST(#{uid} as CHAR), #{group}))
+        WHERE id = #{aid};
+    </update>
+
+    <select id="checkUserExist">
+        SELECT JSON_CONTAINS_PATH(userList, 'one', CONCAT('$."', #{uid}, '"')) AS containsUid
+        FROM Activity
+        WHERE id = #{aid};
+    </select>
+
+    <select id="getActNameByAid">
+        select actName
+        from Activity where id = #{aid};
+    </select>
+
+    <update id="setRankForAct">
+        update Activity
+        set score = #{score},rankList = #{rankList, jdbcType=OTHER, typeHandler=com.example.activity_manage.Handler.JsonTypeHandler}
+        where id = #{aid};
+    </update>
+
+    <select id="getScore">
+        select score
+        from Activity where id = #{aid};
+    </select>
+
+    <select id="getRankList" resultMap="rankListResultMap">
+        select rankList
+        from Activity where id = #{aid};
+    </select>
+
+    <update id="insertMessage">
+        UPDATE Activity
+        SET message = JSON_MERGE_PATCH(IFNULL(message , '{}'), JSON_OBJECT(#{timestamp}, #{message}))
+        WHERE id = #{aid};
+    </update>
+
+    <select id="checkUserInActivity" resultType="boolean">
+        SELECT EXISTS (
+            SELECT 1
+            FROM Activity
+            WHERE id = #{aid}
+              AND JSON_CONTAINS_PATH(userList, 'one', CONCAT('$."', #{uid}, '"'))
+        ) AS key_exists;
+    </select>
+
+    <select id="getAllMessage">
+        SELECT message FROM Activity WHERE id = #{aid};
+    </select>
+
+    <select id="getActProcess" resultMap="actStatusResultMap">
+        select actStatus
+        from Activity where id = #{aid};
+    </select>
+
+    <update id="updateActProcess">
+        update Activity
+        set  actStatus = #{actStatus, jdbcType=OTHER, typeHandler=com.example.activity_manage.Handler.JsonTypeHandler}
+        where id = #{aid};
+    </update>
+
 </mapper>

@@ -19,6 +19,7 @@ public class ActivityCreateDTO {
     private Date beginTime; // 开始时间
     private Date endTime; // 活动的结束时间
     private boolean ifFileStore;// 活动是否开启文件上传功能
+    private JSONObject userList;//本活动的参与者列表<uid,role>
     private JSONObject roleList; // 身份列表<role,quantity>
     private JSONObject actStatus;//活动内部细节流程<StatusName,StatusDescription>
 }

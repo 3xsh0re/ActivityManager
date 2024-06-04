@@ -3,8 +3,8 @@ package com.example.activity_manage.Entity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import net.minidev.json.JSONObject;
 
-import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -15,5 +15,6 @@ public class User {
     private String phoneNumber;//手机号
     private String email;  //邮箱
     private int role;
-    private String actList;//用户活动日程
+    private JSONObject actList;//用户活动日程
+    private JSONObject wantJoinActList; // 想要参与的活动申请<aid,reason>
 }

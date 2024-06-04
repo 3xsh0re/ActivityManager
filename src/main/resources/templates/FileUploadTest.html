@@ -1,11 +1,12 @@
 <!DOCTYPE html>
-<html>
+<html lang="aa">
 <head>
     <meta charset="UTF-8">
     <title>文件上传测试</title>
     <script>
         function uploadFile() {
             var aid = document.getElementById("aid").value;
+            var uid = document.getElementById("uid").value; // 获取 uid 值
             var fileInput = document.getElementById("file");
 
             if (fileInput.files.length === 0) {
@@ -18,9 +19,10 @@
             var formData = new FormData();
             formData.append("file", file);
             formData.append("aid", aid);
+            formData.append("uid", uid); // 将 uid 添加到 FormData 中
 
             var request = new XMLHttpRequest();
-            request.open("POST", "http://127.0.0.1:18088/file/upload");
+            request.open("POST", "http://47.93.254.31:18088/file/upload");
             request.onreadystatechange = function() {
                 if (request.readyState === 4) {
                     if (request.status === 200) {
@@ -40,6 +42,8 @@
 <h1>文件上传测试</h1>
 <label for="aid">AID:</label>
 <input type="text" id="aid" name="aid" required><br><br>
+<label for="uid">UID:</label> <!-- 新增 uid 字段的标签 -->
+<input type="text" id="uid" name="uid" required><br><br> <!-- 新增 uid 字段的输入框 -->
 <input type="file" id="file" name="file" required><br><br>
 <button type="button" onclick="uploadFile()">上传文件</button>
 </body>

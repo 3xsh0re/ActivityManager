@@ -4,6 +4,7 @@ import com.example.activity_manage.Constant.MessageConstant;
 import com.example.activity_manage.Entity.DTO.ResetPwdDTO;
 import com.example.activity_manage.Entity.DTO.UserLoginDTO;
 import com.example.activity_manage.Entity.User;
+import com.example.activity_manage.Entity.VO.UserInfoVO;
 import com.example.activity_manage.Exception.*;
 import com.example.activity_manage.Mapper.ResourceMapper;
 import com.example.activity_manage.Mapper.UserMapper;
@@ -13,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
-import java.util.List;
 
 
 @Service
@@ -118,5 +118,10 @@ public class UserServiceImpl implements UserService {
         {
             throw new LoginRegisterException(MessageConstant.ACCOUNT_NOT_FOUND);
         }
+    }
+
+    @Override
+    public UserInfoVO getUserInfo(long uid) {
+        return userMapper.getUserInfo(uid);
     }
 }

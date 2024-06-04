@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.activity_manage.Mapper.NoticeMapper">
+    <insert id="createNotice" parameterType="com.example.activity_manage.Entity.Notice">
+        insert into Notice(aid, type, sendUid, content, receiveUid, ifRead, groupId)
+        VALUES (#{aid},#{type},#{sendUid},#{content},#{receiveUid},0,#{groupId})
+    </insert>
+    <select id="getNoticeToUser" resultType="com.example.activity_manage.Entity.Notice">
+        select id,type,sendUid,content,ifRead
+        from Notice where receiveUid = #{uid}
+    </select>
+    <select id="getActivityNotice" resultType="com.example.activity_manage.Entity.Notice">
+        select * from Notice where aid = #{aid}
+    </select>
+    <update id="updateIfRead">
+        update Notice set ifRead = 1 where id = #{nid};
+    </update>
+    <select id="getReadCount">
+        select COUNT(id)
+        from Notice where groupId = #{groupId} and ifRead = 1;
+    </select>
+    <select id="getSendCount">
+        select COUNT(id)
+        from Notice where groupId = #{groupId};
+    </select>
+</mapper>
