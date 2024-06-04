@@ -273,6 +273,8 @@ public class ActivityServiceImpl implements ActivityService {
         Set<String> keys = actList.keySet();
         for (String key:keys) {
             Activity activity_Joined = activityMapper.getActInfoToOrganizer(Long.parseLong(key));
+            if (activity_Joined == null)
+                continue;
             Date beginTime = activity_Joined.getBeginTime();
             Date endTime   = activity_Joined.getEndTime();
             // 判断时间是否冲突

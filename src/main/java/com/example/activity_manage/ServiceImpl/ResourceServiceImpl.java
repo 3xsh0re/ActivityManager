@@ -73,6 +73,7 @@ public class ResourceServiceImpl implements ResourceService {
         if (quantityNeed < 0){
             throw new ActivityException(MessageConstant.NOT_ILLEGAL_INPUT);
         }
+
         long UID = resourceReservationDTO.getUid(); // 获取申请者UID, 鉴权, 只有活动创建者与活动管理员可以申请资源
         long AID = resourceReservationDTO.getAid();
         String resourceName = resourceReservationDTO.getResource();
@@ -119,6 +120,10 @@ public class ResourceServiceImpl implements ResourceService {
     @Override
     public Boolean resourceAddition(ResourceAdditionDTO resourceAdditionDTO) {
         String resourceName = resourceAdditionDTO.getResource();
+        if (resourceName.equals(""))
+        {
+            throw new ActivityException(MessageConstant.NOT_ILLEGAL_INPUT);
+        }
         int quantity = resourceAdditionDTO.getQuantity();
         int type = resourceAdditionDTO.getType();
         if ( type != 1 && type !=0){
