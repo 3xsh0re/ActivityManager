@@ -391,6 +391,10 @@ public class ActivityServiceImpl implements ActivityService {
 
     @Override
     public boolean setRankForAct(long uid, long aid, double rank) {
+        if ( rank <= 0 )
+        {
+            throw new ActivityException(MessageConstant.NOT_ILLEGAL_INPUT);
+        }
         String role = activityMapper.getUserRole(aid,uid);
         if (role == null)
         {
