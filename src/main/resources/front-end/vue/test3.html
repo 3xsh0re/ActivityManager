@@ -26,7 +26,7 @@
               活动名：{{ activity.actName }} 时间：{{ activity.beginTime }} 至 {{ activity.endTime }} 地点：{{ activity.place }}
               <button @click="viewActivity(activity.id)">查看</button>
               <button @click="openApproveModal(activity.id)">审核</button>
-              <button @click="deleteActivity(activity.id, 2)">删除</button>
+              <button @click="deleteActivity(activity.id, 1)">删除</button>
             </li>
           </ul>
           <div class="pagination">

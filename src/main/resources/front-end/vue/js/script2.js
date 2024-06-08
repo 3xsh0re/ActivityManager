@@ -26,10 +26,12 @@ new Vue({
       activityDescription: '',
       beginTime: '',
       endTime: '',
-      roleList: { '组织者': 1, '普通参与者': 20 },
+      roleList: {},
       ifFileStore: 1,
-      actStatus: { '心理快车': 1, '活动开场': 2 } // 默认活动状态
+      actStatus: {}
     },
+    newRole: { name: '' },
+    newStatus: { name: '', order: '' },
     activities: [],
     userProfile: {},
     userActivities: [],
@@ -184,8 +186,9 @@ new Vue({
       })
       .then(response => {
         if (response.data.code === 1) {
-          this.activities = response.data.data.records;
-          this.total = response.data.data.total;
+          // 只显示状态为1的活动
+          this.activities = response.data.data.records.filter(activity => activity.status === "1");
+          this.total = this.activities.length;
         } else {
           this.showMessage('获取活动列表失败：' + response.data.msg);
         }
@@ -265,6 +268,15 @@ new Vue({
         });
     },
     openCreateActivityModal: function() {
+      this.newActivity = {
+        activityName: '',
+        activityDescription: '',
+        beginTime: '',
+        endTime: '',
+        roleList: {},
+        ifFileStore: 1,
+        actStatus: {}
+      };
       this.showCreateActivityModal = true;
     },
     closeCreateActivityModal: function() {
@@ -385,6 +397,35 @@ new Vue({
           this.showMessage('创建活动失败');
         });
     },
+
+    addRole: function() {
+      if (this.newRole.name) {
+        this.$set(this.newActivity.roleList, this.newRole.name, 0);
+        this.newRole = { name: '' };
+      }
+    },    
+    removeRole: function(role) {
+      this.$delete(this.newActivity.roleList, role);
+    },
+    addStatus: function() {
+      if (this.newStatus.name && this.newStatus.order) {
+        this.$set(this.newActivity.actStatus, this.newStatus.name, this.newStatus.order);
+        this.newStatus = { name: '', order: '' };
+      }
+    },
+    removeStatus: function(status) {
+      this.$delete(this.newActivity.actStatus, status);
+    },
+    applyTemplate: function() {
+      if (this.selectedTemplate === 'meeting') {
+        this.newActivity.roleList = { '会议组织者': 1, '主讲嘉宾': 2, '参与者': 20 };
+        this.newActivity.actStatus = { '会议主持人开场': 1, '会议进行中': 2, '会议结束': 3 };
+      } else {
+        this.newActivity.roleList = {};
+        this.newActivity.actStatus = {};
+      }
+    },
+
     updateActivity: function() {
       const updateActivityData = {
         id: this.editActivity.id,
@@ -1010,7 +1051,21 @@ new Vue({
       });
     }
   },
-  mounted() {
+  mounted: function() {
+    // 添加请求拦截器，在发送请求之前添加Authorization和uid
+    axios.interceptors.request.use(config => {
+      const token = this.getCookie('token');
+      const uid = this.getCookie('uid');
+      if (token) {
+        config.headers['Authorization'] = token;
+      }
+      if (uid) {
+        config.headers['uid'] = uid;
+      }
+      return config;
+    }, error => {
+      return Promise.reject(error);
+    });
     this.fetchData();
     this.fetchUserSchedule();
   }
