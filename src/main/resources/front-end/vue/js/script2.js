@@ -938,7 +938,7 @@ new Vue({
         content: this.newComment.content,
         commentTime: new Date().toISOString()
       };
-      axios.post('http://47.93.254.31:18088/comment/addComment', commentData)
+      axios.post('http://127.0.0.1:18088/comment/addComment', commentData)
       .then(response => {
         if (response.data.code === 1) {
           this.showMessage('评论添加成功');
