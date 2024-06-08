@@ -273,6 +273,8 @@ public class ActivityServiceImpl implements ActivityService {
         Set<String> keys = actList.keySet();
         for (String key:keys) {
             Activity activity_Joined = activityMapper.getActInfoToOrganizer(Long.parseLong(key));
+            if (activity_Joined == null)
+                continue;
             Date beginTime = activity_Joined.getBeginTime();
             Date endTime   = activity_Joined.getEndTime();
             // 判断时间是否冲突
@@ -391,6 +393,10 @@ public class ActivityServiceImpl implements ActivityService {
 
     @Override
     public boolean setRankForAct(long uid, long aid, double rank) {
+        if ( rank <= 0 )
+        {
+            throw new ActivityException(MessageConstant.NOT_ILLEGAL_INPUT);
+        }
         String role = activityMapper.getUserRole(aid,uid);
         if (role == null)
         {
