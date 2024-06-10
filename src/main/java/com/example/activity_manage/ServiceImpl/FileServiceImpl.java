@@ -17,15 +17,14 @@ import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.system.ApplicationHome;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
+import org.springframework.web.ErrorResponse;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -38,6 +37,23 @@ public class FileServiceImpl implements FileService {
     FileMapper fileMapper;
     @Autowired
     ActivityMapper activityMapper;
+    // 定义错误响应类
+    public static class ErrorResponse {
+        private String message;
+
+        public ErrorResponse(String message) {
+            this.message = message;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
+        public void setMessage(String message) {
+            this.message = message;
+        }
+    }
+
 
     @Override
     public String uploadFile(MultipartFile file, long aid ,long uid){
@@ -102,7 +118,7 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public ResponseEntity<FileSystemResource> downloadFile(FileDownloadDTO fileDownloadDTO) {
+    public ResponseEntity<Object> downloadFile(FileDownloadDTO fileDownloadDTO) {
         long fid = fileDownloadDTO.getFid();
         long aid = fileDownloadDTO.getAid();
         String fileName = fileDownloadDTO.getFileName();
@@ -127,13 +143,16 @@ public class FileServiceImpl implements FileService {
 
         // 检查文件是否存在
         if (!Files.exists(path) || !fileMapper.getFileByFid(fid).getFileName().equals(fileName)) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ErrorResponse("文件不存在"));
         }
 
         // 设置响应头
         HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-        headers.setContentDispositionFormData("attachment", fileName);
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM); // 通用的二进制流类型
+        headers.setContentDisposition(ContentDisposition.builder(FilePrefix + fileSuffix)
+                .filename(fileName, StandardCharsets.UTF_8) // 设置下载文件的文件名并确保文件名是URL编码的
+                .build());
 
         // 创建文件系统资源
         FileSystemResource resource = new FileSystemResource(path.toFile());
@@ -206,3 +225,4 @@ public class FileServiceImpl implements FileService {
         }
     }
 }
+

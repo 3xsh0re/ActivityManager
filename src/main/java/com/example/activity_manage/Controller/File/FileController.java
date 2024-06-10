@@ -17,15 +17,15 @@ import java.io.IOException;
 public class FileController {
     @Autowired
     FileService fileService;
-    @PostMapping (value = "/upload")
+    @PostMapping( "/download")
+    public ResponseEntity<Object> download(@RequestBody FileDownloadDTO fileDownloadDTO){
+        return fileService.downloadFile(fileDownloadDTO);
+    }
+    @PostMapping ("/upload")
     public Result<String> upload(@RequestParam("file") MultipartFile file,@RequestParam("aid") long aid,@RequestParam("uid") long uid) throws IOException {
         return Result.success(fileService.uploadFile(file,aid,uid));
     }
 
-    @PostMapping(value = "/download")
-    public ResponseEntity<FileSystemResource> download(@RequestBody FileDownloadDTO fileDownloadDTO){
-        return fileService.downloadFile(fileDownloadDTO);
-    }
     @PostMapping("/getAllFile")
     public Result<PageResult> getAllFile(@RequestBody FilePageQueryDTO filePageQueryDTO) {
         return Result.success(fileService.pageQueryFile(filePageQueryDTO));
