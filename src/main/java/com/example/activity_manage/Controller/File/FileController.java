@@ -1,5 +1,6 @@
 package com.example.activity_manage.Controller.File;
 
+import com.example.activity_manage.Entity.DTO.FileDownloadDTO;
 import com.example.activity_manage.Entity.DTO.FilePageQueryDTO;
 import com.example.activity_manage.Result.PageResult;
 import com.example.activity_manage.Result.Result;
@@ -21,9 +22,9 @@ public class FileController {
         return Result.success(fileService.uploadFile(file,aid,uid));
     }
 
-    @GetMapping(value = "/download")
-    public ResponseEntity<FileSystemResource> download(@RequestParam("fid") Long fid, @RequestParam("aid") Long aid, @RequestParam("filename") String fileName){
-        return fileService.downloadFile( fid, aid, fileName);
+    @PostMapping(value = "/download")
+    public ResponseEntity<FileSystemResource> download(@RequestBody FileDownloadDTO fileDownloadDTO){
+        return fileService.downloadFile(fileDownloadDTO);
     }
     @PostMapping("/getAllFile")
     public Result<PageResult> getAllFile(@RequestBody FilePageQueryDTO filePageQueryDTO) {

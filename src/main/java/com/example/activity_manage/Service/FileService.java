@@ -1,6 +1,7 @@
 package com.example.activity_manage.Service;
 
 import com.example.activity_manage.Entity.DTO.BasePageQueryDTO;
+import com.example.activity_manage.Entity.DTO.FileDownloadDTO;
 import com.example.activity_manage.Entity.DTO.FilePageQueryDTO;
 import com.example.activity_manage.Result.PageResult;
 import org.springframework.core.io.FileSystemResource;
@@ -13,5 +14,5 @@ public interface FileService {
     String uploadFile(MultipartFile file, long aid , long uid) throws IOException;
     String deleteFile(long fid,long aid,long uid);
     PageResult pageQueryFile(FilePageQueryDTO dto);
-    ResponseEntity<FileSystemResource> downloadFile(Long fid,Long aid,String fileName);
+    ResponseEntity<FileSystemResource> downloadFile(FileDownloadDTO fileDownloadDTO);
 }

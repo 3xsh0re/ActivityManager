@@ -2,6 +2,7 @@ package com.example.activity_manage.ServiceImpl;
 
 import com.example.activity_manage.Constant.MessageConstant;
 import com.example.activity_manage.Controller.File.FileController;
+import com.example.activity_manage.Entity.DTO.FileDownloadDTO;
 import com.example.activity_manage.Entity.DTO.FilePageQueryDTO;
 import com.example.activity_manage.Entity.UploadFile;
 import com.example.activity_manage.Entity.VO.ActFileVO;
@@ -101,7 +102,10 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public ResponseEntity<FileSystemResource> downloadFile(Long fid,Long aid,String fileName) {
+    public ResponseEntity<FileSystemResource> downloadFile(FileDownloadDTO fileDownloadDTO) {
+        long fid = fileDownloadDTO.getFid();
+        long aid = fileDownloadDTO.getAid();
+        String fileName = fileDownloadDTO.getFileName();
         if (fileMapper.getFileByFid(fid) == null)
         {
             return ResponseEntity.notFound().build();
