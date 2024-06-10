@@ -122,6 +122,10 @@ public class FileServiceImpl implements FileService {
         long fid = fileDownloadDTO.getFid();
         long aid = fileDownloadDTO.getAid();
         String fileName = fileDownloadDTO.getFileName();
+        if (fileName == null || fileName.equals("")){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ErrorResponse("文件名为空"));
+        }
         if (fileMapper.getFileByFid(fid) == null)
         {
             return ResponseEntity.notFound().build();
