@@ -1,5 +1,6 @@
 package com.example.activity_manage.Controller.File;
 
+import com.example.activity_manage.Entity.DTO.FileDownloadDTO;
 import com.example.activity_manage.Entity.DTO.FilePageQueryDTO;
 import com.example.activity_manage.Result.PageResult;
 import com.example.activity_manage.Result.Result;
@@ -16,15 +17,15 @@ import java.io.IOException;
 public class FileController {
     @Autowired
     FileService fileService;
-    @PostMapping (value = "/upload")
+    @PostMapping( "/download")
+    public ResponseEntity<Object> download(@RequestBody FileDownloadDTO fileDownloadDTO){
+        return fileService.downloadFile(fileDownloadDTO);
+    }
+    @PostMapping ("/upload")
     public Result<String> upload(@RequestParam("file") MultipartFile file,@RequestParam("aid") long aid,@RequestParam("uid") long uid) throws IOException {
         return Result.success(fileService.uploadFile(file,aid,uid));
     }
 
-    @GetMapping(value = "/download")
-    public ResponseEntity<FileSystemResource> download(@RequestParam("fid") Long fid, @RequestParam("aid") Long aid, @RequestParam("filename") String fileName){
-        return fileService.downloadFile( fid, aid, fileName);
-    }
     @PostMapping("/getAllFile")
     public Result<PageResult> getAllFile(@RequestBody FilePageQueryDTO filePageQueryDTO) {
         return Result.success(fileService.pageQueryFile(filePageQueryDTO));
