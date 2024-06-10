@@ -264,7 +264,7 @@ new Vue({
     },
     sendMessage: function() {
       const messageData = {
-        uid: this.userProfile.uid,
+        uid: this.userProfile.id,
         aid: this.selectedActivity.id,
         message: this.newMessage
       };
@@ -284,7 +284,7 @@ new Vue({
     },
     fetchChatMessages: function() {
       const requestData = {
-        uid: this.userProfile.uid,
+        uid: this.userProfile.id,
         aid: this.selectedActivity.id
       };
       axios.post('http://47.93.254.31:18088/activity/participantInteractiveReceive', requestData)

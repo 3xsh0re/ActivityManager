@@ -327,6 +327,10 @@ public class ActivityServiceImpl implements ActivityService {
             JSONObject jsonObject = userMapper.getActList(uid);
             JSONObject actList    = (JSONObject) jsonObject.get("actList");
             JSONObject jsonObject1 = activityMapper.getUserList(aid);
+            if (jsonObject1 == null)
+            {
+                throw new ActivityException(MessageConstant.NOT_ILLEGAL_INPUT);
+            }
             JSONObject userList   = (JSONObject) jsonObject1.get("userList");
             Set<String> keys = actList.keySet();
             for (String key:keys) {
@@ -361,6 +365,10 @@ public class ActivityServiceImpl implements ActivityService {
             setParticipantRole(roleDTO);
             // 为用户新增活动
             JSONObject jsonObject3 = userMapper.getActList(unCheckedId);
+            if (jsonObject3 == null)
+            {
+                throw new ActivityException(MessageConstant.NOT_ILLEGAL_INPUT);
+            }
             JSONObject actList = (JSONObject) jsonObject3.get("actList");
             actList.put(Long.toString(aid),activityMapper.getActNameByAid(aid));
             userMapper.updateActList(unCheckedId,actList);
@@ -471,28 +479,33 @@ public class ActivityServiceImpl implements ActivityService {
     }
     public Boolean setParticipantRole(ActivitySetParticipantRoleDTO activitySetParticipantRoleDTO)
     {
-        long managerUid = activitySetParticipantRoleDTO.getManagerUid();
-        long aid = activitySetParticipantRoleDTO.getAid();
-        long participantUid = activitySetParticipantRoleDTO.getParticipantUid();
-        String newRole = activitySetParticipantRoleDTO.getRole();
-        String oriRole = activityMapper.getUserRole(aid, participantUid);
-        int oriRoleNum = activityMapper.getRoleNum(aid, oriRole);
-        // 获取操作者身份, 鉴权
-        Set<String> validRoles = new HashSet<>(Arrays.asList("组织者", "管理员"));
-        String managerRole = activityMapper.getUserRole(aid, managerUid);
-        if(validRoles.contains(managerRole))
+        try
         {
-            // 如果用户原本有角色, 将roleList对应角色的数量减一
-            if(oriRole != null && oriRoleNum > 0)
-            {
-                activityMapper.updateRoleList(aid, oriRole, oriRoleNum - 1);
+            long managerUid = activitySetParticipantRoleDTO.getManagerUid();
+            long aid = activitySetParticipantRoleDTO.getAid();
+            long participantUid = activitySetParticipantRoleDTO.getParticipantUid();
+            String newRole = activitySetParticipantRoleDTO.getRole();
+            String oriRole = activityMapper.getUserRole(aid, participantUid);
+            int oriRoleNum = activityMapper.getRoleNum(aid, oriRole);
+            // 获取操作者身份, 鉴权
+            Set<String> validRoles = new HashSet<>(Arrays.asList("组织者", "管理员"));
+            String managerRole = activityMapper.getUserRole(aid, managerUid);
+            if(validRoles.contains(managerRole)) {
+                // 如果用户原本有角色, 将roleList对应角色的数量减一
+                if (oriRole != null && oriRoleNum > 0) {
+                    activityMapper.updateRoleList(aid, oriRole, oriRoleNum - 1);
+                }
+                // 更新新角色的roleList对应quantity
+                int newRoleNum = activityMapper.getRoleNum(aid, newRole);
+                activityMapper.updateRoleList(aid, newRole, newRoleNum + 1);
+                // 更新userList的角色
+                activityMapper.updateUserRole(aid, participantUid, newRole);
+                return true;
             }
-            // 更新新角色的roleList对应quantity
-            int newRoleNum = activityMapper.getRoleNum(aid, newRole);
-            activityMapper.updateRoleList(aid, newRole, newRoleNum + 1);
-            // 更新userList的角色
-            activityMapper.updateUserRole(aid, participantUid, newRole);
-            return true;
+        }
+        catch (Exception e)
+        {
+            throw new ActivityException(MessageConstant.NOT_ILLEGAL_INPUT);
         }
         return false;
     }
@@ -533,7 +546,8 @@ public class ActivityServiceImpl implements ActivityService {
         if(activityMapper.checkUserInActivity(aid, uid)) {
             return activityMapper.getAllMessage(aid);
         }
-        return null;
+        else {
+            throw new ActivityException(MessageConstant.NOT_HAVE_THIS_PERMISSION);
+        }
     }
-
 }
