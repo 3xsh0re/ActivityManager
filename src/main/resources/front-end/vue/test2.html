@@ -28,12 +28,9 @@
             <p>描述：{{ activity.actDescription }}</p>
             <p>状态：活动进行中</p>
             <p v-if="activity.place">地点：{{ activity.place }}</p>
-            <button class="btn" @click="fetchActivityDetails(activity.id)">查看详情</button>
-            <button class="btn" @click="openJoinActivityModal(activity.id)">申请参与</button>
-            <button class="btn" @click="generateActivityReport(activity.id)">生成活动报告</button> <!-- 新增 -->
+            <button class="btn" @click="fetchActivityDetails1(activity.id)">查看详情</button>
           </div>
         </div>
-  
         <!-- 分页控制 -->
         <div class="pagination">
           <button @click="changePage(page - 1)" :disabled="page === 1">上一页</button>
@@ -112,10 +109,10 @@
       </div>
     </div>
   
-    <!-- 活动详情模态框 -->
-    <div v-if="showActivityDetailsModal" class="modal">
+    <!-- 活动详情模态框1-->
+    <div v-if="showActivityDetailsModal1" class="modal">
       <div class="modal-content">
-        <span class="close" @click="closeActivityDetailsModal">&times;</span>
+        <span class="close" @click="closeActivityDetailsModal1">&times;</span>
         <h2>活动详情</h2>
         <div v-if="selectedActivity">
           <p><strong>活动名称：</strong>{{ selectedActivity.actName }}</p>
@@ -124,7 +121,6 @@
           <p><strong>描述：</strong>{{ selectedActivity.actDescription }}</p>
           <p><strong>状态：</strong>活动进行中</p>
           <p v-if="selectedActivity.place"><strong>地点：</strong>{{ selectedActivity.place }}</p>
-          <!-- 更多活动详情字段 -->
           <p><strong>组织者ID：</strong>{{ selectedActivity.orgId }}</p>
           <p><strong>组织者用户名：</strong>{{ selectedActivity.username }}</p>
           <p><strong>总预算：</strong>{{ selectedActivity.totalBudget }}</p>
@@ -134,6 +130,48 @@
           <ul>
             <li v-for="(step, key) in selectedActivity.actStatus" :key="key">{{ key }}: {{ step }}</li>
           </ul>
+          <div class="button-group">
+            <button class="btn" @click="openJoinActivityModal(selectedActivity.id)">申请参与</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 活动详情模态框2-->
+    <div v-if="showActivityDetailsModal2" class="modal">
+      <div class="modal-content">
+        <span class="close" @click="closeActivityDetailsModal2">&times;</span>
+        <h2>活动详情</h2>
+        <div v-if="selectedActivity">
+          <p><strong>活动名称：</strong>{{ selectedActivity.actName }}</p>
+          <p><strong>开始时间：</strong>{{ formatDateTime(selectedActivity.beginTime) }}</p>
+          <p><strong>结束时间：</strong>{{ formatDateTime(selectedActivity.endTime) }}</p>
+          <p><strong>描述：</strong>{{ selectedActivity.actDescription }}</p>
+          <p><strong>状态：</strong>活动进行中</p>
+          <p v-if="selectedActivity.place"><strong>地点：</strong>{{ selectedActivity.place }}</p>
+          <p><strong>组织者ID：</strong>{{ selectedActivity.orgId }}</p>
+          <p><strong>组织者用户名：</strong>{{ selectedActivity.username }}</p>
+          <p><strong>总预算：</strong>{{ selectedActivity.totalBudget }}</p>
+          <p><strong>评分：</strong>{{ selectedActivity.rank }}</p>
+          <p><strong>用户列表：</strong>{{ selectedActivity.userList }}</p>
+          <p><strong>活动流程：</strong></p>
+          <ul>
+            <li v-for="(step, key) in selectedActivity.actStatus" :key="key">{{ key }}: {{ step }}</li>
+          </ul>
+          <div class="button-group">
+            <button v-if="isOrganizer" class="btn" @click="generateActivityReport(selectedActivity.id)">生成活动报告</button>
+            <button v-if="isOrganizer" class="btn" @click="fetchEditActivityDetails(selectedActivity.id)">修改活动</button>
+            <button v-if="isOrganizer" class="btn" @click="openParticipantManagementModal(selectedActivity.id)">参与者管理</button>
+            <button v-if="isOrganizer" class="btn" @click="openResourceReservationModal(selectedActivity.id)">资源预约</button>
+            <button class="btn" @click="exitActivity(selectedActivity.id)">退出活动</button>
+            <button v-if="isOrganizer" class="btn" @click="openUnCheckedUserListModal(selectedActivity.id)">查看参与申请</button>
+            <button v-if="isOrganizer" class="btn" @click="fetchActivityBudget(selectedActivity.id)">查看预算</button>
+            <button v-if="isOrganizer" class="btn" @click="openSetBudgetModal(selectedActivity.id)">设定预算</button>
+            <button v-if="isOrganizer" class="btn" @click="openCommitExpenseModal(selectedActivity.id)">提交报销单</button>
+            <button v-if="isOrganizer" class="btn" @click="openExpenseListModal(selectedActivity.id)">查看报销单</button>
+            <button v-if="isOrganizer" class="btn" @click="switchToActivityNotifications(selectedActivity.id)">查看活动通知</button>
+            <button v-if="isOrganizer" class="btn" @click="openFileManagementModal(selectedActivity.id)">文件管理</button>
+          </div>
           <div class="comments-section">
             <h3>评论</h3>
             <form @submit.prevent="addComment">
@@ -147,11 +185,19 @@
               <button class="btn" @click="unlikeComment(comment.id)">取消点赞</button>
               <button v-if="comment.username === userProfile.username" class="btn" @click="deleteComment(comment.id)">删除</button>
             </div>
-            <div class="pagination">
-              <button @click="changeCommentPage(commentPage - 1)" :disabled="commentPage === 1">上一页</button>
-              <span>第 {{ commentPage }} 页，共 {{ Math.ceil(commentTotal / commentPageSize) }} 页</span>
-              <button @click="changeCommentPage(commentPage + 1)" :disabled="commentPage === Math.ceil(commentTotal / commentPageSize)">下一页</button>
+          </div>
+          <!-- 聊天室部分 -->
+          <div class="chat-room">
+            <h3>互动聊天室</h3>
+            <div class="messages">
+              <div v-for="(message, index) in chatMessages" :key="index" class="message">
+                <p><strong>{{ message.sender }}:</strong> {{ message.content }}</p>
+              </div>
             </div>
+            <form @submit.prevent="sendMessage">
+              <input type="text" v-model="newMessage" placeholder="输入消息..." required />
+              <button type="submit" class="btn">发送</button>
+            </form>
           </div>
         </div>
       </div>
@@ -405,19 +451,7 @@
                 <p><strong>开始时间：</strong>{{ formatDateTime(item.beginTime) }}</p>
                 <p><strong>结束时间：</strong>{{ formatDateTime(item.endTime) }}</p>
                 <p><strong>角色：</strong>{{ item.role }}</p>
-                <div class="button-group">
-                  <button class="btn" @click="fetchEditActivityDetails(item.aid)">修改活动</button>
-                  <button v-if="item.orgId == userProfile.uid || userProfile.role" class="btn" @click="openParticipantManagementModal(item.aid)">参与者管理</button>
-                  <button v-if="item.orgId == userProfile.uid || userProfile.role" class="btn" @click="openResourceReservationModal(item.aid)">资源预约</button>
-                  <button class="btn" @click="exitActivity(item.aid)">退出活动</button>
-                  <button class="btn" @click="openUnCheckedUserListModal(item.aid)">查看参与申请</button>
-                  <button class="btn" @click="fetchActivityBudget(item.aid)">查看预算</button>
-                  <button v-if="item.orgId == userProfile.uid || userProfile.role" class="btn" @click="openSetBudgetModal(item.aid)">设定预算</button>
-                  <button class="btn" @click="openCommitExpenseModal(item.aid)">提交报销单</button>
-                  <button v-if="item.orgId == userProfile.uid || userProfile.role" class="btn" @click="openExpenseListModal(item.aid)">查看报销单</button>
-                  <button v-if="item.orgId == userProfile.uid || userProfile.role" class="btn" @click="switchToActivityNotifications(item.aid)">查看活动通知</button>
-                  <button class="btn" @click="openFileManagementModal(item.aid)">文件管理</button>
-                </div>
+                <button class="btn" @click="fetchActivityDetails2(item.aid)">查看详情</button>
                 <div class="rating-group">
                   <label for="rank">评分</label>
                   <input type="number" v-model="item.rank" id="rank" />

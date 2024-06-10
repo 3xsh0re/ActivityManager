@@ -268,3 +268,24 @@ h2 {
   flex-direction: column;
   gap: 20px;
 }
+
+.chat-room {
+  margin-top: 20px;
+}
+
+.messages {
+  max-height: 200px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  padding: 10px;
+  border-radius: 5px;
+  background: #f9f9f9;
+}
+
+.message {
+  margin-bottom: 10px;
+}
+
+.message p {
+  margin: 0;
+}

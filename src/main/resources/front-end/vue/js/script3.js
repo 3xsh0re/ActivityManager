@@ -25,11 +25,29 @@ var adminApp = new Vue({
     totalUsers: 0
   },
   created: function() {
+    axios.interceptors.request.use(config => {
+      const token = this.getCookie('token');
+      const uid = this.getCookie('uid');
+      if (token) {
+        config.headers['Authorization'] = token;
+      }
+      if (uid) {
+        config.headers['uid'] = uid;
+      }
+      return config;
+    }, error => {
+      return Promise.reject(error);
+    });
     this.fetchActivities();
     this.fetchResources();
     this.fetchUsers();
   },
   methods: {
+    getCookie: function(name) {
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${name}=`);
+      if (parts.length === 2) return parts.pop().split(';').shift();
+    },
     formatDateTime: function(isoString) {
       const date = new Date(isoString);
       const year = date.getFullYear();
@@ -257,5 +275,5 @@ var adminApp = new Vue({
         alert('资源修改失败');
       });
     }
-  }
+  },
 });

@@ -7,7 +7,8 @@ new Vue({
     showMyActivities: false,
     showMyExpenses: false,
     showCreateActivityModal: false,
-    showActivityDetailsModal: false,
+    showActivityDetailsModal1: false,
+    showActivityDetailsModal2: false,
     showEditActivityModal: false,
     showParticipantManagementModal: false,
     showResourceReservationModal: false,
@@ -87,7 +88,15 @@ new Vue({
     newComment: {
       content: ''
     },
+    chatMessages: [], // 聊天消息
+    newMessage: '',    // 新消息内容
     selectedFile: null
+  },
+
+  computed: {
+    isOrganizer() {
+      return this.selectedActivity && this.userProfile && this.selectedActivity.orgId === this.userProfile.id;
+    }
   },
   
   methods: {
@@ -137,6 +146,9 @@ new Vue({
       this.showInfo = false;
       this.showMyActivities = false;
       this.showMyExpenses = true;
+      this.showUserNotifications = false;
+      this.showActivityNotifications = false;
+      this.showReminders = false;
       this.fetchUserExpenses();
     },
     switchToUserNotifications: function() {
@@ -231,14 +243,15 @@ new Vue({
           this.showMessage('获取活动日程失败');
         });
     },
-    fetchActivityDetails: function(aid) {
+    fetchActivityDetails1: function(aid) {
       axios.get(`http://47.93.254.31:18088/activity/getActInfoToAll?aid=${aid}`)
         .then(response => {
           if (response.data.code === 1) {
             this.selectedActivity = response.data.data;
+            this.selectedActivity.id=aid;
             // 对actStatus按顺序排序
             this.selectedActivity.actStatus = Object.fromEntries(Object.entries(this.selectedActivity.actStatus).sort((a, b) => a[1] - b[1]));
-            this.showActivityDetailsModal = true;
+            this.showActivityDetailsModal1 = true;
             this.fetchComments(aid); // 获取活动评论
           } else {
             this.showMessage('获取活动详情失败：' + response.data.msg);
@@ -249,6 +262,74 @@ new Vue({
           this.showMessage('获取活动详情失败');
         });
     },
+    sendMessage: function() {
+      const messageData = {
+        uid: this.userProfile.uid,
+        aid: this.selectedActivity.id,
+        message: this.newMessage
+      };
+      axios.post('http://47.93.254.31:18088/activity/participantInteractiveSend', messageData)
+        .then(response => {
+          if (response.data.code === 1) {
+            this.newMessage = ''; // 清空输入框
+            this.fetchChatMessages(); // 重新获取聊天消息
+          } else {
+            this.showMessage('发送消息失败：' + response.data.msg);
+          }
+        })
+        .catch(error => {
+          console.error('发送消息失败：', error);
+          this.showMessage('发送消息失败');
+        });
+    },
+    fetchChatMessages: function() {
+      const requestData = {
+        uid: this.userProfile.uid,
+        aid: this.selectedActivity.id
+      };
+      axios.post('http://47.93.254.31:18088/activity/participantInteractiveReceive', requestData)
+        .then(response => {
+          if (response.data.code === 1) {
+            const rawMessages = response.data.data || [];
+            console.log('data',response.data.data);
+            console.log(rawMessages);
+            this.chatMessages = rawMessages.map(item => {
+              const parsedMessage = JSON.parse(item.message);
+              const sender = Object.keys(parsedMessage)[0];
+              const content = parsedMessage[sender].split(':')[1];
+              return { sender, content };
+            });
+            console.log(this.chatMessages);
+          } else {
+            this.showMessage('获取聊天消息失败：' + response.data.msg);
+          }
+        })
+        .catch(error => {
+          console.error('获取聊天消息失败e：', error);
+          this.showMessage('获取聊天消息失败');
+        });
+    },
+    fetchActivityDetails2: function(aid) {
+      axios.get(`http://47.93.254.31:18088/activity/getActInfoToAll?aid=${aid}`)
+        .then(response => {
+          if (response.data.code === 1) {
+            this.selectedActivity = response.data.data;
+            this.selectedActivity.id=aid;
+            // 对actStatus按顺序排序
+            this.selectedActivity.actStatus = Object.fromEntries(Object.entries(this.selectedActivity.actStatus).sort((a, b) => a[1] - b[1]));
+            this.showActivityDetailsModal2 = true;
+            this.fetchComments(aid); // 获取活动评论
+            this.fetchChatMessages();
+          } else {
+            this.showMessage('获取活动详情失败：' + response.data.msg);
+          }
+        })
+        .catch(error => {
+          console.error('获取活动详情失败：', error);
+          this.showMessage('获取活动详情失败');
+        });
+    },
+    
     fetchEditActivityDetails: function(aid) {
       const uid = this.getCookie('uid');
       axios.get(`http://47.93.254.31:18088/activity/getActInfoToOrganizer?uid=${uid}&aid=${aid}`)
@@ -282,8 +363,12 @@ new Vue({
     closeCreateActivityModal: function() {
       this.showCreateActivityModal = false;
     },
-    closeActivityDetailsModal: function() {
-      this.showActivityDetailsModal = false;
+    closeActivityDetailsModal1: function() {
+      this.showActivityDetailsModal1 = false;
+      this.selectedActivity = null;
+    },
+    closeActivityDetailsModal2: function() {
+      this.showActivityDetailsModal2 = false;
       this.selectedActivity = null;
     },
     closeEditActivityModal: function() {
@@ -514,7 +599,7 @@ new Vue({
         beginTime: this.resourceReservation.beginTime,
         endTime: this.resourceReservation.endTime
       };
-      axios.post('http://47.93.254.31:18088/user/resourceReservation', reservationData)
+      axios.post('http://47.93.254.31:18088/resource/resourceReservation', reservationData)
         .then(response => {
           if (response.data.code === 1) {
             this.showMessage('资源预约成功');
