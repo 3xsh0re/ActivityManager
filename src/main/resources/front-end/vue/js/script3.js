@@ -157,7 +157,6 @@ var adminApp = new Vue({
           this.fetchActivities();
         } else {
           alert('活动删除失败: ' + response.data.msg);
-          console.log(userId);
         }
       })
       .catch(error => {

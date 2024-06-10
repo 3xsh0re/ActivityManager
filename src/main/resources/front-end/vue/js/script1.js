@@ -47,13 +47,9 @@ var app = new Vue({
             // 确保从响应中正确获取 id 和 token
             const uid = response.data.data.id;
             const token = response.data.data.token;
-            console.log('uid:', uid);
-            console.log('token:', token);
             // 设置 cookie
             document.cookie = `uid=${uid}; path=/;`;
-            console.log('Cookies after setting uid:', document.cookie);
             document.cookie = `token=${token}; path=/;`;
-            console.log('Cookies after setting token:', document.cookie);
             
             setTimeout(() => {
               if(this.loginType == 0) {
@@ -92,7 +88,6 @@ var app = new Vue({
           captcha: this.reviseCaptcha
         })
         .then(response => {
-          console.log(response.data);
           if (response.data.msg === null) {
             this.showMessage('修改成功');
             this.showRegister = false;
@@ -120,7 +115,6 @@ var app = new Vue({
               } 
           })
           .then(response => {
-              console.log(response.data);
               if (response.data.msg === null) {
                 this.showMessage('验证码已发送，请注意查收');
               } else {
@@ -139,7 +133,6 @@ var app = new Vue({
               } 
           })
           .then(response => {
-              console.log(response.data);
               if (response.data.msg === null) {
                 this.showMessage('验证码已发送，请注意查收');
               } else {
@@ -181,7 +174,6 @@ var app = new Vue({
           captcha: this.captcha
         })
         .then(response => {
-          console.log(response.data);
           this.showMessage('注册成功，请登录');
           this.showRegister = false;
         })

@@ -19,6 +19,7 @@ new Vue({
     showExpenseListModal: false,
     showUserNotifications: false,
     showActivityNotifications: false,
+    showActivityNotificationsModal: false,
     showFileManagementModal: false,
     showReminders: false,
     selectedTemplate: 'custom',
@@ -120,11 +121,13 @@ new Vue({
     switchToProfile: function() {
       this.showActivityList = false;
       this.showUserProfile = true;
+      this.showFileManagementModal = false;
       this.switchToInfo();
     },
     switchToMain: function() {
       this.showActivityList = true;
       this.showUserProfile = false;
+      this.showFileManagementModal = false;
     },
     switchToInfo: function() {
       this.showInfo = true;
@@ -161,12 +164,7 @@ new Vue({
       this.fetchUserNotifications();
     },
     switchToActivityNotifications: function(aid) {
-      this.showInfo = false;
-      this.showMyActivities = false;
-      this.showMyExpenses = false;
-      this.showUserNotifications = false;
-      this.showActivityNotifications = true;
-      this.showReminders = false;
+      this.showActivityNotificationsModal = true;
       this.selectedActivityId = aid;
       this.fetchActivityNotifications();
     },
@@ -264,7 +262,7 @@ new Vue({
     },
     sendMessage: function() {
       const messageData = {
-        uid: this.userProfile.uid,
+        uid: this.userProfile.id,
         aid: this.selectedActivity.id,
         message: this.newMessage
       };
@@ -284,30 +282,37 @@ new Vue({
     },
     fetchChatMessages: function() {
       const requestData = {
-        uid: this.userProfile.uid,
+        uid: this.userProfile.id,
         aid: this.selectedActivity.id
       };
       axios.post('http://47.93.254.31:18088/activity/participantInteractiveReceive', requestData)
         .then(response => {
           if (response.data.code === 1) {
             const rawMessages = response.data.data || [];
-            console.log('data',response.data.data);
-            console.log(rawMessages);
-            this.chatMessages = rawMessages.map(item => {
+            this.chatMessages = [];
+            rawMessages.forEach(item => {
               const parsedMessage = JSON.parse(item.message);
-              const sender = Object.keys(parsedMessage)[0];
-              const content = parsedMessage[sender].split(':')[1];
-              return { sender, content };
+              Object.keys(parsedMessage).forEach(timestamp => {
+                const [uid, content] = parsedMessage[timestamp].split(':');
+                this.chatMessages.push({
+                  timestamp: parseInt(timestamp),
+                  uid,
+                  content
+                });
+              });
             });
-            console.log(this.chatMessages);
+            this.sortMessages(); 
           } else {
             this.showMessage('获取聊天消息失败：' + response.data.msg);
           }
         })
         .catch(error => {
-          console.error('获取聊天消息失败e：', error);
+          console.error('获取聊天消息失败:', error);
           this.showMessage('获取聊天消息失败');
         });
+    },
+    sortMessages: function() {
+      this.chatMessages.sort((a, b) => a.timestamp - b.timestamp);
     },
     fetchActivityDetails2: function(aid) {
       axios.get(`http://47.93.254.31:18088/activity/getActInfoToAll?aid=${aid}`)
@@ -870,6 +875,15 @@ new Vue({
         this.showMessage('获取活动通知失败');
       });
     },
+    openActivityNotificationsModal: function(aid) {
+      this.selectedActivityId = aid;
+      this.showActivityNotificationsModal = true;
+      this.fetchActivityNotifications();
+    },
+
+    closeActivityNotificationsModal: function() {
+      this.showActivityNotificationsModal = false;
+    },
     openNotification: function(nid) {
       axios.get(`http://47.93.254.31:18088/user/openNotice?nid=${nid}`)
       .then(response => {
@@ -933,9 +947,38 @@ new Vue({
         this.showMessage('文件上传失败');
       });
     },
-    downloadFile: function(fid, fileName) {
-      window.location.href = `http://47.93.254.31:18088/file/download?aid=${this.selectedActivityId}&fid=${fid}&filename=${fileName}`;
+
+    downloadFile(fid, filename) {
+      // const encodedFilename = encodeURIComponent(filename);
+      const url = `http://47.93.254.31:18088/file/download`;
+    
+      axios.post(url, {
+        aid: this.selectedActivityId,
+        fid: fid,
+        fileName: filename
+      }, {
+        responseType: 'blob'
+      })
+      .then(response => {
+        if (response.status === 200) {
+          const url = window.URL.createObjectURL(new Blob([response.data]));
+          const link = document.createElement('a');
+          link.href = url;
+          link.setAttribute('download', filename);
+          document.body.appendChild(link);
+          link.click();
+          link.parentNode.removeChild(link);
+        } else {
+          this.showMessage('文件下载失败：' + response.data.msg);
+        }
+      })
+      .catch(error => {
+        console.error('文件下载失败：', error);
+        this.showMessage('文件下载失败');
+      });
     },
+    
+    
     deleteFile: function(fid) {
       const uid = this.getCookie('uid');
       axios.get(`http://47.93.254.31:18088/file/deleteFile?aid=${this.selectedActivityId}&fid=${fid}&uid=${uid}`)
@@ -981,7 +1024,12 @@ new Vue({
       })
       .then(response => {
         if (response.data.code === 1) {
-          this.reminders = response.data.data.records;
+          this.reminders = response.data.data.records.map(reminder => {
+            let reminderTime = new Date(reminder.reminderTime);
+            reminderTime.setHours(reminderTime.getHours() - 8);
+            reminder.reminderTime = reminderTime;
+            return reminder;
+          });
           this.reminderTotal = response.data.data.total;
         } else {
           this.showMessage('获取提醒列表失败：' + response.data.msg);
@@ -1134,7 +1182,29 @@ new Vue({
         console.error('生成活动报告失败：', error);
         this.showMessage('生成活动报告失败');
       });
+    },
+
+    copyActivityLink: function(activity) {
+      const link = `活动名称: ${activity.actName}
+        活动描述: ${activity.actDescription}
+        开始时间: ${this.formatDateTime(activity.beginTime)}
+        结束时间: ${this.formatDateTime(activity.endTime)}
+        组织者用户名: ${activity.username}
+        总预算: ${activity.totalBudget}
+        评分: ${activity.rank}`;
+      this.copyTextToClipboard(link);
+      this.showMessage('链接已复制到剪贴板');
+    },
+
+    copyTextToClipboard: function(text) {
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
     }
+
   },
   mounted: function() {
     // 添加请求拦截器，在发送请求之前添加Authorization和uid

@@ -17,7 +17,7 @@
     <section v-if="showActivityList" id="activity-list" class="section">
       <div class="container">
         <h2>活动列表</h2>
-        <button class="btn" @click="openCreateActivityModal">创建活动</button>
+        
         <!-- 活动列表内容 -->
         <div class="activity-list">
           <!-- 活动卡片 -->
@@ -31,6 +31,7 @@
             <button class="btn" @click="fetchActivityDetails1(activity.id)">查看详情</button>
           </div>
         </div>
+        <button class="btn" @click="openCreateActivityModal">创建活动</button>
         <!-- 分页控制 -->
         <div class="pagination">
           <button @click="changePage(page - 1)" :disabled="page === 1">上一页</button>
@@ -164,6 +165,7 @@
             <button v-if="isOrganizer" class="btn" @click="openParticipantManagementModal(selectedActivity.id)">参与者管理</button>
             <button v-if="isOrganizer" class="btn" @click="openResourceReservationModal(selectedActivity.id)">资源预约</button>
             <button class="btn" @click="exitActivity(selectedActivity.id)">退出活动</button>
+            <button class="btn" @click="copyActivityLink(selectedActivity)">复制链接</button>
             <button v-if="isOrganizer" class="btn" @click="openUnCheckedUserListModal(selectedActivity.id)">查看参与申请</button>
             <button v-if="isOrganizer" class="btn" @click="fetchActivityBudget(selectedActivity.id)">查看预算</button>
             <button v-if="isOrganizer" class="btn" @click="openSetBudgetModal(selectedActivity.id)">设定预算</button>
@@ -190,8 +192,9 @@
           <div class="chat-room">
             <h3>互动聊天室</h3>
             <div class="messages">
-              <div v-for="(message, index) in chatMessages" :key="index" class="message">
-                <p><strong>{{ message.sender }}:</strong> {{ message.content }}</p>
+              <div v-for="message in chatMessages" :key="message.timestamp" class="message">
+                <p><small>{{ formatDateTime(message.timestamp) }}</small></p>
+                <p><strong>{{ message.uid }}:</strong> {{ message.content }}</p>
               </div>
             </div>
             <form @submit.prevent="sendMessage">
@@ -493,19 +496,24 @@
             </div>
           </div>
         </div>
-        <div v-if="showActivityNotifications">
-          <h2>活动通知</h2>
-          <div class="notification-list">
-            <div v-for="notification in activityNotifications" :key="notification.nid">
-              <p><strong>发送人：</strong>{{ notification.sendUser }}</p>
-              <p><strong>内容：</strong>{{ notification.content }}</p>
-              <p><strong>总发送：</strong>{{ notification.totalSend }}</p>
-              <p><strong>已读人数：</strong>{{ notification.totalRead }}</p>
-            </div>
-            <div class="pagination">
-              <button @click="changeNotificationPage(notificationPage - 1)" :disabled="notificationPage === 1">上一页</button>
-              <span>第 {{ notificationPage }} 页，共 {{ Math.ceil(notificationTotal / notificationPageSize) }} 页</span>
-              <button @click="changeNotificationPage(notificationPage + 1)" :disabled="notificationPage === Math.ceil(notificationTotal / notificationPageSize)">下一页</button>
+        
+        <!-- 活动通知模态框 -->
+        <div v-if="showActivityNotificationsModal" class="modal">
+          <div class="modal-content">
+            <span class="close" @click="closeActivityNotificationsModal">&times;</span>
+            <h2>活动通知</h2>
+            <div class="notification-list">
+              <div v-for="notification in activityNotifications" :key="notification.nid">
+                <p><strong>发送人：</strong>{{ notification.sendUser }}</p>
+                <p><strong>内容：</strong>{{ notification.content }}</p>
+                <p><strong>总发送：</strong>{{ notification.totalSend }}</p>
+                <p><strong>已读人数：</strong>{{ notification.totalRead }}</p>
+              </div>
+              <div class="pagination">
+                <button @click="changeNotificationPage(notificationPage - 1)" :disabled="notificationPage === 1">上一页</button>
+                <span>第 {{ notificationPage }} 页，共 {{ Math.ceil(notificationTotal / notificationPageSize) }} 页</span>
+                <button @click="changeNotificationPage(notificationPage + 1)" :disabled="notificationPage === Math.ceil(notificationTotal / notificationPageSize)">下一页</button>
+              </div>
             </div>
           </div>
         </div>
@@ -570,6 +578,7 @@
         </div>
       </div>
     </div>
+
   </div>
   
   <script src="https://cdn.bootcdn.net/ajax/libs/vue/2.6.0/vue.js"></script>
