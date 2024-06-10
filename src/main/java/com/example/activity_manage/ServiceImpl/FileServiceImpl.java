@@ -182,16 +182,23 @@ public class FileServiceImpl implements FileService {
         long uid = pageQueryDTO.getUid();
         long aid = pageQueryDTO.getAid();
         JSONObject jsonObject = activityMapper.getUserList(aid);
-        JSONObject userList = (JSONObject) jsonObject.get("userList");
-        if (!userList.containsKey(Long.toString(uid))){
-            // 此活动没有此用户参与
-            throw new FileUploadException(MessageConstant.NOT_HAVE_THIS_PERMISSION);
+        if (jsonObject != null)
+        {
+            JSONObject userList = (JSONObject) jsonObject.get("userList");
+            if (!userList.containsKey(Long.toString(uid))){
+                // 此活动没有此用户参与
+                throw new FileUploadException(MessageConstant.NOT_HAVE_THIS_PERMISSION);
+            }
+            // 开始分页查询
+            PageHelper.startPage(pageQueryDTO.getPage(), pageQueryDTO.getPageSize());
+            Page<ActFileVO> page = fileMapper.pageQueryFileByAid(aid);
+            long total = page.getTotal();
+            List<ActFileVO> records = page.getResult();
+            return new PageResult(total, records);
         }
-        // 开始分页查询
-        PageHelper.startPage(pageQueryDTO.getPage(), pageQueryDTO.getPageSize());
-        Page<ActFileVO> page = fileMapper.pageQueryFileByAid(aid);
-        long total = page.getTotal();
-        List<ActFileVO> records = page.getResult();
-        return new PageResult(total, records);
+        else
+        {
+            return null;
+        }
     }
 }

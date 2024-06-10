@@ -434,34 +434,40 @@ public class ActivityServiceImpl implements ActivityService {
     }
     @Override
     public PageResult pageQueryUnCheckedUser(ActivityPageQueryDTO activityPageQueryDTO) {
-        long uid = activityPageQueryDTO.getUid();
-        long orgId = activityMapper.getUidByAid(activityPageQueryDTO.getAid());
-        if ( uid != orgId)
-        {
-            throw new ActivityException(MessageConstant.NOT_HAVE_THIS_PERMISSION);
-        }
-        //开始分页查询
-        JSONObject object = (JSONObject) activityMapper.getUnCheckedUserList(activityPageQueryDTO.getAid()).get("unCheckedUserList");
-        int page = activityPageQueryDTO.getPage();
-        int pageSize = activityPageQueryDTO.getPageSize();
-        Iterator<String> keys = object.keySet().iterator();
-        List<UnCheckedUserVO> records = new ArrayList<>();
-        int num = 0;
-        while (keys.hasNext()){
-            String key = keys.next(); //key为申请者id
-            if ( (page - 1) * pageSize <= num && num < page * pageSize ){
-                UnCheckedUserVO unCheckedUserVO = new UnCheckedUserVO();
-                unCheckedUserVO.setUid(Long.parseLong(key));
-                unCheckedUserVO.setUsername(userMapper.getUsernameById(Long.parseLong(key)));
-                unCheckedUserVO.setPhoneNumber(userMapper.getPhoneByUid(Long.parseLong(key)));
-                unCheckedUserVO.setReason((String) object.get(key));
-                records.add(unCheckedUserVO);
+        try {
+            long aid = activityPageQueryDTO.getAid();
+            long uid = activityPageQueryDTO.getUid();
+            long orgId = activityMapper.getUidByAid(aid);
+            if ( uid != orgId)
+            {
+                throw new ActivityException(MessageConstant.NOT_HAVE_THIS_PERMISSION);
             }
-            num++;
-        }
+            //开始分页查询
+            JSONObject object = (JSONObject) activityMapper.getUnCheckedUserList(aid).get("unCheckedUserList");
+            int page = activityPageQueryDTO.getPage();
+            int pageSize = activityPageQueryDTO.getPageSize();
+            Iterator<String> keys = object.keySet().iterator();
+            List<UnCheckedUserVO> records = new ArrayList<>();
+            int num = 0;
+            while (keys.hasNext()){
+                String key = keys.next(); //key为申请者id
+                if ( (page - 1) * pageSize <= num && num < page * pageSize ){
+                    UnCheckedUserVO unCheckedUserVO = new UnCheckedUserVO();
+                    unCheckedUserVO.setUid(Long.parseLong(key));
+                    unCheckedUserVO.setUsername(userMapper.getUsernameById(Long.parseLong(key)));
+                    unCheckedUserVO.setPhoneNumber(userMapper.getPhoneByUid(Long.parseLong(key)));
+                    unCheckedUserVO.setReason((String) object.get(key));
+                    records.add(unCheckedUserVO);
+                }
+                num++;
+            }
 
-        long total = records.size();
-        return new PageResult(total, records);
+            long total = records.size();
+            return new PageResult(total, records);
+        }catch (Exception e)
+        {
+            throw new ActivityException(MessageConstant.NOT_ILLEGAL_INPUT);
+        }
     }
     public Boolean setParticipantRole(ActivitySetParticipantRoleDTO activitySetParticipantRoleDTO)
     {

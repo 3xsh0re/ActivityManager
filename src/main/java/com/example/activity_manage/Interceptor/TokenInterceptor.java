@@ -24,6 +24,8 @@ public class TokenInterceptor implements HandlerInterceptor {
         String token = request.getHeader("Authorization");
         response.setCharacterEncoding("UTF-8");
         response.setContentType("text/html;charset=UTF-8");
+        String origin = request.getHeader("Origin");
+        response.setHeader("Access-Control-Allow-Origin",origin);
 
         if (token == null || token.isEmpty()) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
