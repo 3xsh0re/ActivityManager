@@ -468,9 +468,7 @@ new Vue({
         actStatus: this.newActivity.actStatus
       };
   
-      const url = this.selectedTemplate === 'custom' 
-                  ? 'http://47.93.254.31:18088/activity/createActivity' 
-                  : 'http://47.93.254.31:18088/activity/templates';
+      const url = 'http://47.93.254.31:18088/activity/createActivity';
   
       axios.post(url, newActivityData)
         .then(response => {

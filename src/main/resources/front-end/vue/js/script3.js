@@ -71,7 +71,7 @@ var adminApp = new Vue({
               beginTime: this.formatDateTime(activity.beginTime),
               endTime: this.formatDateTime(activity.endTime),
               actDescription: activity.actDescription,
-              status: activity.status,
+              status: this.getActivityStatus(activity.status),
               place: activity.place
             };
           });
@@ -169,6 +169,9 @@ var adminApp = new Vue({
       .then(response => {
         if (response.data.code === 1) {
           this.selectedActivity = response.data.data;
+          this.selectedActivity.beginTime = this.formatDateTime(this.selectedActivity.beginTime);
+          this.selectedActivity.endTime = this.formatDateTime(this.selectedActivity.endTime);
+          this.selectedActivity.status = this.getActivityStatus(this.selectedActivity.status);
           this.showActivityModal = true;
         } else {
           alert('获取活动信息失败: ' + response.data.msg);
@@ -178,6 +181,22 @@ var adminApp = new Vue({
         console.error('获取活动信息失败：', error);
         alert('获取活动信息失败');
       });
+    },
+    getActivityStatus: function(status) {
+      switch(status) {
+        case 0:
+          return '未审核';
+        case -1:
+          return '审核未通过';
+        case 1:
+          return '筹备中';
+        case 2:
+          return '进行中';
+        case 3:
+          return '已结束';
+        default:
+          return '未知状态';
+      }
     },
     approveActivity: function() {
       axios.get(`http://47.93.254.31:18088/admin/checkActContent?aid=${this.selectedActivity.id}&status=${this.approvalStatus}&result=${this.approvalResult}`)
@@ -228,6 +247,9 @@ var adminApp = new Vue({
       this.showAddModal = false;
     },
     addResource: function() {
+      if (this.newResource.type == 1) {
+        this.newResource.quantity = 1;
+      }
       axios.post('http://47.93.254.31:18088/resource/resourceAddition', {
         resource: this.newResource.resourceName,
         quantity: this.newResource.quantity,
@@ -255,6 +277,9 @@ var adminApp = new Vue({
       this.showEditModal = false;
     },
     editResource: function() {
+      if (this.selectedResource.type == 1) {
+        this.selectedResource.quantity = 1;
+      }
       axios.post('http://47.93.254.31:18088/resource/resourceAddition', {
         resource: this.selectedResource.resourceName,
         quantity: this.selectedResource.quantity,

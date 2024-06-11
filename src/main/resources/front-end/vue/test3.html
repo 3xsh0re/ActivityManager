@@ -120,7 +120,10 @@
           </div>
           <div class="form-group">
             <label for="resourceType">类型</label>
-            <input type="number" id="resourceType" v-model="newResource.type" required>
+            <select id="resourceType" v-model="newResource.type" required>
+              <option value="0">物品</option>
+              <option value="1">地点</option>
+            </select>
           </div>
           <button type="submit">提交</button>
         </form>
@@ -143,7 +146,10 @@
           </div>
           <div class="form-group">
             <label for="editResourceType">类型</label>
-            <input type="number" id="editResourceType" v-model="selectedResource.type" required disabled>
+            <select id="editResourceType" v-model="selectedResource.type" required disabled>
+              <option value="0">物品</option>
+              <option value="1">地点</option>
+            </select>
           </div>
           <button type="submit">提交</button>
         </form>
