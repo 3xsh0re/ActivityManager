@@ -26,7 +26,7 @@
             <p>开始时间：{{ formatDateTime(activity.beginTime) }}</p>
             <p>结束时间：{{ formatDateTime(activity.endTime) }}</p>
             <p>描述：{{ activity.actDescription }}</p>
-            <p>状态：活动进行中</p>
+            <p :class="getStatusClass2(activity.status)">状态：{{ getActivityStatus2(activity.status) }}</p>
             <p v-if="activity.place">地点：{{ activity.place }}</p>
             <button class="btn" @click="fetchActivityDetails1(activity.id)">查看详情</button>
           </div>
@@ -120,7 +120,7 @@
           <p><strong>开始时间：</strong>{{ formatDateTime(selectedActivity.beginTime) }}</p>
           <p><strong>结束时间：</strong>{{ formatDateTime(selectedActivity.endTime) }}</p>
           <p><strong>描述：</strong>{{ selectedActivity.actDescription }}</p>
-          <p><strong>状态：</strong>活动进行中</p>
+          <p :class="getStatusClass(selectedActivity.status)">状态：{{ getActivityStatus(selectedActivity.status) }}</p>
           <p v-if="selectedActivity.place"><strong>地点：</strong>{{ selectedActivity.place }}</p>
           <p><strong>组织者ID：</strong>{{ selectedActivity.orgId }}</p>
           <p><strong>组织者用户名：</strong>{{ selectedActivity.username }}</p>
@@ -129,7 +129,7 @@
           <p><strong>用户列表：</strong>{{ selectedActivity.userList }}</p>
           <p><strong>活动流程：</strong></p>
           <ul>
-            <li v-for="(step, key) in selectedActivity.actStatus" :key="key">{{ key }}: {{ step }}</li>
+            <li v-for="(step, key) in selectedActivity.actStatus" :key="key">{{ key }}</li>
           </ul>
           <div class="button-group">
             <button class="btn" @click="openJoinActivityModal(selectedActivity.id)">申请参与</button>
@@ -148,7 +148,7 @@
           <p><strong>开始时间：</strong>{{ formatDateTime(selectedActivity.beginTime) }}</p>
           <p><strong>结束时间：</strong>{{ formatDateTime(selectedActivity.endTime) }}</p>
           <p><strong>描述：</strong>{{ selectedActivity.actDescription }}</p>
-          <p><strong>状态：</strong>活动进行中</p>
+          <p :class="getStatusClass(selectedActivity.status)">状态：{{ getActivityStatus(selectedActivity.status) }}</p>
           <p v-if="selectedActivity.place"><strong>地点：</strong>{{ selectedActivity.place }}</p>
           <p><strong>组织者ID：</strong>{{ selectedActivity.orgId }}</p>
           <p><strong>组织者用户名：</strong>{{ selectedActivity.username }}</p>

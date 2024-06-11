@@ -177,18 +177,55 @@ new Vue({
       this.showReminders = true;
       this.fetchUserReminders();
     },
-    getProgressClass: function(status) {
+    getActivityStatus: function(status) {
       switch (status) {
-        case '筹备中':
+        case 1:
+          return '筹备中';
+        case 2:
+          return '进行中';
+        case 3:
+          return '已结束';
+        default:
+          return '';
+      }
+    },
+    getActivityStatus2: function(status) {
+      switch (status) {
+        case "1":
+          return '筹备中';
+        case "2":
+          return '进行中';
+        case "3":
+          return '已结束';
+        default:
+          return '';
+      }
+    },
+    getStatusClass: function(status) {
+      switch (status) {
+        case 1:
           return 'status-preparing';
-        case '进行中':
+        case 2:
           return 'status-ongoing';
-        case '已完成':
+        case 3:
           return 'status-completed';
         default:
           return '';
       }
     },
+    getStatusClass2: function(status) {
+      switch (status) {
+        case "1":
+          return 'status-preparing';
+        case "2":
+          return 'status-ongoing';
+        case "3":
+          return 'status-completed';
+        default:
+          return '';
+      }
+    },
+    
     fetchData: function() {
       axios.post('http://47.93.254.31:18088/activity/getAllActivity', {
         page: this.page,
@@ -196,8 +233,9 @@ new Vue({
       })
       .then(response => {
         if (response.data.code === 1) {
-          // 只显示状态为1的活动
-          this.activities = response.data.data.records.filter(activity => activity.status === "1");
+          this.activities = response.data.data.records.filter(activity => 
+            activity.status === "1" || activity.status === "2" || activity.status === "3"
+          );
           this.total = this.activities.length;
         } else {
           this.showMessage('获取活动列表失败：' + response.data.msg);
