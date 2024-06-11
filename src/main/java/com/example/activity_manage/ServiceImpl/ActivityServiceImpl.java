@@ -24,6 +24,7 @@ import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.security.Key;
 import java.sql.Timestamp;
 import java.util.*;
 
@@ -65,6 +66,10 @@ public class ActivityServiceImpl implements ActivityService {
             for (String aid : keys) {
                 // 获取时间
                 Pair<Timestamp, Timestamp> tmp = activityMapper.activityDateGet(Long.parseLong(aid));
+                if (tmp == null)
+                {
+                    continue;
+                }
                 java.util.Date extActBeginTime = new java.util.Date(tmp.first.getTime());
                 java.util.Date extActEndTime = new java.util.Date(tmp.second.getTime());
                 // 检测时间冲突
@@ -80,7 +85,11 @@ public class ActivityServiceImpl implements ActivityService {
         // 设定活动的组织者
         JSONObject userList = new JSONObject();
         userList.put(Long.toString(activityCreateDTO.getUid()), "组织者");
+        // 设定活动的角色
+        JSONObject roleList = activityCreateDTO.getRoleList();
+        roleList.put("组织者",1);
         activityCreateDTO.setUserList(userList);
+        activityCreateDTO.setRoleList(roleList);
 
         // 创建活动,直接将activityCreateDTO传入即可
         activityMapper.activityCreate(activityCreateDTO);
@@ -207,6 +216,19 @@ public class ActivityServiceImpl implements ActivityService {
         {
             // 删除活动的评论
             commentsMapper.deleteAllCommentToAct(aid);
+            // 删除获得所有参与者的该项活动
+            JSONObject jsonObject = activityMapper.getUserList(aid);
+            // 获取活动参与人数
+            JSONObject userList   = (JSONObject) jsonObject.get("userList");
+            Set<String> keySet = userList.keySet();
+            for (String uidInUserList : keySet) {
+                // 删除获得所有参与者的该项活动
+                JSONObject userObject = userMapper.getActList(Long.parseLong(uidInUserList));
+                // 获取活动参与人数
+                JSONObject actList   = (JSONObject) userObject.get("actList");
+                actList.remove(Long.toString(aid));
+                userMapper.updateActList(Long.parseLong(uidInUserList),actList);
+            }
             // 删除活动表中的数据
             activityMapper.deleteActivity(aid);
         }

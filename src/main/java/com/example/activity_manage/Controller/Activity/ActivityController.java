@@ -25,7 +25,6 @@ public class ActivityController {
     @PostMapping("/createActivity")
     public Result<Boolean> activityCreate(@RequestBody ActivityCreateDTO activityCreateDTO)
     {
-        System.out.println(activityCreateDTO);
         return Result.success(activityService.ActivityCreate(activityCreateDTO));
     }
     @GetMapping("/getDate")

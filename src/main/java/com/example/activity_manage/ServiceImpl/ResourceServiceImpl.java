@@ -120,7 +120,7 @@ public class ResourceServiceImpl implements ResourceService {
     @Override
     public Boolean resourceAddition(ResourceAdditionDTO resourceAdditionDTO) {
         String resourceName = resourceAdditionDTO.getResource();
-        if (resourceName.equals(""))
+        if (resourceName == null || resourceName.equals("") || resourceName.contains(" "))
         {
             throw new ActivityException(MessageConstant.NOT_ILLEGAL_INPUT);
         }

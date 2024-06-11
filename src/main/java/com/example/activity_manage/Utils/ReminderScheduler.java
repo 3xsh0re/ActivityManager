@@ -1,8 +1,10 @@
 package com.example.activity_manage.Utils;
 
+import com.example.activity_manage.Entity.Activity;
 import com.example.activity_manage.Entity.Notice;
 import com.example.activity_manage.Entity.Reminder;
 import com.example.activity_manage.Entity.VO.UserInfoVO;
+import com.example.activity_manage.Mapper.ActivityMapper;
 import com.example.activity_manage.Service.NoticeService;
 import com.example.activity_manage.Service.ReminderService;
 import com.example.activity_manage.Service.UserService;
@@ -24,6 +26,10 @@ public class ReminderScheduler {
     UserService userService;
     @Autowired
     NoticeService noticeService;
+
+    @Autowired
+    ActivityMapper activityMapper;
+
     @Autowired
     SendUtil sendUtil;
     @Scheduled(fixedRate = 30000) // 每分钟执行一次
@@ -55,6 +61,29 @@ public class ReminderScheduler {
                 String nowTimeHash = JwtUtil.getNowTimeHash();
                 notice.setGroupId(nowTimeHash);
                 noticeService.createNotice(notice);
+            }
+        }
+    }
+    @Scheduled(fixedRate = 30000) // 每分钟执行一次
+    public void checkActivityEnd() {
+        List<Activity> actList = activityMapper.getAllAct();
+        Date currentDate = new Date();
+        // 创建Calendar实例，并设置为当前时间，同时指定时区为中国标准时间
+        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("Asia/Shanghai"));
+        calendar.setTime(currentDate);
+        // 将时间增加8小时
+        calendar.add(Calendar.HOUR_OF_DAY, 8);
+        calendar.add(Calendar.MINUTE,1);
+        // 获取加上8小时后的时间
+        Date nowTime = calendar.getTime();
+        for (Activity act: actList) {
+            if (act.getBeginTime().before(nowTime) && act.getStatus() == 1)
+            {
+                activityMapper.setActStatus(2,act.getId());
+            }
+            // 活动结束
+            if (act.getEndTime().before(nowTime)) {
+                activityMapper.setActStatus(3,act.getId());
             }
         }
     }
