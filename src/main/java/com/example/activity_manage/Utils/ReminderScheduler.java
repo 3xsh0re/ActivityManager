@@ -77,7 +77,7 @@ public class ReminderScheduler {
         // 获取加上8小时后的时间
         Date nowTime = calendar.getTime();
         for (Activity act: actList) {
-            if (act.getBeginTime().before(nowTime))
+            if (act.getBeginTime().before(nowTime) && act.getStatus() == 1)
             {
                 activityMapper.setActStatus(2,act.getId());
             }
