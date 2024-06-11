@@ -275,4 +275,8 @@
         where id = #{aid};
     </update>
 
+    <update id="setActStatus">
+        update Activity set status = #{status} where id = #{aid};
+    </update>
+
 </mapper>
