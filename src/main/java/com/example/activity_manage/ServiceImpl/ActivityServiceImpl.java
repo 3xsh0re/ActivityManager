@@ -85,7 +85,11 @@ public class ActivityServiceImpl implements ActivityService {
         // 设定活动的组织者
         JSONObject userList = new JSONObject();
         userList.put(Long.toString(activityCreateDTO.getUid()), "组织者");
+        // 设定活动的角色
+        JSONObject roleList = activityCreateDTO.getRoleList();
+        roleList.put("组织者",1);
         activityCreateDTO.setUserList(userList);
+        activityCreateDTO.setRoleList(roleList);
 
         // 创建活动,直接将activityCreateDTO传入即可
         activityMapper.activityCreate(activityCreateDTO);
