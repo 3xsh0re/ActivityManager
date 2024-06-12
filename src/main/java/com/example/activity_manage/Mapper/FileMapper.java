@@ -9,6 +9,7 @@ import org.apache.ibatis.annotations.Mapper;
 public interface FileMapper {
     void uploadNewFile(UploadFile file);
     String getTimingByFid(long fid);
+    void increaseDownloadTimes(long fid);
     void deleteFile(long fid);
     UploadFile getFileByFid(long fid);
     Page<ActFileVO> pageQueryFileByAid(long aid);

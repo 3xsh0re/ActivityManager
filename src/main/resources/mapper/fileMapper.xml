@@ -22,4 +22,7 @@
         from ActFile
         where fid = #{fid};
     </delete>
+    <update id="increaseDownloadTimes">
+        update ActFile set downloadTimes = downloadTimes + 1;
+    </update>
 </mapper>

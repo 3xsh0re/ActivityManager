@@ -122,7 +122,6 @@ public class FileServiceImpl implements FileService {
         long fid = fileDownloadDTO.getFid();
         long aid = fileDownloadDTO.getAid();
         String fileName = fileDownloadDTO.getFileName();
-        System.out.println("fid:" + fid + "-" + "aid:" + aid +"-" + "fileName:" + fileName);
         if (fileName == null || fileName.equals("")){
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ErrorResponse("文件名为空"));
@@ -162,6 +161,7 @@ public class FileServiceImpl implements FileService {
 
         // 创建文件系统资源
         FileSystemResource resource = new FileSystemResource(path.toFile());
+        fileMapper.increaseDownloadTimes(fid);
         return new ResponseEntity<>(resource, headers, HttpStatus.OK);
     }
 
