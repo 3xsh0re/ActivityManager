@@ -109,8 +109,14 @@ public class ResourceServiceImpl implements ResourceService {
                     activityMapper.updateActivityResource(AID, resourceName, quantityNeed);
                     return true;
                 }
+                else
+                {
+                    throw new ActivityException("资源剩余量不足");
+                }
             }
-            return false;
+            else {
+                throw new ActivityException(MessageConstant.NOT_HAVE_THIS_PERMISSION);
+            }
         }finally {
             // 操作完成释放锁
             redisUtil.unlock(lockKey,lockValue);
