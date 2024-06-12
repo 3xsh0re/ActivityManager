@@ -142,8 +142,8 @@
             status NOT IN (0, -1)
         ORDER BY
             CASE
-                WHEN status = 1 THEN 1
                 WHEN status = 2 THEN 2
+                WHEN status = 1 THEN 1
                 WHEN status = 3 THEN 3
                 ELSE 4
                 END
