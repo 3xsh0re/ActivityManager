@@ -19,5 +19,4 @@ public class MyWebMvcConfig implements WebMvcConfigurer {
                 .addPathPatterns("/activity/*","/user/*","/reminder/*","/file/*","/resource/*","/comment/*","/expense/*","/admin/*")
                 .excludePathPatterns("/user/login", "/user/register","/user/getCaptchaByPhone","/user/resetPasswd","/user/getCaptchaByEmail"); // 排除不需要拦截的路径
     }
-
 }

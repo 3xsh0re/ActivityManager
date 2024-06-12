@@ -2,10 +2,7 @@ package com.example.activity_manage.Controller.User;
 
 
 import com.example.activity_manage.Constant.MessageConstant;
-import com.example.activity_manage.Entity.DTO.NoticePageQueryDTO;
-import com.example.activity_manage.Entity.DTO.NoticeToManagerPageQueryDTO;
-import com.example.activity_manage.Entity.DTO.ResetPwdDTO;
-import com.example.activity_manage.Entity.DTO.UserLoginDTO;
+import com.example.activity_manage.Entity.DTO.*;
 import com.example.activity_manage.Entity.User;
 import com.example.activity_manage.Entity.VO.UserInfoVO;
 import com.example.activity_manage.Entity.VO.UserLoginVO;
@@ -118,6 +115,14 @@ public class UserController {
     public Result<PageResult> getNoticeToManager(@RequestBody NoticeToManagerPageQueryDTO pageQueryDTO){
         return Result.success(noticeService.getNoticeToManager(pageQueryDTO));
     }
+    // 活动通知发送
+    @PostMapping("/createNotice")
+    public Result<Boolean> createNotice(@RequestBody NoticeCreateDTO noticeCreateDTO)
+    {
+        noticeService.sendNotice(noticeCreateDTO);
+        return Result.success();
+    }
+
 
     @GetMapping("/getUserInfoByUid")
     public Result<UserInfoVO> getUserInfo(@RequestParam("uid") long uid){
