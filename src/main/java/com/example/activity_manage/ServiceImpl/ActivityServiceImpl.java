@@ -168,7 +168,7 @@ public class ActivityServiceImpl implements ActivityService {
         {
             throw new ActivityException(MessageConstant.NOT_HAVE_THIS_PERMISSION);
         }
-        if (MessageConstant.All_Permission_Role.contains(role))
+        if (!MessageConstant.All_Permission_Role.contains(role))
         {
             throw new ActivityException(MessageConstant.NOT_HAVE_THIS_PERMISSION);
         }
@@ -518,7 +518,7 @@ public class ActivityServiceImpl implements ActivityService {
         {
             long managerUid = activitySetParticipantRoleDTO.getManagerUid();
             long aid = activitySetParticipantRoleDTO.getAid();
-            if (MessageConstant.All_Permission_Role.contains(activityMapper.getUserRole(aid,managerUid))){
+            if (!MessageConstant.All_Permission_Role.contains(activityMapper.getUserRole(aid,managerUid))){
                 throw new ActivityException(MessageConstant.NOT_HAVE_THIS_PERMISSION);
             }
             long participantUid = activitySetParticipantRoleDTO.getParticipantUid();
