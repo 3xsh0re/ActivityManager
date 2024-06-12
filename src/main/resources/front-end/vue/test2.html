@@ -165,6 +165,7 @@
             <button v-if="isOrganizer" class="btn" @click="fetchEditActivityDetails(selectedActivity.id)">修改活动</button>
             <button v-if="isOrganizer" class="btn" @click="openParticipantManagementModal(selectedActivity.id)">参与者管理</button>
             <button v-if="isOrganizer" class="btn" @click="openResourceReservationModal(selectedActivity.id)">资源预约</button>
+            <button v-if="isOrganizer" class="btn" @click="fetchResourceDetails">获取资源详情</button>
             <button class="btn" @click="exitActivity(selectedActivity.id)">退出活动</button>
             <button class="btn" @click="copyActivityLink(selectedActivity)">复制链接</button>
             <button v-if="isOrganizer" class="btn" @click="openUnCheckedUserListModal(selectedActivity.id)">查看参与申请</button>
@@ -325,6 +326,30 @@
           </div>
           <button type="submit" class="btn">预约资源</button>
         </form>
+      </div>
+    </div>
+
+    <!-- 新增显示资源详情的模态框 -->
+    <div v-if="showResourceDetailsModal" class="modal">
+      <div class="modal-content">
+        <span class="close" @click="closeResourceDetailsModal">&times;</span>
+        <h2>资源详情</h2>
+        <div v-if="resourceDetails.length">
+          <ul>
+            <li v-for="resource in resourceDetails" :key="resource.id">
+              {{ resource.resourceName }}: {{ resource.quantity }}
+            </li>
+          </ul>
+          <!-- 分页控件 -->
+          <div class="pagination">
+            <button @click="changeResourcePage(resourcePage - 1)" :disabled="resourcePage === 1">上一页</button>
+            <span>第 {{ resourcePage }} 页，共 {{ Math.ceil(resourceTotal / resourcePageSize) }} 页</span>
+            <button @click="changeResourcePage(resourcePage + 1)" :disabled="resourcePage === Math.ceil(resourceTotal / resourcePageSize)">下一页</button>
+          </div>
+        </div>
+        <div v-else>
+          <p>暂无资源详情。</p>
+        </div>
       </div>
     </div>
 

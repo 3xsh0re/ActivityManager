@@ -23,6 +23,7 @@ new Vue({
     showActivityNotificationsModal: false,
     showFileManagementModal: false,
     showReminders: false,
+    showResourceDetailsModal: false,
     selectedTemplate: 'custom',
     newActivity: {
       activityName: '',
@@ -41,6 +42,7 @@ new Vue({
     userSchedule: [],
     userExpenses: [],
     activityExpenses: [],
+    resourceDetails: [],
     userNotifications: [],
     notificationContent: '',
     activityNotifications: [],
@@ -67,6 +69,9 @@ new Vue({
     reminderPage: 1,
     reminderPageSize: 10,
     reminderTotal: 0,
+    resourcePage: 1,
+    resourcePageSize: 10,
+    resourceTotal: 0,
     participantUid: '',
     participantGroup: '',
     participantRole: '',
@@ -646,6 +651,37 @@ new Vue({
           console.error('参与者角色设置失败：', error);
           this.showMessage('参与者角色设置失败');
         });
+    },
+    fetchResourceDetails() {
+      const resourceRequestData = {
+        beginTime: this.selectedActivity.beginTime,
+        endTime: this.selectedActivity.endTime,
+        page: this.resourcePage,
+        pageSize: this.resourcePageSize
+      };
+  
+      axios.post('http://47.93.254.31:18088/resource/getAllResourceToAct', resourceRequestData)
+        .then(response => {
+          if (response.data.code === 1) {
+            this.resourceDetails = response.data.data.records;
+            this.resourceTotal = response.data.data.total;
+            this.showResourceDetailsModal = true;
+          } else {
+            this.showMessage('获取资源详情失败：' + response.data.msg);
+          }
+        })
+        .catch(error => {
+          console.error('获取资源详情失败：', error);
+          this.showMessage('获取资源详情失败');
+        });
+    },
+    changeResourcePage: function(newPage) {
+      this.resourcePage = newPage;
+      this.fetchResourceDetails();
+    },
+    closeResourceDetailsModal() {
+      this.showResourceDetailsModal = false;
+      this.resourceDetails = [];
     },
     reserveResource: function() {
       const reservationData = {
