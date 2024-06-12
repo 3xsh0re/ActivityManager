@@ -1253,12 +1253,13 @@ new Vue({
 
     copyActivityLink: function(activity) {
       const link = `活动名称: ${activity.actName}
-        活动描述: ${activity.actDescription}
-        开始时间: ${this.formatDateTime(activity.beginTime)}
-        结束时间: ${this.formatDateTime(activity.endTime)}
-        组织者用户名: ${activity.username}
-        总预算: ${activity.totalBudget}
-        评分: ${activity.rank}`;
+                    活动描述: ${activity.actDescription}
+                    开始时间: ${this.formatDateTime(activity.beginTime)}
+                    结束时间: ${this.formatDateTime(activity.endTime)}
+                    组织者用户名: ${activity.username}
+                    总预算: ${activity.totalBudget}
+                    评分: ${activity.rank}
+                    链接: ${window.location.href}`;
       this.copyTextToClipboard(link);
       this.showMessage('链接已复制到剪贴板');
     },
