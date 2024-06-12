@@ -144,6 +144,7 @@ new Vue({
       this.showUserNotifications = false;
       this.showActivityNotifications = false;
       this.showReminders = false;
+      this.fetchUserSchedule();
     },
     switchToMyExpenses: function() {
       this.showInfo = false;
@@ -233,10 +234,9 @@ new Vue({
       })
       .then(response => {
         if (response.data.code === 1) {
-          this.activities = response.data.data.records.filter(activity => 
-            activity.status === "1" || activity.status === "2" || activity.status === "3"
-          );
-          this.total = this.activities.length;
+          this.total = response.data.data.total;
+          this.activities = response.data.data.records;
+          console.log('total: ' + this.total);
         } else {
           this.showMessage('获取活动列表失败：' + response.data.msg);
         }
@@ -245,7 +245,6 @@ new Vue({
         console.error('获取活动列表失败：', error);
         this.showMessage('获取活动列表失败');
       });
-  
       this.fetchUserProfile();
     },
     fetchUserProfile: function() {
@@ -341,12 +340,12 @@ new Vue({
             });
             this.sortMessages(); 
           } else {
-            this.showMessage('获取聊天消息失败：' + response.data.msg);
+            // this.showMessage('获取聊天消息失败：' + response.data.msg);
           }
         })
         .catch(error => {
           console.error('获取聊天消息失败:', error);
-          this.showMessage('获取聊天消息失败');
+          // this.showMessage('获取聊天消息失败');
         });
     },
     sortMessages: function() {
