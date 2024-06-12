@@ -29,7 +29,7 @@ new Vue({
       beginTime: '',
       endTime: '',
       roleList: {},
-      ifFileStore: 1,
+      ifFileStore: true,
       actStatus: {}
     },
     newRole: { name: '' },
@@ -398,7 +398,7 @@ new Vue({
         beginTime: '',
         endTime: '',
         roleList: {},
-        ifFileStore: 1,
+        ifFileStore: true,
         actStatus: {}
       };
       this.showCreateActivityModal = true;
