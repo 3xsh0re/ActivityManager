@@ -545,7 +545,10 @@ new Vue({
       if (this.selectedTemplate === 'meeting') {
         this.newActivity.roleList = { '会议组织者': 1, '主讲嘉宾': 2, '参与者': 20 };
         this.newActivity.actStatus = { '会议主持人开场': 1, '会议进行中': 2, '会议结束': 3 };
-      } else {
+      } else if (this.selectedTemplate === 'classMeeting') {
+        this.newActivity.roleList = { 班主任: "", 班长: "", 同学: "" };
+        this.newActivity.actStatus = { "班主任发言": 1, "班会进行中": 2, "班会结束": 3 };
+      } else  {
         this.newActivity.roleList = {};
         this.newActivity.actStatus = {};
       }
