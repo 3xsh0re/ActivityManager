@@ -5,6 +5,7 @@ import com.example.activity_manage.Entity.Activity;
 import com.example.activity_manage.Entity.DTO.BasePageQueryDTO;
 import com.example.activity_manage.Entity.DTO.ResourceAdditionDTO;
 import com.example.activity_manage.Entity.DTO.ResourceReservationDTO;
+import com.example.activity_manage.Entity.DTO.ResourceToActDTO;
 import com.example.activity_manage.Entity.Notice;
 import com.example.activity_manage.Entity.Resource;
 import com.example.activity_manage.Exception.ActivityException;
@@ -96,8 +97,7 @@ public class ResourceServiceImpl implements ResourceService {
             // 获取操作者的角色
             String userRole = activityMapper.getUserRole(AID, UID);
             // 设置哪些角色有权限进行资源申请
-            Set<String> validRoles = new HashSet<>(Arrays.asList("组织者", "管理员"));
-            if (validRoles.contains(userRole) && resourceMapper.checkResourceByName(resourceName)) {// 检查资源是否存在
+            if (MessageConstant.All_Permission_Role.contains(userRole) && resourceMapper.checkResourceByName(resourceName)) {// 检查资源是否存在
                 int quantityCurr = resourceMapper.selectResourceByName(resourceName);
                 // 从totalResourceUsage中获取已经被占用的数量
                 int quantityUsed = (int) totalResourceUsage.getOrDefault(resourceName, 0);
@@ -109,8 +109,14 @@ public class ResourceServiceImpl implements ResourceService {
                     activityMapper.updateActivityResource(AID, resourceName, quantityNeed);
                     return true;
                 }
+                else
+                {
+                    throw new ActivityException("资源剩余量不足");
+                }
             }
-            return false;
+            else {
+                throw new ActivityException(MessageConstant.NOT_HAVE_THIS_PERMISSION);
+            }
         }finally {
             // 操作完成释放锁
             redisUtil.unlock(lockKey,lockValue);
@@ -185,5 +191,32 @@ public class ResourceServiceImpl implements ResourceService {
         catch (Exception e){
             throw new SystemException(MessageConstant.SYSTEM_BUSY);
         }
+    }
+
+    @Override
+    public PageResult pageQueryResourceToAct(ResourceToActDTO resourceToActDTO) {
+//        try {
+            List<Activity> actList = activityMapper.getAllAct();
+            // 计算在指定时间段内已经被占用的资源
+            JSONObject totalResourceUsage = checkActivityConflicts(actList, resourceToActDTO.getBeginTime(), resourceToActDTO.getEndTime());
+            //开始分页查询
+            PageHelper.startPage(resourceToActDTO.getPage(), resourceToActDTO.getPageSize());
+            Page<Resource> page = resourceMapper.pageQueryAllResource();
+            long total = page.getTotal();
+            List<Resource> records = page.getResult();
+            for (Resource re: records) {
+                String resourceName = re.getResourceName();
+                int quantityCurr = resourceMapper.selectResourceByName(resourceName);
+                // 从totalResourceUsage中获取已经被占用的数量
+                int quantityUsed = (int) totalResourceUsage.getOrDefault(resourceName, 0);
+                // 可用资源数量
+                int availableQuantity = quantityCurr - quantityUsed;
+                re.setQuantity(availableQuantity);
+            }
+            return new PageResult(total, records);
+//        }
+//        catch (Exception e){
+//            throw new SystemException(MessageConstant.SYSTEM_BUSY);
+//        }
     }
 }

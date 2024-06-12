@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:2024-06-04T17="http://www.w3.org/1999/xhtml">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -175,7 +175,7 @@
             <button v-if="isOrganizer" class="btn" @click="openExpenseListModal(selectedActivity.id)">查看报销单</button>
             <button v-if="isOrganizer" class="btn" @click="switchToActivityNotifications(selectedActivity.id)">查看活动通知</button>
             <button v-if="isOrganizer" class="btn" @click="openSendNotificationModal">发送活动通知</button>
-            <button v-if="isOrganizer" class="btn" @click="openFileManagementModal(selectedActivity.id)">文件管理</button>
+            <button class="btn" @click="openFileManagementModal(selectedActivity.id)">文件管理</button>
           </div>
           <div class="comments-section">
             <h3>评论</h3>
@@ -465,6 +465,7 @@
           <li @click="switchToMyExpenses">我的报销单</li>
           <li @click="switchToUserNotifications">我的通知</li>
           <li @click="switchToReminders">我的提醒</li>
+          <li @click="switchToResource('2024-06-04T17:49:00.000+00:00','2024-06-04T17:48:00.000+00:00')">资源量查看</li>
         </ul>
       </nav>
       <!-- 个人主页内容 -->
@@ -498,6 +499,31 @@
             </div>
           </div>
         </div>
+        <div v-if="showResource">
+          <h2>可用资源列表</h2>
+
+          <!-- 时间选择框和查询按钮 -->
+          <div>
+            <div class="query-section">
+              <label for="start-time">开始时间:</label>
+              <input type="datetime-local" v-model="beginTime" id="start-time" value="2024-06-01T00:00">
+              <label for="end-time">结束时间:</label>
+              <input type="datetime-local" v-model="endTime" id="end-time" value="2024-06-01T01:00">
+              <button @click="fetchResources(beginTime, endTime)">查询</button>
+            </div>
+          </div>
+          <ul>
+            <li v-for="resource in resources" :key="resource.id">
+              {{ resource.resourceName }} - 数量: {{ resource.quantity }}
+            </li>
+          </ul>
+          <div class="pagination">
+            <button @click="changeResourcePage(resourcePage - 1, beginTime, endTime)" :disabled="resourcePage === 1">上一页</button>
+            <span>第 {{ resourcePage }} 页，共 {{ Math.ceil(resourceTotal / resourcePageSize) }} 页</span>
+            <button @click="changeResourcePage(resourcePage + 1, beginTime, endTime)" :disabled="resourcePage === Math.ceil(resourceTotal / resourcePageSize)">下一页</button>
+          </div>
+        </div>
+
         <div v-if="showMyExpenses">
           <h2>我的报销单</h2>
           <div class="expense-list">
