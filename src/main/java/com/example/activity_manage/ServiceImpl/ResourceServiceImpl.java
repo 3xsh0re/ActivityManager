@@ -195,7 +195,7 @@ public class ResourceServiceImpl implements ResourceService {
 
     @Override
     public PageResult pageQueryResourceToAct(ResourceToActDTO resourceToActDTO) {
-        try {
+//        try {
             List<Activity> actList = activityMapper.getAllAct();
             // 计算在指定时间段内已经被占用的资源
             JSONObject totalResourceUsage = checkActivityConflicts(actList, resourceToActDTO.getBeginTime(), resourceToActDTO.getEndTime());
@@ -214,9 +214,9 @@ public class ResourceServiceImpl implements ResourceService {
                 re.setQuantity(availableQuantity);
             }
             return new PageResult(total, records);
-        }
-        catch (Exception e){
-            throw new SystemException(MessageConstant.SYSTEM_BUSY);
-        }
+//        }
+//        catch (Exception e){
+//            throw new SystemException(MessageConstant.SYSTEM_BUSY);
+//        }
     }
 }

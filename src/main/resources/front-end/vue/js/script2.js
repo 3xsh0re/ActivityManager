@@ -23,6 +23,7 @@ new Vue({
     showActivityNotificationsModal: false,
     showFileManagementModal: false,
     showReminders: false,
+    showResource: false,
     selectedTemplate: 'custom',
     newActivity: {
       activityName: '',
@@ -55,6 +56,9 @@ new Vue({
     expensePage: 1,
     expensePageSize: 10,
     expenseTotal: 0,
+    resourcePage:1,
+    resourcePageSize: 10,
+    resourceTotal: 0,
     notificationPage: 1,
     notificationPageSize: 10,
     notificationTotal: 0,
@@ -67,6 +71,7 @@ new Vue({
     reminderPage: 1,
     reminderPageSize: 10,
     reminderTotal: 0,
+    resources: [],
     participantUid: '',
     participantGroup: '',
     participantRole: '',
@@ -142,6 +147,7 @@ new Vue({
       this.showUserNotifications = false;
       this.showActivityNotifications = false;
       this.showReminders = false;
+      this.showResource = false;
     },
     switchToMyActivities: function() {
       this.showInfo = false;
@@ -150,6 +156,7 @@ new Vue({
       this.showUserNotifications = false;
       this.showActivityNotifications = false;
       this.showReminders = false;
+      this.showResource = false;
       this.fetchUserSchedule();
     },
     switchToMyExpenses: function() {
@@ -159,6 +166,7 @@ new Vue({
       this.showUserNotifications = false;
       this.showActivityNotifications = false;
       this.showReminders = false;
+      this.showResource = false;
       this.fetchUserExpenses();
     },
     switchToUserNotifications: function() {
@@ -168,6 +176,7 @@ new Vue({
       this.showUserNotifications = true;
       this.showActivityNotifications = false;
       this.showReminders = false;
+      this.showResource = false;
       this.fetchUserNotifications();
     },
     switchToActivityNotifications: function(aid) {
@@ -182,7 +191,18 @@ new Vue({
       this.showUserNotifications = false;
       this.showActivityNotifications = false;
       this.showReminders = true;
+      this.showResource = false;
       this.fetchUserReminders();
+    },
+    switchToResource: function(beginTime,endTime) {
+      this.showInfo = false;
+      this.showMyActivities = false;
+      this.showMyExpenses = false;
+      this.showUserNotifications = false;
+      this.showActivityNotifications = false;
+      this.showReminders = false;
+      this.showResource = true;
+      this.fetchResources(beginTime,endTime);
     },
     getActivityStatus: function(status) {
       switch (status) {
@@ -848,6 +868,32 @@ new Vue({
         this.showMessage('获取活动报销单列表失败');
       });
     },
+    fetchResources: function(beginTime,endTime) {
+      axios.post('http://127.0.0.1:18088/resource/getAllResourceToAct', {
+        beginTime:beginTime,
+        endTime:endTime,
+        page: this.resourcePage,
+        pageSize: this.resourcePageSize
+      })
+          .then(response => {
+            if (response.data.msg == null) {
+              this.resources = response.data.data.records.map(resource => ({
+                id: resource.id,
+                resourceName: resource.resourceName,
+                type: resource.type,
+                quantity: resource.quantity
+              }));
+              this.resourceTotal = response.data.data.total;
+            } else {
+              console.error('获取资源列表失败：', response.data.msg);
+              alert('获取资源列表失败');
+            }
+          })
+          .catch(error => {
+            console.error('获取资源列表失败：', error);
+            alert('获取资源列表失败');
+          });
+    },
     checkExpense: function(eid, status, comment) {
       const uid = this.getCookie('uid');
       axios.post('http://47.93.254.31:18088/expense/checkExpense', {
@@ -883,6 +929,11 @@ new Vue({
     changeExpensePage: function(newPage) {
       this.expensePage = newPage;
       this.fetchActivityExpenses();
+    },
+    changeResourcePage: function (newPage,beginTime,endTime)
+    {
+      this.resourcePage = newPage;
+      this.fetchResources(beginTime,endTime);
     },
     sendNotification() {
       const notificationData = {
