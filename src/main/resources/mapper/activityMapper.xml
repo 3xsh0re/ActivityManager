@@ -137,7 +137,7 @@
     <select id="pageQueryBaseActInfoVO" resultType="com.example.activity_manage.Entity.VO.BaseActInfoVO" >
         select id, actName, beginTime, endTime,
                actDescription, status, place
-        from Activity
+        from Activity where status NOT IN (0, -1)
     </select>
     
     <select id="getMaxId">
