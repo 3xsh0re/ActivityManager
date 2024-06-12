@@ -103,6 +103,7 @@
               <option value="custom">自定义活动</option>
               <option value="meeting">会议活动模板</option>
               <option value="classMeeting">班会活动模板</option>
+              <option value="sportsMeet">运动会活动模板</option>
             </select>
           </div>          
           <button type="submit" class="btn">创建</button>
@@ -169,9 +170,10 @@
             <button v-if="isOrganizer" class="btn" @click="openUnCheckedUserListModal(selectedActivity.id)">查看参与申请</button>
             <button v-if="isOrganizer" class="btn" @click="fetchActivityBudget(selectedActivity.id)">查看预算</button>
             <button v-if="isOrganizer" class="btn" @click="openSetBudgetModal(selectedActivity.id)">设定预算</button>
-            <button v-if="isOrganizer" class="btn" @click="openCommitExpenseModal(selectedActivity.id)">提交报销单</button>
+            <button class="btn" @click="openCommitExpenseModal(selectedActivity.id)">提交报销单</button>
             <button v-if="isOrganizer" class="btn" @click="openExpenseListModal(selectedActivity.id)">查看报销单</button>
             <button v-if="isOrganizer" class="btn" @click="switchToActivityNotifications(selectedActivity.id)">查看活动通知</button>
+            <button v-if="isOrganizer" class="btn" @click="openSendNotificationModal">发送活动通知</button>
             <button v-if="isOrganizer" class="btn" @click="openFileManagementModal(selectedActivity.id)">文件管理</button>
           </div>
           <div class="comments-section">
@@ -321,14 +323,6 @@
             <label for="quantity">数量</label>
             <input type="number" id="quantity" v-model="resourceReservation.quantity" required>
           </div>
-          <div class="form-group">
-            <label for="resourceBeginTime">开始时间</label>
-            <input type="datetime-local" id="resourceBeginTime" v-model="resourceReservation.beginTime" required>
-          </div>
-          <div class="form-group">
-            <label for="resourceEndTime">结束时间</label>
-            <input type="datetime-local" id="resourceEndTime" v-model="resourceReservation.endTime" required>
-          </div>
           <button type="submit" class="btn">预约资源</button>
         </form>
       </div>
@@ -418,6 +412,21 @@
           <span>第 {{ expensePage }} 页，共 {{ Math.ceil(expenseTotal / expensePageSize) }} 页</span>
           <button @click="changeExpensePage(expensePage + 1)" :disabled="expensePage === Math.ceil(expenseTotal / expensePageSize)">下一页</button>
         </div>
+      </div>
+    </div>
+
+    <!-- 新增发送活动通知的模态框 -->
+    <div v-if="showSendNotificationModal" class="modal">
+      <div class="modal-content">
+        <span class="close" @click="closeSendNotificationModal">&times;</span>
+        <h2>发送活动通知</h2>
+        <form @submit.prevent="sendNotification">
+          <div class="form-group">
+            <label for="notificationContent">通知内容</label>
+            <textarea id="notificationContent" v-model="notificationContent" required></textarea>
+          </div>
+          <button type="submit" class="btn">发送通知</button>
+        </form>
       </div>
     </div>
 

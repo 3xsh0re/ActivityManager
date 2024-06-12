@@ -48,14 +48,18 @@ var adminApp = new Vue({
       const parts = value.split(`; ${name}=`);
       if (parts.length === 2) return parts.pop().split(';').shift();
     },
-    formatDateTime: function(isoString) {
-      const date = new Date(isoString);
-      const year = date.getFullYear();
-      const month = date.getMonth() + 1;
-      const day = date.getDate();
-      const hours = date.getHours();
-      const minutes = date.getMinutes().toString().padStart(2, '0');
-      return `${year}年${month}月${day}日${hours}:${minutes}`;
+    formatDateTime: function(dateString) {
+      const date = new Date(dateString);
+    
+      // 获取 UTC 时间
+      const year = date.getUTCFullYear();
+      const month = date.getUTCMonth() + 1; // 月份从0开始，需要加1
+      const day = date.getUTCDate();
+      const hours = date.getUTCHours();
+      const minutes = date.getUTCMinutes();
+    
+      // 格式化时间
+      return `${year}年${month}月${day}日${hours}:${minutes < 10 ? '0' + minutes : minutes}`;
     },
     fetchActivities: function() {
       axios.post('http://47.93.254.31:18088/admin/getAllActivity', {

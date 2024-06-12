@@ -19,6 +19,7 @@ new Vue({
     showExpenseListModal: false,
     showUserNotifications: false,
     showActivityNotifications: false,
+    showSendNotificationModal: false,
     showActivityNotificationsModal: false,
     showFileManagementModal: false,
     showReminders: false,
@@ -41,6 +42,7 @@ new Vue({
     userExpenses: [],
     activityExpenses: [],
     userNotifications: [],
+    notificationContent: '',
     activityNotifications: [],
     reminders: [],
     files: [],
@@ -77,8 +79,6 @@ new Vue({
     resourceReservation: {
       resource: '',
       quantity: '',
-      beginTime: '',
-      endTime: ''
     },
     unCheckedUserList: [],
     joinActivityReason: '',
@@ -108,13 +108,18 @@ new Vue({
     },
     formatDateTime: function(dateString) {
       const date = new Date(dateString);
-      const year = date.getFullYear();
-      const month = date.getMonth() + 1;
-      const day = date.getDate();
-      const hours = date.getHours();
-      const minutes = date.getMinutes();
+    
+      // 获取 UTC 时间
+      const year = date.getUTCFullYear();
+      const month = date.getUTCMonth() + 1; // 月份从0开始，需要加1
+      const day = date.getUTCDate();
+      const hours = date.getUTCHours();
+      const minutes = date.getUTCMinutes();
+    
+      // 格式化时间
       return `${year}年${month}月${day}日${hours}:${minutes < 10 ? '0' + minutes : minutes}`;
     },
+    
     showMessage: function(message) {
       alert(message);
     },
@@ -128,6 +133,7 @@ new Vue({
       this.showActivityList = true;
       this.showUserProfile = false;
       this.showFileManagementModal = false;
+      this.fetchData();
     },
     switchToInfo: function() {
       this.showInfo = true;
@@ -436,8 +442,6 @@ new Vue({
       this.resourceReservation = {
         resource: '',
         quantity: '',
-        beginTime: '',
-        endTime: ''
       };
     },
     openJoinActivityModal: function(aid) {
@@ -492,6 +496,13 @@ new Vue({
       this.showFileManagementModal = false;
       this.files = [];
       this.selectedFile = null;
+    },
+    openSendNotificationModal() {
+      this.showSendNotificationModal = true;
+    },
+    closeSendNotificationModal() {
+      this.showSendNotificationModal = false;
+      this.notificationContent = '';
     },
     createActivity: function() {
       const newActivityData = {
@@ -548,6 +559,9 @@ new Vue({
       } else if (this.selectedTemplate === 'classMeeting') {
         this.newActivity.roleList = { 班主任: "", 班长: "", 同学: "" };
         this.newActivity.actStatus = { "班主任发言": 1, "班会进行中": 2, "班会结束": 3 };
+      } else if (this.selectedTemplate === 'sportsMeet') { 
+        this.newActivity.roleList = { 主持人: "", 运动员: "", 观众: "" };
+        this.newActivity.actStatus = { "开幕式": 1, "运动会进行中": 2, "闭幕式": 3 };
       } else  {
         this.newActivity.roleList = {};
         this.newActivity.actStatus = {};
@@ -639,8 +653,6 @@ new Vue({
         aid: this.selectedActivityId,
         resource: this.resourceReservation.resource,
         quantity: this.resourceReservation.quantity,
-        beginTime: this.resourceReservation.beginTime,
-        endTime: this.resourceReservation.endTime
       };
       axios.post('http://47.93.254.31:18088/resource/resourceReservation', reservationData)
         .then(response => {
@@ -872,6 +884,28 @@ new Vue({
       this.expensePage = newPage;
       this.fetchActivityExpenses();
     },
+    sendNotification() {
+      const notificationData = {
+        aid: this.selectedActivity.id,
+        sendUid: this.userProfile.id,
+        type: 1,
+        content: this.notificationContent
+      };
+  
+      axios.post('http://47.93.254.31:18088/user/createNotice', notificationData)
+        .then(response => {
+          if (response.data.code === 1) {
+            this.showMessage('通知发送成功');
+            this.closeSendNotificationModal();
+          } else {
+            this.showMessage('通知发送失败：' + response.data.msg);
+          }
+        })
+        .catch(error => {
+          console.error('通知发送失败：', error);
+          this.showMessage('通知发送失败');
+        });
+    },
     fetchUserNotifications: function() {
       const uid = this.getCookie('uid');
       axios.post('http://47.93.254.31:18088/user/getNoticeToUser', {
@@ -1062,12 +1096,7 @@ new Vue({
       })
       .then(response => {
         if (response.data.code === 1) {
-          this.reminders = response.data.data.records.map(reminder => {
-            let reminderTime = new Date(reminder.reminderTime);
-            reminderTime.setHours(reminderTime.getHours() - 8);
-            reminder.reminderTime = reminderTime;
-            return reminder;
-          });
+          this.reminders = response.data.data.records;
           this.reminderTotal = response.data.data.total;
         } else {
           this.showMessage('获取提醒列表失败：' + response.data.msg);
