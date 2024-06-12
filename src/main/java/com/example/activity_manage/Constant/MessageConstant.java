@@ -1,9 +1,15 @@
 package com.example.activity_manage.Constant;
 
+import java.util.List;
+
 /**
  * 信息提示常量类
  */
 public class MessageConstant {
+    public static final List<String> All_Permission_Role = List.of(new String[]{"组织者", "活动管理员" , "管理员" , "活动组织者", "活动主力成员","活动骨干"});
+    public static final List<String> costCheck_Permission_Role = List.of(new String[]{"组织者", "活动管理员" , "管理员" , "活动组织者", "活动主力成员", "活动骨干", "审核员", "报销审核员"});
+    public static final List<String> participantCheck_Permission_Role = List.of(new String[]{"组织者", "活动管理员" , "管理员" , "活动组织者", "活动主力成员", "活动骨干", "审核员", "参与申请审核员"});
+
     public static final String JWT_SECRET_KET = "123456";
 
     public static final String PASSWORD_ERROR = "密码错误";

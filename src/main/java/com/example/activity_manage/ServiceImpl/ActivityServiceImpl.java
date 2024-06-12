@@ -168,7 +168,7 @@ public class ActivityServiceImpl implements ActivityService {
         {
             throw new ActivityException(MessageConstant.NOT_HAVE_THIS_PERMISSION);
         }
-        if (!role.equals("组织者") && !role.equals("管理员"))
+        if (MessageConstant.All_Permission_Role.contains(role))
         {
             throw new ActivityException(MessageConstant.NOT_HAVE_THIS_PERMISSION);
         }
@@ -379,6 +379,11 @@ public class ActivityServiceImpl implements ActivityService {
     // 审核用户申请
     @Override
     public boolean checkApplication(long uid, long aid, long unCheckedId,boolean result) {
+        String role = activityMapper.getUserRole(aid,uid);
+        if (!MessageConstant.participantCheck_Permission_Role.contains(role))
+        {
+            throw new ActivityException(MessageConstant.NOT_HAVE_THIS_PERMISSION);
+        }
         // 审核通过
         if (result){
             // 更新Activity表
@@ -473,28 +478,36 @@ public class ActivityServiceImpl implements ActivityService {
                 throw new ActivityException(MessageConstant.NOT_HAVE_THIS_PERMISSION);
             }
             //开始分页查询
-            JSONObject object = (JSONObject) activityMapper.getUnCheckedUserList(aid).get("unCheckedUserList");
-            int page = activityPageQueryDTO.getPage();
-            int pageSize = activityPageQueryDTO.getPageSize();
-            Iterator<String> keys = object.keySet().iterator();
-            List<UnCheckedUserVO> records = new ArrayList<>();
-            int num = 0;
-            while (keys.hasNext()){
-                String key = keys.next(); //key为申请者id
-                if ( (page - 1) * pageSize <= num && num < page * pageSize ){
-                    UnCheckedUserVO unCheckedUserVO = new UnCheckedUserVO();
-                    unCheckedUserVO.setUid(Long.parseLong(key));
-                    unCheckedUserVO.setUsername(userMapper.getUsernameById(Long.parseLong(key)));
-                    unCheckedUserVO.setPhoneNumber(userMapper.getPhoneByUid(Long.parseLong(key)));
-                    unCheckedUserVO.setReason((String) object.get(key));
-                    records.add(unCheckedUserVO);
+            JSONObject object = activityMapper.getUnCheckedUserList(aid);
+            if (object != null)
+            {
+                JSONObject unCheckedUserList = (JSONObject) object.get("unCheckedUserList");
+                int page = activityPageQueryDTO.getPage();
+                int pageSize = activityPageQueryDTO.getPageSize();
+                Iterator<String> keys = unCheckedUserList.keySet().iterator();
+                List<UnCheckedUserVO> records = new ArrayList<>();
+                int num = 0;
+                while (keys.hasNext()){
+                    String key = keys.next(); //key为申请者id
+                    if ( (page - 1) * pageSize <= num && num < page * pageSize ){
+                        UnCheckedUserVO unCheckedUserVO = new UnCheckedUserVO();
+                        unCheckedUserVO.setUid(Long.parseLong(key));
+                        unCheckedUserVO.setUsername(userMapper.getUsernameById(Long.parseLong(key)));
+                        unCheckedUserVO.setPhoneNumber(userMapper.getPhoneByUid(Long.parseLong(key)));
+                        unCheckedUserVO.setReason((String) unCheckedUserList.get(key));
+                        records.add(unCheckedUserVO);
+                    }
+                    num++;
                 }
-                num++;
-            }
 
-            long total = records.size();
-            return new PageResult(total, records);
-        }catch (Exception e)
+                long total = records.size();
+                return new PageResult(total, records);
+            }
+            else {
+                return new PageResult(0,null);
+            }
+        }
+        catch (Exception e)
         {
             throw new ActivityException(MessageConstant.NOT_ILLEGAL_INPUT);
         }
@@ -505,6 +518,9 @@ public class ActivityServiceImpl implements ActivityService {
         {
             long managerUid = activitySetParticipantRoleDTO.getManagerUid();
             long aid = activitySetParticipantRoleDTO.getAid();
+            if (MessageConstant.All_Permission_Role.contains(activityMapper.getUserRole(aid,managerUid))){
+                throw new ActivityException(MessageConstant.NOT_HAVE_THIS_PERMISSION);
+            }
             long participantUid = activitySetParticipantRoleDTO.getParticipantUid();
             String newRole = activitySetParticipantRoleDTO.getRole();
             String oriRole = activityMapper.getUserRole(aid, participantUid);
@@ -537,10 +553,8 @@ public class ActivityServiceImpl implements ActivityService {
         long aid = activitySetParticipantGroupDTO.getAid();
         long participantUid = activitySetParticipantGroupDTO.getParticipantUid();
         String group = activitySetParticipantGroupDTO.getGroup();
-        // 获取操作者身份, 鉴权
-        Set<String> validRoles = new HashSet<>(Arrays.asList("组织者", "管理员"));
         String managerRole = activityMapper.getUserRole(aid, managerUid);
-        if(validRoles.contains(managerRole))
+        if(MessageConstant.All_Permission_Role.contains(managerRole))
         {
             // 更新userList的角色
             activityMapper.updateUserGroup(aid, participantUid, group);
