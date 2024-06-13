@@ -23,6 +23,6 @@
         where fid = #{fid};
     </delete>
     <update id="increaseDownloadTimes">
-        update ActFile set downloadTimes = downloadTimes + 1;
+        update ActFile set downloadTimes = downloadTimes + 1 where fid = #{fid}
     </update>
 </mapper>
